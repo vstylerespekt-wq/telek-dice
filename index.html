@@ -1,70 +1,113 @@
 from pathlib import Path
-p = Path('/mnt/data/telek_dice_meowl_classic_trade.html')
-html = p.read_text(encoding='utf-8')
 
-# Restyle the existing working game to match the screenshot's bold purple lightning / white outlined panels,
-# keeping its MEOW sounds, music styles, dice logic, and right-side Trade Machine.
-start = html.index('<style>')
-end = html.index('</style>', start) + len('</style>')
-new_style = r'''<style>
-:root{--bg:#13051f;--panel:#210b2c;--line:#fff;--cyan:#55f5ee;--pink:#ed00ff;--purple:#a100ff}
+html = r'''<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TELEK DICE — MEOWL Style</title>
+<style>
+:root{--bg:#100b18;--panel:#1d1424;--line:#ffffff25;--text:#fff8f0;--muted:#c9b9d2;--accent:#ff4fbd;--gold:#ffd46a}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;color:#fff;font:15px system-ui,sans-serif;padding:18px;background:radial-gradient(ellipse at 12% 10%,#ff00e1 0,transparent 24%),radial-gradient(ellipse at 90% 28%,#8d00ff 0,transparent 32%),radial-gradient(ellipse at 50% 90%,#6b00bb 0,transparent 38%),linear-gradient(135deg,#080014,#21002f 48%,#080014);background-attachment:fixed}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.28;background-image:repeating-linear-gradient(125deg,transparent 0 65px,#bd00ff 67px,transparent 72px),repeating-linear-gradient(55deg,transparent 0 110px,#fa00ff 112px,transparent 117px);mask-image:linear-gradient(#000,transparent 85%)}
-.layout{position:relative;width:min(1450px,100%);margin:auto;display:grid;grid-template-columns:200px minmax(0,540px) 200px 1fr;gap:14px;align-items:start}
-.game{min-width:0;text-align:center;grid-column:2}.top{display:flex;justify-content:space-between;gap:8px;color:#fff;font-size:10px;font-weight:1000;letter-spacing:1px}
-.tag{border:2px solid #fff;color:#ffebff;border-radius:30px;padding:6px 9px;background:#31003c}
-.logo{font-size:clamp(43px,6vw,69px);line-height:.92;font-weight:1000;letter-spacing:-2px;margin:20px 0 12px;color:#ffd52a;text-shadow:2px 3px 0 #b84b00,-2px -2px 0 #fff,0 0 18px #ff00f7;filter:drop-shadow(0 4px 0 #350047)}
-.sub{color:#f4caff;font-size:11px;letter-spacing:2px;margin-bottom:18px;font-weight:900}
-.panel,.trade,.streamers{border:3px solid #fff;border-radius:18px;background:linear-gradient(145deg,#1a0924ed,#100615ed);box-shadow:0 0 0 2px #a900ff88,0 10px 32px #0008;padding:17px 13px}
-.label{font-size:11px;font-weight:1000;letter-spacing:1.5px;color:#f5dfff}
-.row{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;margin:13px 0}
-select{background:#fff;color:#17101d;border:3px solid #e400ff;border-radius:11px;padding:10px 8px;font-weight:1000;min-width:0;max-width:100%}
-.diceboard{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;max-width:390px;margin:22px auto}
-.die{aspect-ratio:1;border:5px solid #fff;border-radius:15px;display:grid;place-items:center;cursor:pointer;position:relative;transition:transform .18s,box-shadow .18s;background:linear-gradient(145deg,#202948,#10162c);box-shadow:0 4px 0 #777,0 8px 15px #0007}
-.die:hover{transform:translateY(-3px)}
-.die.selected{outline:3px solid #ff00ed;outline-offset:2px;box-shadow:0 0 24px #ff00ed99}
-.pip{width:15px;height:15px;border-radius:50%;background:#fff;box-shadow:0 0 8px #fff9}
-.primary{width:100%;max-width:460px;padding:14px;border:3px solid #fff;border-radius:13px;background:linear-gradient(#fff34e,#ffad00 75%,#f47700);color:#fff;font-size:25px;font-weight:1000;letter-spacing:1px;cursor:pointer;text-shadow:2px 3px 0 #b64b00,-1px -1px #9b4a00;box-shadow:0 4px 0 #7e3900,0 0 0 2px #ffcb00}
-.primary:active{transform:translateY(3px)}.primary:disabled{opacity:.6}
-.results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;max-width:460px;margin:18px auto}
-.resultdie{min-width:0;min-height:70px;border:3px solid #fff;border-radius:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;animation:pop .25s ease;text-shadow:0 1px 5px #0009;font-weight:900}
-.resultdie .pip{width:11px;height:11px}.resultdie .name{font-size:11px}.resultdie small{font-size:9px}
-.btn{background:#2b1235;color:white;border:2px solid #8b4a9c;border-radius:10px;padding:9px 11px;cursor:pointer;font-weight:900}
-.btn:hover,.btn.active{border-color:#ff00ed;color:#ff8aff;box-shadow:0 0 10px #ff00ed55}
-.status{padding:12px;background:#0d0715;border-radius:11px;border:2px solid #5e386c;font-size:12px;line-height:1.5}
-.stats{font-size:11px;color:#d6b8e4}.stats strong{color:white;font-size:15px}
-.side{position:static;grid-column:3}.trade{padding:15px 11px}.trade h2{font-size:16px;margin:0 0 6px}.trade p{color:#d6b8e4;font-size:11px;line-height:1.4;margin:0 0 13px}
-.trade-list{display:grid;gap:8px}.trade-btn{width:100%;padding:11px 9px;text-align:left;border-radius:10px;color:white;border:2px solid #ffffff55;background:#1b0b25;font-weight:1000;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:5px;transition:.15s;font-size:11px}
-.trade-btn:hover{transform:translateX(-2px);filter:brightness(1.2)}.trade-btn.active{outline:2px solid #fff;outline-offset:1px}
-.trade-btn small{font-weight:700;opacity:.85;font-size:9px}
-.add{border-color:#42dfff;color:#55eaff}.deal{border-color:#a98aff;color:#bba4ff}.loss{border-color:#ff6262;color:#ff7373}.fair{border-color:#4ae6a0;color:#61f0a8}.sign{border-color:#ffce66;color:#ffd16d}.thanks{border-color:#9aa2b8;color:#c2c7d5}
-.trade-status{margin-top:12px;border-radius:10px;padding:10px;background:#09040e;border:1px solid #ffffff30;font-size:11px;line-height:1.45}
-.streamers{grid-column:1;padding:12px 9px}.streamers.right{grid-column:3;display:none}.streamers h3{font-size:14px;margin:0 0 12px;text-align:center;font-weight:1000}
-.streamer{display:flex;align-items:center;gap:8px;padding:9px 7px;margin:7px 0;border:2px solid #e000ff;border-left-width:4px;border-radius:10px;background:#13091b;font-size:10px;font-weight:900;text-align:left}
-.avatar{width:32px;height:32px;flex:0 0 32px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#ffcc27,#a100ff);border:2px solid #fff;font-size:15px}
-.streamer small{display:block;color:#c9a9d6;font-size:9px;font-weight:600}
-.soundbox{margin-top:13px}.soundbox .row{margin-bottom:4px}
-footer{font-size:10px;color:#c8a5d9;line-height:1.6;margin:16px}
-@keyframes pop{from{transform:scale(.75) rotate(-6deg);opacity:0}to{transform:scale(1);opacity:1}}
-@keyframes shake{from{transform:rotate(-4deg)}to{transform:rotate(4deg)}}
-.rolling{animation:shake .12s infinite alternate}
-@media(max-width:1050px){.layout{grid-template-columns:minmax(0,1fr) 230px}.game{grid-column:1}.side{grid-column:2}.streamers{display:none}}
-@media(max-width:650px){body{padding:9px}.layout{grid-template-columns:1fr}.game,.side{grid-column:1}.side{position:static}.trade-list{grid-template-columns:repeat(2,minmax(0,1fr))}.trade-btn{font-size:11px}.logo{margin-top:18px}.panel{padding:15px 9px}.diceboard,.results{gap:7px}.die{border-radius:11px;border-width:4px}.primary{font-size:21px}}
-</style>'''
-html = html[:start] + new_style + html[end:]
-
-# Add decorative streamer panels flanking the game, while keeping the Trade Machine in the right column.
-needle = '<main class="game">'
-left = '''<aside class="streamers"><h3>OUR TOP STREAMERS</h3>
-<div class="streamer"><span class="avatar">🐱</span><span>MEOWL PLAYER<small>@meowldice</small></span></div>
-<div class="streamer"><span class="avatar">🎲</span><span>DICE MASTER<small>@dicemaster</small></span></div>
-<div class="streamer"><span class="avatar">⚡</span><span>NEON ROLLER<small>@neonroll</small></span></div>
-<div class="streamer"><span class="avatar">🌙</span><span>CHILL CAT<small>@chillcat</small></span></div>
-<div class="streamer"><span class="avatar">💜</span><span>PURPLE PAWS<small>@purplepaws</small></span></div>
-</aside>
+body{margin:0;min-height:100vh;color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(ellipse at 50% 0%,#55305b 0,#21142d 42%,#0d0913 100%);overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.25;background-image:radial-gradient(#ffd46a 1px,transparent 1px);background-size:24px 24px}
+.leaf{position:fixed;pointer-events:none;opacity:.55;font-size:26px;animation:float 12s ease-in-out infinite;z-index:0}.l1{top:13%;left:7%}.l2{top:38%;right:8%;animation-delay:-4s}.l3{bottom:12%;left:12%;animation-delay:-7s}
+.wrap{position:relative;z-index:1;width:min(760px,100%);margin:auto;padding:22px 14px 30px;text-align:center}
+.top{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:900;letter-spacing:1.5px;color:var(--muted)}
+.pill{border:1px solid #ffb5e966;color:#ffc2ec;padding:7px 10px;border-radius:20px}
+.logo{font-size:clamp(48px,11vw,78px);font-weight:1000;line-height:.88;letter-spacing:-3px;margin:30px 0 14px;color:#ffcf72;text-shadow:3px 4px 0 #58263c,0 0 25px #ff9cdb77}
+.subtitle{font-size:11px;letter-spacing:2px;color:#f5c7e9;margin-bottom:24px}
+.panel{padding:22px 15px;margin:14px 0;border:1px solid #ffb7df55;border-radius:22px;background:linear-gradient(145deg,#321c38ee,#170f20f5);box-shadow:0 16px 45px #0006}
+.label{font-size:11px;font-weight:900;letter-spacing:1.7px;color:#f2c7e4}
+.row{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0}
+select{background:#21152a;color:white;border:1px solid #ffb6df99;border-radius:10px;padding:10px;font-weight:bold}
+.dice-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;max-width:510px;margin:22px auto}
+.die{aspect-ratio:1;border:3px solid #fff1d8;border-radius:22%;display:grid;place-items:center;position:relative;box-shadow:inset 0 0 0 2px #ffffff50,inset 0 -7px 12px #0002,0 7px 0 #5c334a,0 10px 18px #0005;transition:transform .18s,filter .18s;overflow:hidden}
+.die:before{content:"";position:absolute;inset:5px;border:1px solid #ffffff9c;border-radius:18%;pointer-events:none}
+.die .pip{width:17px;height:17px;background:#fff9df;border-radius:50%;box-shadow:0 0 13px #fff8c8,0 0 25px #fff7}
+.die.rolling{animation:shake .12s infinite alternate}
+.primary{width:100%;max-width:460px;padding:17px;border:0;border-radius:15px;background:linear-gradient(100deg,#ffd76d,#ff9d58,#ff4fbd);color:#291222;font-size:21px;font-weight:1000;letter-spacing:2px;cursor:pointer;box-shadow:0 6px 0 #763455,0 12px 22px #0004}
+.primary:active{transform:translateY(3px);box-shadow:0 3px 0 #763455}
+.primary:disabled{opacity:.7;cursor:wait}
+.btn{background:#ffffff09;color:white;border:1px solid #ffffff35;border-radius:10px;padding:10px 13px;cursor:pointer;font-weight:bold}
+.btn:hover,.btn.active{border-color:#ff8fd5;color:#ffb9e7}
+.results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;max-width:520px;margin:18px auto}
+.resultdie{min-width:0;min-height:76px;border:2px solid #fff1d8;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;animation:pop .25s ease;box-shadow:0 5px 0 #0004}
+.resultdie .pip{width:12px;height:12px;background:#fff9df;border-radius:50%;box-shadow:0 0 10px #fff}
+.name{font-size:12px;font-weight:900}.small{font-size:9px;opacity:.85}
+.status{padding:13px;background:#0c0814a8;border-radius:12px;border:1px solid #ffffff18;font-size:13px;line-height:1.5}
+.stats{font-size:12px;color:var(--muted)}.stats strong{color:white;font-size:16px}
+footer{font-size:11px;color:#b4a0bd;line-height:1.6;margin:20px}
+@keyframes pop{from{transform:scale(.7) rotate(-8deg);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes shake{from{transform:rotate(-5deg) scale(.97)}to{transform:rotate(5deg) scale(1.03)}}
+@keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(24px) rotate(35deg)}}
+@media(max-width:430px){.dice-grid,.results{gap:8px}.die{border-radius:18%}.panel{padding:17px 10px}.die .pip{width:13px;height:13px}}
+</style>
+</head>
+<body>
+<span class="leaf l1">🍂</span><span class="leaf l2">🍁</span><span class="leaf l3">🍃</span>
+<main class="wrap">
+  <div class="top"><span>🐾 NEON DICE CLUB</span><span class="pill">● MEOWL STYLE</span></div>
+  <div class="logo">TELEK<br>DICE</div>
+  <div class="subtitle">🐾 ROLL YOUR COLORS · MEOW VIBES 🐾</div>
+  <section class="panel">
+    <div class="label">НАСТРОЙ СВОЙ БРОСОК</div>
+    <div class="row"><label for="count">КОЛИЧЕСТВО КУБИКОВ</label><select id="count"></select></div>
+    <div class="dice-grid" id="diceGrid" aria-label="Кубики"></div>
+    <button class="primary" id="roll">🎲 ROLL DICE</button>
+    <div class="label" style="margin-top:26px">РЕЗУЛЬТАТ БРОСКА</div>
+    <div class="results" id="results"><div class="stats" style="grid-column:1/-1">Нажми ROLL DICE!</div></div>
+    <div class="status" id="status">Система готова к броску.</div>
+    <div class="row"><button class="btn" id="reset">↻ Сбросить счёт</button></div>
+    <div class="row stats">БРОСКИ: <strong id="rolls">0</strong> · СОВПАДЕНИЯ: <strong id="score">0</strong> · СЕРИЯ: <strong id="streak">0</strong></div>
+  </section>
+  <section class="panel">
+    <div class="label">🔊 ЗВУКИ И МУЗЫКА</div>
+    <div class="row"><button class="btn active" id="soundToggle">🔊 Звуки: ВКЛ</button><button class="btn" id="musicToggle">♫ Музыка: ВЫКЛ</button></div>
+    <div class="row"><label for="musicStyle">МУЗЫКАЛЬНЫЙ СТИЛЬ</label><select id="musicStyle"><option value="meow">🐱 MEOW melody</option><option value="chill">🌙 Chill neon</option><option value="arcade">🕹️ Arcade</option><option value="autumn">🍂 Autumn vibes</option></select></div>
+    <div class="stats" id="musicInfo">Выбери стиль и включи музыку. Звук запускается после нажатия кнопки.</div>
+  </section>
+  <footer>TELEK DICE · MEOWL-inspired style · Счёт хранится в этой вкладке и не является глобальным онлайном.</footer>
+</main>
+<script>
+const colors=[
+ {name:'Красный',hex:'#ed403c'},{name:'Оранжевый',hex:'#ff852e'},
+ {name:'Жёлтый',hex:'#f3d743'},{name:'Зелёный',hex:'#21c968'},
+ {name:'Синий',hex:'#3479f6'},{name:'Фиолетовый',hex:'#9b42e9'},
+ {name:'Розовый',hex:'#ef42b5'},{name:'Чёрный',hex:'#393541'}
+];
+const $=id=>document.getElementById(id);
+let rolls=0,score=0,streak=0,busy=false,soundOn=true,musicOn=false,audio=null,musicTimer=null,musicStep=0;
+for(let n=1;n<=8;n++){let o=document.createElement('option');o.value=n;o.textContent=n+(n===1?' кубик':' кубика');$('count').append(o)}
+function ctx(){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;if(!audio)audio=new AC();if(audio.state==='suspended')audio.resume();return audio}
+function tone(freq,duration=.12,type='sine',volume=.025,delay=0){const c=ctx();if(!c)return;let o=c.createOscillator(),g=c.createGain(),t=c.currentTime+delay;o.type=type;o.frequency.setValueAtTime(freq,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(volume,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+duration);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+duration+.03)}
+function clickSound(){if(soundOn){tone(720,.055,'sine',.025);tone(960,.045,'sine',.012,.025)}}
+function meow(){if(!soundOn)return;tone(520,.10,'triangle',.025);tone(760,.14,'sine',.022,.09);tone(610,.16,'triangle',.02,.20)}
+function rollSound(){if(soundOn){tone(180,.15,'triangle',.03);tone(280,.15,'triangle',.025,.09);tone(390,.18,'triangle',.02,.18)}}
+function winSound(){if(soundOn)[523,659,784,1046].forEach((f,i)=>tone(f,.15,'sine',.028,i*.07))}
+function makeDie(c,small=false){let d=document.createElement('div');d.className=small?'resultdie':'die';d.style.background=`linear-gradient(145deg,${c.hex},${c.hex}dd)`;if(small)d.innerHTML='<span class="pip"></span><span class="name">'+c.name+'</span>';else d.innerHTML='<span class="pip"></span>';return d}
+function drawIdle(){let grid=$('diceGrid');grid.innerHTML='';for(let i=0;i<Number($('count').value);i++){let d=makeDie(colors[i%colors.length]);grid.append(d)}}
+function render(nums){let r=$('results');r.innerHTML='';nums.forEach((n,i)=>{let d=makeDie(colors[n],true);let small=document.createElement('span');small.className='small';small.textContent='КУБИК '+(i+1);d.append(small);r.append(d)})}
+$('count').onchange=()=>{clickSound();drawIdle()};
+$('roll').onclick=()=>{
+ if(busy)return;ctx();clickSound();rollSound();busy=true;$('roll').disabled=true;$('roll').textContent='⏳ ROLLING...';
+ const grid=$('diceGrid'),n=Number($('count').value);grid.innerHTML='';
+ for(let i=0;i<n;i++){let d=makeDie(colors[Math.floor(Math.random()*colors.length)]);d.classList.add('rolling');grid.append(d)}
+ setTimeout(()=>{const nums=Array.from({length:n},()=>Math.floor(Math.random()*colors.length));grid.innerHTML='';nums.forEach(x=>grid.append(makeDie(colors[x])));render(nums);rolls++;const hits=nums.length;score+=hits;streak++;$('rolls').textContent=rolls;$('score').textContent=score;$('streak').textContent=streak;$('status').textContent='Выпало: '+nums.map(x=>colors[x].name).join(' · ')+'. Бросок завершён!';if(nums.some(x=>x===6))meow();else winSound();$('roll').disabled=false;$('roll').textContent='🎲 ROLL DICE';busy=false},700)
+};
+$('reset').onclick=()=>{clickSound();rolls=score=streak=0;$('rolls').textContent='0';$('score').textContent='0';$('streak').textContent='0';$('results').innerHTML='<div class="stats" style="grid-column:1/-1">Нажми ROLL DICE!</div>';$('status').textContent='Счёт сброшен.';drawIdle()};
+$('soundToggle').onclick=()=>{soundOn=!soundOn;$('soundToggle').textContent=soundOn?'🔊 Звуки: ВКЛ':'🔇 Звуки: ВЫКЛ';$('soundToggle').classList.toggle('active',soundOn);if(soundOn){ctx();clickSound()}};
+const tunes={meow:[523,659,784,659,587,698,880,698],chill:[261,329,392,329,293,349,440,349],arcade:[440,554,659,880,659,554,784,988],autumn:[392,440,523,587,523,440,349,392]};
+function musicTick(){if(!musicOn)return;let a=tunes[$('musicStyle').value]||tunes.meow,i=musicStep%a.length;tone(a[i],.22,'sine',.018);tone(a[i]/2,.27,'triangle',.011,.02);if($('musicStyle').value==='meow'&&musicStep%4===0&&soundOn)tone(780,.08,'triangle',.008,.12);musicStep++}
+function stopMusic(){musicOn=false;clearInterval(musicTimer);musicTimer=null;$('musicToggle').textContent='♫ Музыка: ВЫКЛ';$('musicToggle').classList.remove('active');$('musicInfo').textContent='Музыка выключена.'}
+function startMusic(){if(!ctx()){$('musicInfo').textContent='Браузер не поддерживает встроенную музыку.';return}musicOn=true;musicStep=0;musicTick();musicTimer=setInterval(musicTick,300);$('musicToggle').textContent='♫ Музыка: ВКЛ';$('musicToggle').classList.add('active');$('musicInfo').textContent='Играет стиль: '+$('musicStyle').selectedOptions[0].textContent}
+$('musicToggle').onclick=()=>{clickSound();musicOn?stopMusic():startMusic()};
+$('musicStyle').onchange=()=>{clickSound();if(musicOn){stopMusic();startMusic()}else $('musicInfo').textContent='Выбран стиль: '+$('musicStyle').selectedOptions[0].textContent};
+drawIdle();
+</script>
+</body>
+</html>
 '''
-html = html.replace(needle, left + needle, 1)
-# Avoid implying fake live/global online stats; labels already don't claim them.
-p.write_text(html, encoding='utf-8')
-print("Обновил стиль: фиолетовый неон, белые рамки, золотая кнопка броска и боковая панель Trade Machine. MEOW-звуки и музыкальные стили сохранены.")
+out = Path("/mnt/data/telek_dice_meowl_classic.html")
+out.write_text(html, encoding="utf-8")
+print(f"Готово: {out.name} ({len(html)} символов)")
