@@ -1,215 +1,555 @@
-from pathlib import Path
 
-html = r'''<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TELEK DICE — MEOWL Style</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TELEK DICE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
 <style>
-:root{--bg:#100b18;--panel:#1d1424;--line:#ffffff25;--text:#fff8f0;--muted:#c9b9d2;--accent:#ff4fbd;--gold:#ffd46a}
-*{box-sizing:border-box}
-body{margin:0;min-height:100vh;color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(ellipse at 50% 0%,#55305b 0,#21142d 42%,#0d0913 100%);overflow-x:hidden;transition:background .25s}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.25;background-image:radial-gradient(#ffd46a 1px,transparent 1px);background-size:24px 24px}
-.leaf{position:fixed;pointer-events:none;opacity:.55;font-size:26px;animation:float 12s ease-in-out infinite;z-index:0}.l1{top:13%;left:7%}.l2{top:38%;right:8%;animation-delay:-4s}.l3{bottom:12%;left:12%;animation-delay:-7s}
-.wrap{position:relative;z-index:1;width:min(760px,100%);margin:auto;padding:22px 14px 30px;text-align:center}
-.top{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:900;letter-spacing:1.5px;color:var(--muted)}
-.pill{border:1px solid #ffb5e966;color:#ffc2ec;padding:7px 10px;border-radius:20px}
-.logo{font-size:clamp(48px,11vw,78px);font-weight:1000;line-height:.88;letter-spacing:-3px;margin:30px 0 14px;color:#ffcf72;text-shadow:3px 4px 0 #58263c,0 0 25px #ff9cdb77}
-.subtitle{font-size:11px;letter-spacing:2px;color:#f5c7e9;margin-bottom:24px}
-.panel{padding:22px 15px;margin:14px 0;border:1px solid #ffb7df55;border-radius:22px;background:linear-gradient(145deg,#321c38ee,#170f20f5);box-shadow:0 16px 45px #0006}
-.label{font-size:11px;font-weight:900;letter-spacing:1.7px;color:#f2c7e4}
-.row{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0}
-select,input{background:#21152a;color:white;border:1px solid #ffb6df99;border-radius:10px;padding:10px;font-weight:bold;max-width:100%}
-.dice-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;max-width:510px;margin:22px auto}
-.die{aspect-ratio:1;border:3px solid #fff1d8;border-radius:22%;display:grid;place-items:center;position:relative;box-shadow:inset 0 0 0 2px #ffffff50,inset 0 -7px 12px #0002,0 7px 0 #5c334a,0 10px 18px #0005;transition:transform .18s,filter .18s;overflow:hidden}
-.die:before{content:"";position:absolute;inset:5px;border:1px solid #ffffff9c;border-radius:18%;pointer-events:none}
-.die .pip{width:17px;height:17px;background:#fff9df;border-radius:50%;box-shadow:0 0 13px #fff8c8,0 0 25px #fff7}
-.die.rolling{animation:shake .12s infinite alternate}
-.primary{width:100%;max-width:460px;padding:17px;border:0;border-radius:15px;background:linear-gradient(100deg,#ffd76d,#ff9d58,#ff4fbd);color:#291222;font-size:21px;font-weight:1000;letter-spacing:2px;cursor:pointer;box-shadow:0 6px 0 #763455,0 12px 22px #0004}
-.primary:active{transform:translateY(3px);box-shadow:0 3px 0 #763455}
-.primary:disabled{opacity:.7;cursor:wait}
-.btn{background:#ffffff09;color:white;border:1px solid #ffffff35;border-radius:10px;padding:10px 13px;cursor:pointer;font-weight:bold}
-.btn:hover,.btn.active{border-color:#ff8fd5;color:#ffb9e7}
-.results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;max-width:520px;margin:18px auto}
-.resultdie{min-width:0;min-height:76px;border:2px solid #fff1d8;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;animation:pop .25s ease;box-shadow:0 5px 0 #0004}
-.resultdie .pip{width:12px;height:12px;background:#fff9df;border-radius:50%;box-shadow:0 0 10px #fff}
-.name{font-size:12px;font-weight:900}.small{font-size:9px;opacity:.85}
-.status{padding:13px;background:#0c0814a8;border-radius:12px;border:1px solid #ffffff18;font-size:13px;line-height:1.5}
-.stats{font-size:12px;color:var(--muted)}.stats strong{color:white;font-size:16px}
-.trade-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:520px;margin:16px auto}
-.trade-card{padding:14px;border:1px solid #ffffff25;border-radius:14px;background:#0c081455}
-.trade-card label{display:block;font-size:11px;color:var(--muted);margin-bottom:8px}
-.trade-result{min-height:48px;padding:12px;border-radius:12px;background:#0c0814a8;line-height:1.5;font-size:13px}
-footer{font-size:11px;color:#b4a0bd;line-height:1.6;margin:20px}
-@keyframes pop{from{transform:scale(.7) rotate(-8deg);opacity:0}to{transform:scale(1);opacity:1}}
-@keyframes shake{from{transform:rotate(-5deg) scale(.97)}to{transform:rotate(5deg) scale(1.03)}}
-@keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(24px) rotate(35deg)}}
-@media(max-width:430px){.dice-grid,.results{gap:8px}.die{border-radius:18%}.panel{padding:17px 10px}.die .pip{width:13px;height:13px}.trade-grid{grid-template-columns:1fr}}
+:root {
+  --glass: rgba(20, 22, 28, .70);
+  --glass-border: rgba(255,255,255,.19);
+  --text: #fff;
+  --muted: rgba(255,255,255,.74);
+  --accent: #ffb6d9;
+  --accent2: #c9b6ff;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  font-family: "Nunito", sans-serif;
+  background: #171922;
+  background-image:
+    linear-gradient(120deg, rgba(9,12,22,.55), rgba(14,12,22,.48)),
+    url("https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=2200&q=85");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  transition: background-image .5s;
+}
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+button:disabled { opacity: .55; cursor: wait; }
+button:focus-visible, select:focus-visible, input:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 3px;
+}
+.wrap { width: min(1120px, 92%); margin: auto; padding: 25px 0 40px; }
+.top { display:flex; justify-content:space-between; align-items:center; gap:15px; flex-wrap:wrap; margin-bottom:22px; }
+.logo { font-weight:900; font-size:clamp(26px,4vw,42px); letter-spacing:2px; text-shadow:0 4px 20px #0008; }
+.subtitle { color:var(--muted); font-size:14px; }
+.pill { border:1px solid var(--glass-border); background:var(--glass); padding:8px 13px; border-radius:99px; color:white; }
+.panel {
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  border-radius:23px;
+  padding:22px;
+  margin:16px 0;
+  backdrop-filter:blur(15px);
+  box-shadow:0 12px 40px #0002;
+}
+h2 { font-size:21px; margin:0 0 16px; }
+h3 { margin:0 0 12px; font-size:16px; }
+.label { color:var(--muted); display:block; font-size:13px; margin-bottom:7px; }
+.row { display:flex; flex-wrap:wrap; gap:12px; align-items:end; }
+.field { flex:1; min-width:130px; }
+select, input[type="number"] {
+  width:100%; color:white; background:rgba(255,255,255,.11);
+  border:1px solid var(--glass-border); border-radius:12px; padding:11px 12px;
+}
+select option { color:#222; }
+.primary, .btn {
+  border:1px solid rgba(255,255,255,.2); color:white; border-radius:13px;
+  padding:11px 17px; font-weight:800; transition:transform .15s, filter .15s;
+}
+.primary { background:linear-gradient(135deg,#d56ea9,#8d77db); }
+.btn { background:rgba(255,255,255,.11); }
+.primary:hover, .btn:hover { transform:translateY(-2px); filter:brightness(1.13); }
+.btn.active { background:linear-gradient(135deg,#8e78d9,#c16ba0); }
+.dice-grid { display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:13px; min-height:125px; padding:18px 0; }
+.die {
+  width:72px; height:72px; border-radius:18px; background:#f3f3f3; color:#222;
+  display:grid; place-items:center; font-size:37px; font-weight:900;
+  box-shadow:0 8px 18px #0004, inset 0 2px 2px #fff9;
+  border:1px solid #ffffffa8; user-select:none;
+}
+.die.rolling { animation:casino .42s ease-in-out infinite alternate; }
+@keyframes casino {
+  from { transform:rotate(-8deg) scale(.91); filter:hue-rotate(0deg); }
+  to { transform:rotate(8deg) scale(1.08); filter:hue-rotate(160deg); }
+}
+.results { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:8px 0 14px; }
+.resultdie { border:1px solid var(--glass-border); border-radius:12px; padding:8px 12px; background:#ffffff12; }
+.status { text-align:center; color:var(--muted); min-height:24px; margin-top:10px; }
+.stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:18px; }
+.stat { background:#ffffff0d; border:1px solid var(--glass-border); border-radius:14px; padding:13px; text-align:center; }
+.stat strong { display:block; font-size:24px; }
+.stat span { color:var(--muted); font-size:12px; }
+.options-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:15px; }
+.trade-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px; }
+.trade-card { border:1px solid var(--glass-border); background:#ffffff0a; border-radius:16px; padding:15px; }
+.trade-result { margin-top:13px; padding:13px; border-radius:12px; background:#ffffff12; line-height:1.6; }
+.switchrow { display:flex; gap:10px; align-items:center; margin:10px 0; color:var(--muted); }
+input[type="checkbox"] { accent-color:#d98ab9; width:17px; height:17px; }
+footer { text-align:center; color:#ffffffa8; font-size:12px; padding:15px; }
+.hidden { display:none !important; }
+
+/* Language welcome screen */
+.welcome {
+  position:fixed; inset:0; z-index:1000; display:grid; place-items:center;
+  padding:20px; background:linear-gradient(135deg,rgba(12,13,22,.76),rgba(26,15,32,.78));
+  backdrop-filter:blur(12px);
+}
+.welcome-card {
+  width:min(440px,100%); text-align:center; padding:35px 25px;
+  border-radius:26px; background:rgba(31,28,40,.91);
+  border:1px solid #ffffff35; box-shadow:0 25px 90px #0008;
+}
+.welcome-card h1 { margin:0; font-size:34px; letter-spacing:2px; }
+.welcome-card p { color:var(--muted); margin:8px 0 25px; }
+.lang-buttons { display:flex; gap:12px; }
+.lang-buttons button { flex:1; padding:15px 10px; font-size:16px; }
+@media(max-width:550px) {
+  .panel { padding:17px; }
+  .die { width:58px; height:58px; font-size:30px; border-radius:15px; }
+  .stats { grid-template-columns:1fr; }
+  .top { align-items:flex-start; }
+}
 </style>
 </head>
+
 <body>
-<span class="leaf l1">🍂</span><span class="leaf l2">🍁</span><span class="leaf l3">🍃</span>
+<div class="welcome" id="welcome">
+  <div class="welcome-card">
+    <h1>TELEK DICE</h1>
+    <p id="welcomeText">Выбери язык / Choose your language</p>
+    <div class="lang-buttons">
+      <button class="primary" onclick="setLanguage('ru')">🇷🇺 Русский</button>
+      <button class="primary" onclick="setLanguage('en')">🇬🇧 English</button>
+    </div>
+  </div>
+</div>
+
 <main class="wrap">
-  <div class="top"><span>🐾 NEON DICE CLUB</span><span class="pill">● MEOWL STYLE</span></div>
-  <div class="logo">TELEK<br>DICE</div>
-  <div class="subtitle">🐾 ROLL YOUR COLORS · MEOW VIBES 🐾</div>
+  <header class="top">
+    <div>
+      <div class="logo">🎲 TELEK DICE</div>
+      <div class="subtitle" data-i18n="subtitle">Твой уютный мир кубиков</div>
+    </div>
+    <button class="pill" onclick="showLanguage()" data-i18n="changeLang">🌐 Язык</button>
+  </header>
 
   <section class="panel">
-    <div class="label">НАСТРОЙ СВОЙ БРОСОК</div>
-    <div class="row"><label for="count">КОЛИЧЕСТВО КУБИКОВ</label><select id="count"></select></div>
-    <div class="dice-grid" id="diceGrid" aria-label="Кубики"></div>
+    <h2 data-i18n="rollTitle">🎲 Бросок кубиков</h2>
     <div class="row">
-      <button class="primary" id="roll">🎲 ROLL DICE</button>
+      <div class="field">
+        <label class="label" data-i18n="diceCount">Количество кубиков</label>
+        <select id="diceCount">
+          <option value="1">1</option><option value="2">2</option>
+          <option value="3" selected>3</option><option value="4">4</option>
+          <option value="5">5</option><option value="6">6</option>
+          <option value="7">7</option><option value="8">8</option>
+        </select>
+      </div>
+      <button class="primary" id="rollBtn" onclick="rollDice(false)" data-i18n="roll">БРОСИТЬ</button>
+      <button class="primary" id="megaBtn" onclick="rollDice(true)" data-i18n="mega">✨ MEGA ROLL</button>
+      <button class="btn" id="fastBtn" onclick="toggleFast()" data-i18n="fast">⚡ Fast Roll: OFF</button>
     </div>
-    <div class="row"><button class="btn active" id="fastRoll" aria-pressed="false">⚡ Fast Roll: ВЫКЛ</button><span class="stats">Без анимации — мгновенный результат</span></div>
-    <div class="label" style="margin-top:26px">РЕЗУЛЬТАТ БРОСКА</div>
-    <div class="results" id="results"><div class="stats" style="grid-column:1/-1">Нажми ROLL DICE!</div></div>
-    <div class="status" id="status">Система готова к броску.</div>
-    <div class="row"><button class="btn" id="reset">↻ Сбросить счёт</button></div>
-    <div class="row stats">БРОСКИ: <strong id="rolls">0</strong> · СОВПАДЕНИЯ: <strong id="score">0</strong> · СЕРИЯ: <strong id="streak">0</strong></div>
+
+    <div class="dice-grid" id="diceGrid">
+      <div class="die" style="background:#ffb6d9">⚄</div>
+      <div class="die" style="background:#b9c8ff">⚂</div>
+      <div class="die" style="background:#c8f2d0">⚅</div>
+    </div>
+    <div class="results" id="results"></div>
+    <div class="status" id="status" data-i18n="ready">Готов к броску!</div>
+
+    <div class="stats">
+      <div class="stat"><strong id="rollsStat">0</strong><span data-i18n="totalRolls">Всего бросков</span></div>
+      <div class="stat"><strong id="sumStat">0</strong><span data-i18n="lastSum">Сумма последнего броска</span></div>
+      <div class="stat"><strong id="bestStat">—</strong><span data-i18n="bestRoll">Лучший бросок</span></div>
+    </div>
+    <div style="text-align:center;margin-top:14px">
+      <button class="btn" onclick="resetStats()" data-i18n="resetStats">Сбросить статистику</button>
+    </div>
   </section>
 
   <section class="panel">
-    <div class="label">🎨 ВЫБОР ФОНА</div>
-    <div class="row"><label for="backgroundStyle">СТИЛЬ СТРАНИЦЫ</label>
-      <select id="backgroundStyle">
-        <option value="meowl">🐾 MEOWL — исходный</option>
-        <option value="midnight">🌌 Midnight blue</option>
-        <option value="mint">🍃 Mint dream</option>
-        <option value="sunset">🌇 Neon sunset</option>
-        <option value="mono">🖤 Dark monochrome</option>
-      </select>
+    <h2 data-i18n="backgroundTitle">🌲 Фотофоны</h2>
+    <div class="options-grid">
+      <div>
+        <label class="label" data-i18n="chooseBackground">Выбери атмосферу</label>
+        <select id="backgroundSelect" onchange="changeBackground(this.value)">
+          <option value="forest" data-i18n="forest">🍂 Лесная осень</option>
+          <option value="winter" data-i18n="winter">❄️ Зимний лес</option>
+          <option value="ocean" data-i18n="ocean">🌊 Океан</option>
+          <option value="flowers" data-i18n="flowers">🌸 Цветы и весна</option>
+          <option value="mountains" data-i18n="mountains">🏔️ Горы</option>
+          <option value="night" data-i18n="night">🌌 Ночное небо</option>
+        </select>
+      </div>
+      <div>
+        <label class="label" data-i18n="backgroundNote">Фотографии загружаются из Unsplash. Для них нужен интернет.</label>
+      </div>
     </div>
-    <div class="stats">Фон меняется сразу и не влияет на игровой счёт.</div>
   </section>
 
   <section class="panel">
-    <div class="label">🔊 ЗВУКИ И МУЗЫКА</div>
-    <div class="row"><button class="btn active" id="soundToggle">🔊 Звуки: ВКЛ</button><button class="btn" id="musicToggle">♫ Музыка: ВЫКЛ</button></div>
-    <div class="row"><label for="musicStyle">МУЗЫКАЛЬНЫЙ СТИЛЬ</label><select id="musicStyle"><option value="meow">🐱 MEOW melody</option><option value="chill">🌙 Chill neon</option><option value="arcade">🕹️ Arcade</option><option value="autumn">🍂 Autumn vibes</option></select></div>
-    <div class="stats" id="musicInfo">Выбери стиль и включи музыку. Звук запускается после нажатия кнопки.</div>
+    <h2 data-i18n="soundTitle">🎧 Звук и музыка</h2>
+    <div class="row">
+      <button class="btn active" id="soundBtn" onclick="toggleSound()" data-i18n="soundOn">🔊 Звуки: ВКЛ</button>
+      <button class="btn" id="musicBtn" onclick="toggleMusic()" data-i18n="musicOff">🎵 Музыка: ВЫКЛ</button>
+      <div class="field">
+        <label class="label" data-i18n="musicStyle">Стиль музыки</label>
+        <select id="musicStyle">
+          <option value="chill" data-i18n="chill">Chill</option>
+          <option value="arcade" data-i18n="arcade">Arcade</option>
+          <option value="autumn" data-i18n="autumn">Autumn</option>
+        </select>
+      </div>
+    </div>
+    <p class="subtitle" style="margin-top:12px" data-i18n="audioNote">Музыка создаётся прямо в браузере. Нажми «Музыка», чтобы включить её.</p>
   </section>
 
-  <section class="panel" id="tradeMachine">
-    <div class="label">🔁 TRADE MACHINE · СИСТЕМА ОБМЕНА</div>
-    <p class="stats">Выбери две стороны обмена. Машина покажет предложение и проверит, равны ли количества.</p>
+  <section class="panel">
+    <h2 data-i18n="tradeTitle">🔄 Trade Machine</h2>
     <div class="trade-grid">
       <div class="trade-card">
-        <label for="giveColor">ТЫ ОТДАЁШЬ</label>
+        <h3 data-i18n="giveTitle">Что отдаёшь?</h3>
+        <label class="label" data-i18n="color">Цвет</label>
         <select id="giveColor"></select>
-        <label for="giveAmount" style="margin-top:12px">КОЛИЧЕСТВО</label>
-        <input id="giveAmount" type="number" min="1" max="999" value="1">
+        <label class="label" style="margin-top:10px" data-i18n="amount">Количество</label>
+        <input id="giveAmount" type="number" min="1" max="999" value="2">
       </div>
       <div class="trade-card">
-        <label for="getColor">ТЫ ПОЛУЧАЕШЬ</label>
+        <h3 data-i18n="getTitle">Что хочешь получить?</h3>
+        <label class="label" data-i18n="color">Цвет</label>
         <select id="getColor"></select>
-        <label for="getAmount" style="margin-top:12px">КОЛИЧЕСТВО</label>
+        <label class="label" style="margin-top:10px" data-i18n="amount">Количество</label>
         <input id="getAmount" type="number" min="1" max="999" value="1">
       </div>
     </div>
-    <div class="row"><button class="btn" id="checkTrade">⚙️ Проверить обмен</button><button class="btn" id="resetTrade">↻ Сбросить обмен</button></div>
-    <div class="trade-result" id="tradeResult">Настрой обмен и нажми «Проверить обмен».</div>
-    <p class="stats">Важно: это локальный симулятор предложений. Он не подключён к аккаунтам, инвентарю или онлайн-рынку.</p>
+    <div class="row" style="margin-top:14px">
+      <button class="primary" onclick="checkTrade()" data-i18n="checkTrade">Проверить обмен</button>
+      <button class="btn" onclick="resetTrade()" data-i18n="clear">Очистить</button>
+    </div>
+    <div class="trade-result" id="tradeResult" data-i18n="tradeHint">Настрой обмен и нажми «Проверить обмен».</div>
+    <p class="subtitle" style="margin-top:10px" data-i18n="tradeNote">Это игровая симуляция — обмен не отправляется на сервер.</p>
   </section>
-  <footer>TELEK DICE · MEOWL-inspired style · Счёт хранится в этой вкладке и не является глобальным онлайном.</footer>
+
+  <footer>TELEK DICE · <span data-i18n="footer">Бросай кубики и наслаждайся атмосферой ✨</span></footer>
 </main>
+
 <script>
-const colors=[
- {name:'Красный',hex:'#ed403c'},{name:'Оранжевый',hex:'#ff852e'},
- {name:'Жёлтый',hex:'#f3d743'},{name:'Зелёный',hex:'#21c968'},
- {name:'Синий',hex:'#3479f6'},{name:'Фиолетовый',hex:'#9b42e9'},
- {name:'Розовый',hex:'#ef42b5'},{name:'Чёрный',hex:'#393541'}
+const translations = {
+  ru: {
+    subtitle:"Твой уютный мир кубиков",changeLang:"🌐 Язык",rollTitle:"🎲 Бросок кубиков",
+    diceCount:"Количество кубиков",roll:"🎲 БРОСИТЬ",mega:"✨ MEGA ROLL",fast:"⚡ Fast Roll: ",
+    ready:"Готов к броску!",totalRolls:"Всего бросков",lastSum:"Сумма последнего броска",
+    bestRoll:"Лучший бросок",resetStats:"Сбросить статистику",backgroundTitle:"🌲 Фотофоны",
+    chooseBackground:"Выбери атмосферу",forest:"🍂 Лесная осень",winter:"❄️ Зимний лес",
+    ocean:"🌊 Океан",flowers:"🌸 Цветы и весна",mountains:"🏔️ Горы",night:"🌌 Ночное небо",
+    backgroundNote:"Фотографии загружаются из Unsplash. Для них нужен интернет.",
+    soundTitle:"🎧 Звук и музыка",soundOn:"🔊 Звуки: ВКЛ",soundOff:"🔇 Звуки: ВЫКЛ",
+    musicOn:"🎵 Музыка: ВКЛ",musicOff:"🎵 Музыка: ВЫКЛ",musicStyle:"Стиль музыки",
+    chill:"Спокойная",arcade:"Аркадная",autumn:"Осенняя",
+    audioNote:"Музыка создаётся прямо в браузере. Нажми «Музыка», чтобы включить её.",
+    tradeTitle:"🔄 Trade Machine",giveTitle:"Что отдаёшь?",getTitle:"Что хочешь получить?",
+    color:"Цвет",amount:"Количество",checkTrade:"Проверить обмен",clear:"Очистить",
+    tradeHint:"Настрой обмен и нажми «Проверить обмен».",
+    tradeNote:"Это игровая симуляция — обмен не отправляется на сервер.",
+    footer:"Бросай кубики и наслаждайся атмосферой ✨",rolling:"Кубики крутятся…",
+    result:"Результат",sum:"Сумма",fastOn:"⚡ Fast Roll: ON",fastOff:"⚡ Fast Roll: OFF",
+    tradeGood:"Обмен выглядит сбалансированным.",tradeBad:"Количество отдаваемого и получаемого отличается.",
+    chooseLang:"Выбери язык / Choose your language",rolls:"Бросков выполнено",resetDone:"Статистика сброшена.",
+    colors:["Красный","Оранжевый","Жёлтый","Зелёный","Голубой","Фиолетовый","Розовый","Чёрный"]
+  },
+  en: {
+    subtitle:"Your cozy dice universe",changeLang:"🌐 Language",rollTitle:"🎲 Roll the dice",
+    diceCount:"Number of dice",roll:"🎲 ROLL DICE",mega:"✨ MEGA ROLL",fast:"⚡ Fast Roll: ",
+    ready:"Ready to roll!",totalRolls:"Total rolls",lastSum:"Last roll sum",
+    bestRoll:"Best roll",resetStats:"Reset statistics",backgroundTitle:"🌲 Photo backgrounds",
+    chooseBackground:"Choose your atmosphere",forest:"🍂 Autumn forest",winter:"❄️ Winter forest",
+    ocean:"🌊 Ocean",flowers:"🌸 Flowers & spring",mountains:"🏔️ Mountains",night:"🌌 Night sky",
+    backgroundNote:"Photos load from Unsplash. An internet connection is required.",
+    soundTitle:"🎧 Sound & music",soundOn:"🔊 Sound: ON",soundOff:"🔇 Sound: OFF",
+    musicOn:"🎵 Music: ON",musicOff:"🎵 Music: OFF",musicStyle:"Music style",
+    chill:"Chill",arcade:"Arcade",autumn:"Autumn",
+    audioNote:"Music is generated in your browser. Press Music to turn it on.",
+    tradeTitle:"🔄 Trade Machine",giveTitle:"What will you give?",getTitle:"What do you want?",
+    color:"Color",amount:"Amount",checkTrade:"Check trade",clear:"Clear",
+    tradeHint:"Set up your trade and press Check trade.",
+    tradeNote:"This is a game simulation — no trade is sent to a server.",
+    footer:"Roll the dice and enjoy the atmosphere ✨",rolling:"Dice are rolling…",
+    result:"Result",sum:"Sum",fastOn:"⚡ Fast Roll: ON",fastOff:"⚡ Fast Roll: OFF",
+    tradeGood:"This trade looks balanced.",tradeBad:"The given and received amounts are different.",
+    chooseLang:"Choose your language",rolls:"Rolls completed",resetDone:"Statistics reset.",
+    colors:["Red","Orange","Yellow","Green","Blue","Purple","Pink","Black"]
+  }
+};
+
+let language = "ru";
+let fastRoll = false;
+let soundEnabled = true;
+let musicEnabled = false;
+let rollCount = 0;
+let bestRoll = 0;
+let lastSum = 0;
+let audioContext = null;
+let musicTimer = null;
+let musicStep = 0;
+
+const colorValues = [
+  {key:"red",hex:"#ff626f"},{key:"orange",hex:"#ffad66"},
+  {key:"yellow",hex:"#ffe27a"},{key:"green",hex:"#7be0a0"},
+  {key:"blue",hex:"#80caff"},{key:"purple",hex:"#b59aff"},
+  {key:"pink",hex:"#ffacd5"},{key:"black",hex:"#333540"}
 ];
-const $=id=>document.getElementById(id);
-let rolls=0,score=0,streak=0,busy=false,soundOn=true,musicOn=false,fastRoll=false,audio=null,musicTimer=null,musicStep=0;
-for(let n=1;n<=8;n++){let o=document.createElement('option');o.value=n;o.textContent=n+(n===1?' кубик':' кубика');$('count').append(o)}
-function ctx(){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;if(!audio)audio=new AC();if(audio.state==='suspended')audio.resume();return audio}
-function tone(freq,duration=.12,type='sine',volume=.025,delay=0){const c=ctx();if(!c)return;let o=c.createOscillator(),g=c.createGain(),t=c.currentTime+delay;o.type=type;o.frequency.setValueAtTime(freq,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(volume,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+duration);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+duration+.03)}
-function clickSound(){if(soundOn){tone(720,.055,'sine',.025);tone(960,.045,'sine',.012,.025)}}
-function meow(){if(!soundOn)return;tone(520,.10,'triangle',.025);tone(760,.14,'sine',.022,.09);tone(610,.16,'triangle',.02,.20)}
-function rollSound(){if(soundOn){tone(180,.15,'triangle',.03);tone(280,.15,'triangle',.025,.09);tone(390,.18,'triangle',.02,.18)}}
-function winSound(){if(soundOn)[523,659,784,1046].forEach((f,i)=>tone(f,.15,'sine',.028,i*.07))}
-function makeDie(c,small=false){let d=document.createElement('div');d.className=small?'resultdie':'die';d.style.background=`linear-gradient(145deg,${c.hex},${c.hex}dd)`;if(small)d.innerHTML='<span class="pip"></span><span class="name">'+c.name+'</span>';else d.innerHTML='<span class="pip"></span>';return d}
-function drawIdle(){let grid=$('diceGrid');grid.innerHTML='';for(let i=0;i<Number($('count').value);i++){let d=makeDie(colors[i%colors.length]);grid.append(d)}}
-function render(nums){let r=$('results');r.innerHTML='';nums.forEach((n,i)=>{let d=makeDie(colors[n],true);let small=document.createElement('span');small.className='small';small.textContent='КУБИК '+(i+1);d.append(small);r.append(d)})}
-function finishRoll(nums){
-  const grid=$('diceGrid');grid.innerHTML='';nums.forEach(x=>grid.append(makeDie(colors[x])));
-  render(nums);rolls++;score+=nums.length;streak++;
-  $('rolls').textContent=rolls;$('score').textContent=score;$('streak').textContent=streak;
-  $('status').textContent='Выпало: '+nums.map(x=>colors[x].name).join(' · ')+'. Бросок завершён!';
-  if(nums.some(x=>x===6))meow();else winSound();
-  $('roll').disabled=false;$('roll').textContent='🎲 ROLL DICE';busy=false;
+
+const backgrounds = {
+  forest:"https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=2200&q=85",
+  winter:"https://images.unsplash.com/photo-1418985991508-e47386d96a71?auto=format&fit=crop&w=2200&q=85",
+  ocean:"https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=2200&q=85",
+  flowers:"https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=2200&q=85",
+  mountains:"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2200&q=85",
+  night:"https://images.unsplash.com/photo-1472120435266-818c60f2e9c3?auto=format&fit=crop&w=2200&q=85"
+};
+
+function setLanguage(lang) {
+  language = lang;
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.dataset.i18n;
+    if (translations[lang][key] !== undefined) el.textContent = translations[lang][key];
+  });
+  document.getElementById("welcome").classList.add("hidden");
+  document.getElementById("fastBtn").textContent = fastRoll ? translations[lang].fastOn : translations[lang].fastOff;
+  document.getElementById("soundBtn").textContent = soundEnabled ? translations[lang].soundOn : translations[lang].soundOff;
+  document.getElementById("musicBtn").textContent = musicEnabled ? translations[lang].musicOn : translations[lang].musicOff;
+  document.getElementById("status").textContent = translations[lang].ready;
+  document.getElementById("tradeResult").textContent = translations[lang].tradeHint;
+  fillTradeColors();
 }
-$('count').onchange=()=>{clickSound();drawIdle()};
-$('roll').onclick=()=>{
- if(busy)return;
- ctx();clickSound();busy=true;$('roll').disabled=true;$('roll').textContent=fastRoll?'⚡ RESULT...':'⏳ ROLLING...';
- const n=Number($('count').value);
- const nums=Array.from({length:n},()=>Math.floor(Math.random()*colors.length));
- if(fastRoll){finishRoll(nums);return}
- rollSound();const grid=$('diceGrid');grid.innerHTML='';
- for(let i=0;i<n;i++){let d=makeDie(colors[Math.floor(Math.random()*colors.length)]);d.classList.add('rolling');grid.append(d)}
- setTimeout(()=>finishRoll(nums),700);
-};
-$('fastRoll').onclick=()=>{fastRoll=!fastRoll;$('fastRoll').textContent=fastRoll?'⚡ Fast Roll: ВКЛ':'⚡ Fast Roll: ВЫКЛ';$('fastRoll').classList.toggle('active',fastRoll);$('fastRoll').setAttribute('aria-pressed',String(fastRoll));clickSound()};
-$('reset').onclick=()=>{clickSound();rolls=score=streak=0;$('rolls').textContent='0';$('score').textContent='0';$('streak').textContent='0';$('results').innerHTML='<div class="stats" style="grid-column:1/-1">Нажми ROLL DICE!</div>';$('status').textContent='Счёт сброшен.';drawIdle()};
-$('soundToggle').onclick=()=>{soundOn=!soundOn;$('soundToggle').textContent=soundOn?'🔊 Звуки: ВКЛ':'🔇 Звуки: ВЫКЛ';$('soundToggle').classList.toggle('active',soundOn);if(soundOn){ctx();clickSound()}};
-const tunes={meow:[523,659,784,659,587,698,880,698],chill:[261,329,392,329,293,349,440,349],arcade:[440,554,659,880,659,554,784,988],autumn:[392,440,523,587,523,440,349,392]};
-function musicTick(){if(!musicOn)return;let a=tunes[$('musicStyle').value]||tunes.meow,i=musicStep%a.length;tone(a[i],.22,'sine',.018);tone(a[i]/2,.27,'triangle',.011,.02);if($('musicStyle').value==='meow'&&musicStep%4===0&&soundOn)tone(780,.08,'triangle',.008,.12);musicStep++}
-function stopMusic(){musicOn=false;clearInterval(musicTimer);musicTimer=null;$('musicToggle').textContent='♫ Музыка: ВЫКЛ';$('musicToggle').classList.remove('active');$('musicInfo').textContent='Музыка выключена.'}
-function startMusic(){if(!ctx()){$('musicInfo').textContent='Браузер не поддерживает встроенную музыку.';return}musicOn=true;musicStep=0;musicTick();musicTimer=setInterval(musicTick,300);$('musicToggle').textContent='♫ Музыка: ВКЛ';$('musicToggle').classList.add('active');$('musicInfo').textContent='Играет стиль: '+$('musicStyle').selectedOptions[0].textContent}
-$('musicToggle').onclick=()=>{clickSound();musicOn?stopMusic():startMusic()};
-$('musicStyle').onchange=()=>{clickSound();if(musicOn){stopMusic();startMusic()}else $('musicInfo').textContent='Выбран стиль: '+$('musicStyle').selectedOptions[0].textContent};
-
-const backgrounds={
- meowl:'radial-gradient(ellipse at 50% 0%,#55305b 0,#21142d 42%,#0d0913 100%)',
- midnight:'radial-gradient(ellipse at 50% 0%,#164b76 0,#101a38 44%,#070b18 100%)',
- mint:'radial-gradient(ellipse at 50% 0%,#347c70 0,#173b3a 44%,#081715 100%)',
- sunset:'radial-gradient(ellipse at 50% 0%,#9c416e 0,#492448 44%,#160d24 100%)',
- mono:'radial-gradient(ellipse at 50% 0%,#45404b 0,#24212a 44%,#0a090d 100%)'
-};
-$('backgroundStyle').onchange=()=>{document.body.style.background=backgrounds[$('backgroundStyle').value]||backgrounds.meowl;clickSound()};
-
-function fillTradeColors(){
-  ['giveColor','getColor'].forEach((id,idx)=>{
-    const sel=$(id);colors.forEach((c,i)=>{const op=document.createElement('option');op.value=String(i);op.textContent=c.name;sel.append(op)});
-    sel.value=idx===0?'0':'1';
+function showLanguage() {
+  document.getElementById("welcome").classList.remove("hidden");
+}
+function changeBackground(name) {
+  document.body.style.backgroundImage =
+    `linear-gradient(120deg,rgba(9,12,22,.50),rgba(14,12,22,.42)),url("${backgrounds[name]}")`;
+}
+function fillTradeColors() {
+  ["giveColor","getColor"].forEach((id, index) => {
+    const el = document.getElementById(id);
+    const previous = el.value;
+    el.innerHTML = "";
+    colorValues.forEach((c,i) => {
+      const option = document.createElement("option");
+      option.value = c.key;
+      option.textContent = translations[language].colors[i];
+      el.appendChild(option);
+    });
+    if (previous) el.value = previous;
+    else el.selectedIndex = index === 0 ? 0 : 3;
   });
 }
-function checkTrade(){
- const gi=Number($('giveColor').value),ge=Number($('getColor').value);
- const ga=Number($('giveAmount').value),ea=Number($('getAmount').value);
- if(!Number.isInteger(ga)||!Number.isInteger(ea)||ga<1||ea<1||ga>999||ea>999){
-  $('tradeResult').textContent='Укажи количество от 1 до 999 для обеих сторон.';return;
- }
- if(gi===ge){$('tradeResult').textContent='Выбери разные цвета для обмена.';return}
- let verdict=ga===ea?'⚖️ Количества равны. Предложение сбалансировано по количеству.':ga>ea?'📦 Ты отдаёшь больше предметов, чем получаешь.':'✨ Ты получаешь больше предметов, чем отдаёшь.';
- $('tradeResult').textContent='Предложение: '+ga+' × '+colors[gi].name+' → '+ea+' × '+colors[ge].name+'. '+verdict;
+function toggleFast() {
+  fastRoll = !fastRoll;
+  document.getElementById("fastBtn").textContent = fastRoll ? translations[language].fastOn : translations[language].fastOff;
+  document.getElementById("fastBtn").classList.toggle("active", fastRoll);
 }
-$('checkTrade').onclick=()=>{clickSound();checkTrade()};
-$('resetTrade').onclick=()=>{$('giveColor').value='0';$('getColor').value='1';$('giveAmount').value='1';$('getAmount').value='1';$('tradeResult').textContent='Настрой обмен и нажми «Проверить обмен».';clickSound()};
+function getAudio() {
+  if (!audioContext) {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (AudioCtx) audioContext = new AudioCtx();
+  }
+  if (audioContext && audioContext.state === "suspended") audioContext.resume();
+  return audioContext;
+}
+function tone(freq=440,duration=.09,type="sine",volume=.06) {
+  if (!soundEnabled) return;
+  const ctx = getAudio();
+  if (!ctx) return;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(volume,ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+duration);
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.start(); osc.stop(ctx.currentTime+duration);
+}
+function clickSound() { tone(520,.045,"sine",.035); }
+function rollSound() {
+  tone(170,.12,"triangle",.045);
+  setTimeout(() => tone(250,.10,"triangle",.035),80);
+}
+function winSound() {
+  [523,659,784,1046].forEach((f,i) => setTimeout(() => tone(f,.15,"sine",.045),i*85));
+}
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  document.getElementById("soundBtn").textContent = soundEnabled ? translations[language].soundOn : translations[language].soundOff;
+  document.getElementById("soundBtn").classList.toggle("active",soundEnabled);
+  if (soundEnabled) clickSound();
+}
+function toggleMusic() {
+  musicEnabled = !musicEnabled;
+  document.getElementById("musicBtn").textContent = musicEnabled ? translations[language].musicOn : translations[language].musicOff;
+  document.getElementById("musicBtn").classList.toggle("active",musicEnabled);
+  if (musicEnabled) startMusic(); else stopMusic();
+}
+function startMusic() {
+  stopMusic();
+  const styles = {
+    chill:[261.63,329.63,392,329.63,293.66,349.23,440,349.23],
+    arcade:[392,523.25,659.25,783.99,659.25,523.25,587.33,783.99],
+    autumn:[220,261.63,329.63,293.66,196,246.94,293.66,261.63]
+  };
+  const play = () => {
+    if (!musicEnabled) return;
+    const style = document.getElementById("musicStyle").value;
+    const notes = styles[style] || styles.chill;
+    const freq = notes[musicStep % notes.length];
+    const ctx = getAudio();
+    if (ctx) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = freq;
+      gain.gain.value = .018;
+      gain.gain.setTargetAtTime(.001,ctx.currentTime+.25,.18);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(); osc.stop(ctx.currentTime+.8);
+    }
+    musicStep++;
+  };
+  play();
+  musicTimer = setInterval(play,420);
+}
+function stopMusic() {
+  if (musicTimer) clearInterval(musicTimer);
+  musicTimer = null;
+}
+function makeDie(color, face, rolling=false) {
+  const die = document.createElement("div");
+  die.className = "die" + (rolling ? " rolling" : "");
+  die.style.background = color;
+  die.textContent = face;
+  return die;
+}
+const faces = ["⚀","⚁","⚂","⚃","⚄","⚅"];
+function randomInt(max) { return Math.floor(Math.random()*max); }
+function shuffle(array) {
+  for (let i=array.length-1;i>0;i--) {
+    const j=randomInt(i+1); [array[i],array[j]]=[array[j],array[i]];
+  }
+  return array;
+}
+let rollingNow = false;
+async function rollDice(mega) {
+  if (rollingNow) return;
+  rollingNow = true;
+  const count = Number(document.getElementById("diceCount").value);
+  const grid = document.getElementById("diceGrid");
+  const results = document.getElementById("results");
+  const status = document.getElementById("status");
+  const rollBtn = document.getElementById("rollBtn");
+  const megaBtn = document.getElementById("megaBtn");
+  rollBtn.disabled = megaBtn.disabled = true;
+  results.innerHTML = "";
+  status.textContent = translations[language].rolling;
+  grid.innerHTML = "";
+  const dice = [];
+  for (let i=0;i<count;i++) {
+    const die = makeDie(colorValues[randomInt(8)].hex,faces[randomInt(6)],true);
+    grid.appendChild(die); dice.push(die);
+  }
+  rollSound();
+
+  const duration = fastRoll ? 450 : (mega ? 2700 : 1250);
+  const intervals = dice.map((die,i) => setInterval(() => {
+    const colorIndex = randomInt(8);
+    die.style.background = colorValues[colorIndex].hex;
+    die.textContent = faces[randomInt(6)];
+    if (mega) die.style.transform = `rotate(${randomInt(50)-25}deg) scale(${.85+Math.random()*.3})`;
+  }, mega ? 65+i*8 : fastRoll ? 60 : 90));
+
+  await new Promise(resolve => setTimeout(resolve,duration));
+  intervals.forEach(clearInterval);
+
+  let finalColors;
+  if (mega) {
+    finalColors = shuffle([...colorValues]).slice(0,count);
+  } else {
+    finalColors = Array.from({length:count},()=>colorValues[randomInt(8)]);
+  }
+  const values = [];
+  dice.forEach((die,i) => {
+    const value = randomInt(6)+1;
+    values.push(value);
+    die.classList.remove("rolling");
+    die.style.transition = "transform .35s ease, background .35s ease";
+    die.style.transform = "rotate(0deg) scale(1)";
+    die.style.background = finalColors[i].hex;
+    die.textContent = faces[value-1];
+    const chip = document.createElement("div");
+    chip.className = "resultdie";
+    chip.textContent = `${translations[language].result} ${i+1}: ${value}`;
+    results.appendChild(chip);
+  });
+  lastSum = values.reduce((a,b)=>a+b,0);
+  rollCount++;
+  if (lastSum > bestRoll) bestRoll = lastSum;
+  document.getElementById("rollsStat").textContent = rollCount;
+  document.getElementById("sumStat").textContent = lastSum;
+  document.getElementById("bestStat").textContent = bestRoll;
+  status.textContent = `${translations[language].sum}: ${lastSum} · ${translations[language].rolls}: ${rollCount}`;
+  if (lastSum >= count*5) winSound(); else tone(340,.08);
+  rollingNow = false;
+  rollBtn.disabled = megaBtn.disabled = false;
+}
+function resetStats() {
+  rollCount=0; bestRoll=0; lastSum=0;
+  document.getElementById("rollsStat").textContent="0";
+  document.getElementById("sumStat").textContent="0";
+  document.getElementById("bestStat").textContent="—";
+  document.getElementById("results").innerHTML="";
+  document.getElementById("status").textContent=translations[language].resetDone;
+  clickSound();
+}
+function checkTrade() {
+  const give = Number(document.getElementById("giveAmount").value);
+  const get = Number(document.getElementById("getAmount").value);
+  const giveColor = document.getElementById("giveColor");
+  const getColor = document.getElementById("getColor");
+  const same = giveColor.value === getColor.value;
+  let message;
+  if (give < 1 || get < 1 || !Number.isFinite(give) || !Number.isFinite(get)) {
+    message = language === "ru" ? "Укажи количество не меньше 1." : "Enter an amount of at least 1.";
+  } else if (same) {
+    message = language === "ru" ? "Выбран один и тот же цвет. Попробуй обменять разные цвета." : "You selected the same color. Try trading different colors.";
+  } else if (give === get) {
+    message = translations[language].tradeGood;
+  } else {
+    message = translations[language].tradeBad;
+  }
+  document.getElementById("tradeResult").textContent = message;
+  clickSound();
+}
+function resetTrade() {
+  document.getElementById("giveAmount").value=2;
+  document.getElementById("getAmount").value=1;
+  document.getElementById("giveColor").selectedIndex=0;
+  document.getElementById("getColor").selectedIndex=3;
+  document.getElementById("tradeResult").textContent=translations[language].tradeHint;
+}
 fillTradeColors();
-drawIdle();
 </script>
 </body>
 </html>
-'''
-
-out = Path("/mnt/data/telek_dice_meowl_updated.html")
-out.write_text(html, encoding="utf-8")
-
-# Quick structural sanity checks before presenting the file.
-checks = {
-    "HTML doctype": html.lstrip().startswith("<!DOCTYPE html>"),
-    "HTML closed": html.strip().endswith("</html>"),
-    "Fast Roll added": 'id="fastRoll"' in html and "if(fastRoll){finishRoll(nums);return}" in html,
-    "Background choices added": 'id="backgroundStyle"' in html and "const backgrounds=" in html,
-    "Trade Machine added": 'id="tradeMachine"' in html and "function checkTrade()" in html,
-    "Original sound/music controls retained": 'id="soundToggle"' in html and 'id="musicToggle"' in html,
-}
-print("Создан обновлённый HTML-файл:")
-print(f"{out} ({len(html):,} символов)")
-print("\nПроверки:")
-for name, ok in checks.items():
-    print(f"{'OK' if ok else 'ERROR'} — {name}")
