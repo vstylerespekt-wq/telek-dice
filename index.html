@@ -9,7 +9,7 @@ html = r'''<!DOCTYPE html>
 <style>
 :root{--bg:#100b18;--panel:#1d1424;--line:#ffffff25;--text:#fff8f0;--muted:#c9b9d2;--accent:#ff4fbd;--gold:#ffd46a}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(ellipse at 50% 0%,#55305b 0,#21142d 42%,#0d0913 100%);overflow-x:hidden}
+body{margin:0;min-height:100vh;color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(ellipse at 50% 0%,#55305b 0,#21142d 42%,#0d0913 100%);overflow-x:hidden;transition:background .25s}
 body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.25;background-image:radial-gradient(#ffd46a 1px,transparent 1px);background-size:24px 24px}
 .leaf{position:fixed;pointer-events:none;opacity:.55;font-size:26px;animation:float 12s ease-in-out infinite;z-index:0}.l1{top:13%;left:7%}.l2{top:38%;right:8%;animation-delay:-4s}.l3{bottom:12%;left:12%;animation-delay:-7s}
 .wrap{position:relative;z-index:1;width:min(760px,100%);margin:auto;padding:22px 14px 30px;text-align:center}
@@ -20,7 +20,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.25;ba
 .panel{padding:22px 15px;margin:14px 0;border:1px solid #ffb7df55;border-radius:22px;background:linear-gradient(145deg,#321c38ee,#170f20f5);box-shadow:0 16px 45px #0006}
 .label{font-size:11px;font-weight:900;letter-spacing:1.7px;color:#f2c7e4}
 .row{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0}
-select{background:#21152a;color:white;border:1px solid #ffb6df99;border-radius:10px;padding:10px;font-weight:bold}
+select,input{background:#21152a;color:white;border:1px solid #ffb6df99;border-radius:10px;padding:10px;font-weight:bold;max-width:100%}
 .dice-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;max-width:510px;margin:22px auto}
 .die{aspect-ratio:1;border:3px solid #fff1d8;border-radius:22%;display:grid;place-items:center;position:relative;box-shadow:inset 0 0 0 2px #ffffff50,inset 0 -7px 12px #0002,0 7px 0 #5c334a,0 10px 18px #0005;transition:transform .18s,filter .18s;overflow:hidden}
 .die:before{content:"";position:absolute;inset:5px;border:1px solid #ffffff9c;border-radius:18%;pointer-events:none}
@@ -37,11 +37,15 @@ select{background:#21152a;color:white;border:1px solid #ffb6df99;border-radius:1
 .name{font-size:12px;font-weight:900}.small{font-size:9px;opacity:.85}
 .status{padding:13px;background:#0c0814a8;border-radius:12px;border:1px solid #ffffff18;font-size:13px;line-height:1.5}
 .stats{font-size:12px;color:var(--muted)}.stats strong{color:white;font-size:16px}
+.trade-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:520px;margin:16px auto}
+.trade-card{padding:14px;border:1px solid #ffffff25;border-radius:14px;background:#0c081455}
+.trade-card label{display:block;font-size:11px;color:var(--muted);margin-bottom:8px}
+.trade-result{min-height:48px;padding:12px;border-radius:12px;background:#0c0814a8;line-height:1.5;font-size:13px}
 footer{font-size:11px;color:#b4a0bd;line-height:1.6;margin:20px}
 @keyframes pop{from{transform:scale(.7) rotate(-8deg);opacity:0}to{transform:scale(1);opacity:1}}
 @keyframes shake{from{transform:rotate(-5deg) scale(.97)}to{transform:rotate(5deg) scale(1.03)}}
 @keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(24px) rotate(35deg)}}
-@media(max-width:430px){.dice-grid,.results{gap:8px}.die{border-radius:18%}.panel{padding:17px 10px}.die .pip{width:13px;height:13px}}
+@media(max-width:430px){.dice-grid,.results{gap:8px}.die{border-radius:18%}.panel{padding:17px 10px}.die .pip{width:13px;height:13px}.trade-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -50,22 +54,63 @@ footer{font-size:11px;color:#b4a0bd;line-height:1.6;margin:20px}
   <div class="top"><span>🐾 NEON DICE CLUB</span><span class="pill">● MEOWL STYLE</span></div>
   <div class="logo">TELEK<br>DICE</div>
   <div class="subtitle">🐾 ROLL YOUR COLORS · MEOW VIBES 🐾</div>
+
   <section class="panel">
     <div class="label">НАСТРОЙ СВОЙ БРОСОК</div>
     <div class="row"><label for="count">КОЛИЧЕСТВО КУБИКОВ</label><select id="count"></select></div>
     <div class="dice-grid" id="diceGrid" aria-label="Кубики"></div>
-    <button class="primary" id="roll">🎲 ROLL DICE</button>
+    <div class="row">
+      <button class="primary" id="roll">🎲 ROLL DICE</button>
+    </div>
+    <div class="row"><button class="btn active" id="fastRoll" aria-pressed="false">⚡ Fast Roll: ВЫКЛ</button><span class="stats">Без анимации — мгновенный результат</span></div>
     <div class="label" style="margin-top:26px">РЕЗУЛЬТАТ БРОСКА</div>
     <div class="results" id="results"><div class="stats" style="grid-column:1/-1">Нажми ROLL DICE!</div></div>
     <div class="status" id="status">Система готова к броску.</div>
     <div class="row"><button class="btn" id="reset">↻ Сбросить счёт</button></div>
     <div class="row stats">БРОСКИ: <strong id="rolls">0</strong> · СОВПАДЕНИЯ: <strong id="score">0</strong> · СЕРИЯ: <strong id="streak">0</strong></div>
   </section>
+
+  <section class="panel">
+    <div class="label">🎨 ВЫБОР ФОНА</div>
+    <div class="row"><label for="backgroundStyle">СТИЛЬ СТРАНИЦЫ</label>
+      <select id="backgroundStyle">
+        <option value="meowl">🐾 MEOWL — исходный</option>
+        <option value="midnight">🌌 Midnight blue</option>
+        <option value="mint">🍃 Mint dream</option>
+        <option value="sunset">🌇 Neon sunset</option>
+        <option value="mono">🖤 Dark monochrome</option>
+      </select>
+    </div>
+    <div class="stats">Фон меняется сразу и не влияет на игровой счёт.</div>
+  </section>
+
   <section class="panel">
     <div class="label">🔊 ЗВУКИ И МУЗЫКА</div>
     <div class="row"><button class="btn active" id="soundToggle">🔊 Звуки: ВКЛ</button><button class="btn" id="musicToggle">♫ Музыка: ВЫКЛ</button></div>
     <div class="row"><label for="musicStyle">МУЗЫКАЛЬНЫЙ СТИЛЬ</label><select id="musicStyle"><option value="meow">🐱 MEOW melody</option><option value="chill">🌙 Chill neon</option><option value="arcade">🕹️ Arcade</option><option value="autumn">🍂 Autumn vibes</option></select></div>
     <div class="stats" id="musicInfo">Выбери стиль и включи музыку. Звук запускается после нажатия кнопки.</div>
+  </section>
+
+  <section class="panel" id="tradeMachine">
+    <div class="label">🔁 TRADE MACHINE · СИСТЕМА ОБМЕНА</div>
+    <p class="stats">Выбери две стороны обмена. Машина покажет предложение и проверит, равны ли количества.</p>
+    <div class="trade-grid">
+      <div class="trade-card">
+        <label for="giveColor">ТЫ ОТДАЁШЬ</label>
+        <select id="giveColor"></select>
+        <label for="giveAmount" style="margin-top:12px">КОЛИЧЕСТВО</label>
+        <input id="giveAmount" type="number" min="1" max="999" value="1">
+      </div>
+      <div class="trade-card">
+        <label for="getColor">ТЫ ПОЛУЧАЕШЬ</label>
+        <select id="getColor"></select>
+        <label for="getAmount" style="margin-top:12px">КОЛИЧЕСТВО</label>
+        <input id="getAmount" type="number" min="1" max="999" value="1">
+      </div>
+    </div>
+    <div class="row"><button class="btn" id="checkTrade">⚙️ Проверить обмен</button><button class="btn" id="resetTrade">↻ Сбросить обмен</button></div>
+    <div class="trade-result" id="tradeResult">Настрой обмен и нажми «Проверить обмен».</div>
+    <p class="stats">Важно: это локальный симулятор предложений. Он не подключён к аккаунтам, инвентарю или онлайн-рынку.</p>
   </section>
   <footer>TELEK DICE · MEOWL-inspired style · Счёт хранится в этой вкладке и не является глобальным онлайном.</footer>
 </main>
@@ -77,7 +122,7 @@ const colors=[
  {name:'Розовый',hex:'#ef42b5'},{name:'Чёрный',hex:'#393541'}
 ];
 const $=id=>document.getElementById(id);
-let rolls=0,score=0,streak=0,busy=false,soundOn=true,musicOn=false,audio=null,musicTimer=null,musicStep=0;
+let rolls=0,score=0,streak=0,busy=false,soundOn=true,musicOn=false,fastRoll=false,audio=null,musicTimer=null,musicStep=0;
 for(let n=1;n<=8;n++){let o=document.createElement('option');o.value=n;o.textContent=n+(n===1?' кубик':' кубика');$('count').append(o)}
 function ctx(){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;if(!audio)audio=new AC();if(audio.state==='suspended')audio.resume();return audio}
 function tone(freq,duration=.12,type='sine',volume=.025,delay=0){const c=ctx();if(!c)return;let o=c.createOscillator(),g=c.createGain(),t=c.currentTime+delay;o.type=type;o.frequency.setValueAtTime(freq,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(volume,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+duration);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+duration+.03)}
@@ -88,13 +133,26 @@ function winSound(){if(soundOn)[523,659,784,1046].forEach((f,i)=>tone(f,.15,'sin
 function makeDie(c,small=false){let d=document.createElement('div');d.className=small?'resultdie':'die';d.style.background=`linear-gradient(145deg,${c.hex},${c.hex}dd)`;if(small)d.innerHTML='<span class="pip"></span><span class="name">'+c.name+'</span>';else d.innerHTML='<span class="pip"></span>';return d}
 function drawIdle(){let grid=$('diceGrid');grid.innerHTML='';for(let i=0;i<Number($('count').value);i++){let d=makeDie(colors[i%colors.length]);grid.append(d)}}
 function render(nums){let r=$('results');r.innerHTML='';nums.forEach((n,i)=>{let d=makeDie(colors[n],true);let small=document.createElement('span');small.className='small';small.textContent='КУБИК '+(i+1);d.append(small);r.append(d)})}
+function finishRoll(nums){
+  const grid=$('diceGrid');grid.innerHTML='';nums.forEach(x=>grid.append(makeDie(colors[x])));
+  render(nums);rolls++;score+=nums.length;streak++;
+  $('rolls').textContent=rolls;$('score').textContent=score;$('streak').textContent=streak;
+  $('status').textContent='Выпало: '+nums.map(x=>colors[x].name).join(' · ')+'. Бросок завершён!';
+  if(nums.some(x=>x===6))meow();else winSound();
+  $('roll').disabled=false;$('roll').textContent='🎲 ROLL DICE';busy=false;
+}
 $('count').onchange=()=>{clickSound();drawIdle()};
 $('roll').onclick=()=>{
- if(busy)return;ctx();clickSound();rollSound();busy=true;$('roll').disabled=true;$('roll').textContent='⏳ ROLLING...';
- const grid=$('diceGrid'),n=Number($('count').value);grid.innerHTML='';
+ if(busy)return;
+ ctx();clickSound();busy=true;$('roll').disabled=true;$('roll').textContent=fastRoll?'⚡ RESULT...':'⏳ ROLLING...';
+ const n=Number($('count').value);
+ const nums=Array.from({length:n},()=>Math.floor(Math.random()*colors.length));
+ if(fastRoll){finishRoll(nums);return}
+ rollSound();const grid=$('diceGrid');grid.innerHTML='';
  for(let i=0;i<n;i++){let d=makeDie(colors[Math.floor(Math.random()*colors.length)]);d.classList.add('rolling');grid.append(d)}
- setTimeout(()=>{const nums=Array.from({length:n},()=>Math.floor(Math.random()*colors.length));grid.innerHTML='';nums.forEach(x=>grid.append(makeDie(colors[x])));render(nums);rolls++;const hits=nums.length;score+=hits;streak++;$('rolls').textContent=rolls;$('score').textContent=score;$('streak').textContent=streak;$('status').textContent='Выпало: '+nums.map(x=>colors[x].name).join(' · ')+'. Бросок завершён!';if(nums.some(x=>x===6))meow();else winSound();$('roll').disabled=false;$('roll').textContent='🎲 ROLL DICE';busy=false},700)
+ setTimeout(()=>finishRoll(nums),700);
 };
+$('fastRoll').onclick=()=>{fastRoll=!fastRoll;$('fastRoll').textContent=fastRoll?'⚡ Fast Roll: ВКЛ':'⚡ Fast Roll: ВЫКЛ';$('fastRoll').classList.toggle('active',fastRoll);$('fastRoll').setAttribute('aria-pressed',String(fastRoll));clickSound()};
 $('reset').onclick=()=>{clickSound();rolls=score=streak=0;$('rolls').textContent='0';$('score').textContent='0';$('streak').textContent='0';$('results').innerHTML='<div class="stats" style="grid-column:1/-1">Нажми ROLL DICE!</div>';$('status').textContent='Счёт сброшен.';drawIdle()};
 $('soundToggle').onclick=()=>{soundOn=!soundOn;$('soundToggle').textContent=soundOn?'🔊 Звуки: ВКЛ':'🔇 Звуки: ВЫКЛ';$('soundToggle').classList.toggle('active',soundOn);if(soundOn){ctx();clickSound()}};
 const tunes={meow:[523,659,784,659,587,698,880,698],chill:[261,329,392,329,293,349,440,349],arcade:[440,554,659,880,659,554,784,988],autumn:[392,440,523,587,523,440,349,392]};
@@ -103,11 +161,55 @@ function stopMusic(){musicOn=false;clearInterval(musicTimer);musicTimer=null;$('
 function startMusic(){if(!ctx()){$('musicInfo').textContent='Браузер не поддерживает встроенную музыку.';return}musicOn=true;musicStep=0;musicTick();musicTimer=setInterval(musicTick,300);$('musicToggle').textContent='♫ Музыка: ВКЛ';$('musicToggle').classList.add('active');$('musicInfo').textContent='Играет стиль: '+$('musicStyle').selectedOptions[0].textContent}
 $('musicToggle').onclick=()=>{clickSound();musicOn?stopMusic():startMusic()};
 $('musicStyle').onchange=()=>{clickSound();if(musicOn){stopMusic();startMusic()}else $('musicInfo').textContent='Выбран стиль: '+$('musicStyle').selectedOptions[0].textContent};
+
+const backgrounds={
+ meowl:'radial-gradient(ellipse at 50% 0%,#55305b 0,#21142d 42%,#0d0913 100%)',
+ midnight:'radial-gradient(ellipse at 50% 0%,#164b76 0,#101a38 44%,#070b18 100%)',
+ mint:'radial-gradient(ellipse at 50% 0%,#347c70 0,#173b3a 44%,#081715 100%)',
+ sunset:'radial-gradient(ellipse at 50% 0%,#9c416e 0,#492448 44%,#160d24 100%)',
+ mono:'radial-gradient(ellipse at 50% 0%,#45404b 0,#24212a 44%,#0a090d 100%)'
+};
+$('backgroundStyle').onchange=()=>{document.body.style.background=backgrounds[$('backgroundStyle').value]||backgrounds.meowl;clickSound()};
+
+function fillTradeColors(){
+  ['giveColor','getColor'].forEach((id,idx)=>{
+    const sel=$(id);colors.forEach((c,i)=>{const op=document.createElement('option');op.value=String(i);op.textContent=c.name;sel.append(op)});
+    sel.value=idx===0?'0':'1';
+  });
+}
+function checkTrade(){
+ const gi=Number($('giveColor').value),ge=Number($('getColor').value);
+ const ga=Number($('giveAmount').value),ea=Number($('getAmount').value);
+ if(!Number.isInteger(ga)||!Number.isInteger(ea)||ga<1||ea<1||ga>999||ea>999){
+  $('tradeResult').textContent='Укажи количество от 1 до 999 для обеих сторон.';return;
+ }
+ if(gi===ge){$('tradeResult').textContent='Выбери разные цвета для обмена.';return}
+ let verdict=ga===ea?'⚖️ Количества равны. Предложение сбалансировано по количеству.':ga>ea?'📦 Ты отдаёшь больше предметов, чем получаешь.':'✨ Ты получаешь больше предметов, чем отдаёшь.';
+ $('tradeResult').textContent='Предложение: '+ga+' × '+colors[gi].name+' → '+ea+' × '+colors[ge].name+'. '+verdict;
+}
+$('checkTrade').onclick=()=>{clickSound();checkTrade()};
+$('resetTrade').onclick=()=>{$('giveColor').value='0';$('getColor').value='1';$('giveAmount').value='1';$('getAmount').value='1';$('tradeResult').textContent='Настрой обмен и нажми «Проверить обмен».';clickSound()};
+fillTradeColors();
 drawIdle();
 </script>
 </body>
 </html>
 '''
-out = Path("/mnt/data/telek_dice_meowl_classic.html")
+
+out = Path("/mnt/data/telek_dice_meowl_updated.html")
 out.write_text(html, encoding="utf-8")
-print(f"Готово: {out.name} ({len(html)} символов)")
+
+# Quick structural sanity checks before presenting the file.
+checks = {
+    "HTML doctype": html.lstrip().startswith("<!DOCTYPE html>"),
+    "HTML closed": html.strip().endswith("</html>"),
+    "Fast Roll added": 'id="fastRoll"' in html and "if(fastRoll){finishRoll(nums);return}" in html,
+    "Background choices added": 'id="backgroundStyle"' in html and "const backgrounds=" in html,
+    "Trade Machine added": 'id="tradeMachine"' in html and "function checkTrade()" in html,
+    "Original sound/music controls retained": 'id="soundToggle"' in html and 'id="musicToggle"' in html,
+}
+print("Создан обновлённый HTML-файл:")
+print(f"{out} ({len(html):,} символов)")
+print("\nПроверки:")
+for name, ok in checks.items():
+    print(f"{'OK' if ok else 'ERROR'} — {name}")
