@@ -1,239 +1,119 @@
 <!doctype html>
 <html lang="ru">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#090b18">
-<title>TELEK DICE ULTIMATE</title>
-<!-- Подключаем шрифт Inter для идеальной типографики -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg:#050712;
-  --panel:#1a1f3a;
-  --glass:rgba(255,255,255,0.03);
-  --border:rgba(139,119,255,0.3);
-  --cyan:#00f3ff;
-  --pink:#ff00cc;
-  --violet:#bb86fc;
-  --text:#ffffff;
-  --muted:#a0a0c0;
-  --glow:#7c4dff;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  min-height:100vh;
-  padding:20px;
-  color:var(--text);
-  font-family:'Inter',sans-serif;
-  background:radial-gradient(circle at 50% 0%, #1e1e3a 0%, var(--bg) 100%);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  overflow-x:hidden;
-  user-select:none;
-}
-/* Фоновые частицы для атмосферы */
-body::before {
-  content: "";
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  pointer-events: none;
-  background-image: 
-    radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
-    radial-gradient(white, rgba(255,255,255,.15) 2px, transparent 3px);
-  background-size: 70px 70px, 100px 100px;
-  opacity: 0.05;
-  z-index: -1;
-}
-.wrap{
-  position:relative;
-  width:min(820px,100%);
-  text-align:center;
-}
-
-/* Анимация появления */
-.fade-in { animation: fadeIn 0.8s ease-out forwards; opacity: 0; }
-@keyframes fadeIn { to { opacity: 1; } }
-
-.topline{
-  display:flex;justify-content:space-between;align-items:center;gap:10px;
-  margin:2px 0 20px;color:var(--muted);font-size:11px;font-weight:900;letter-spacing:2px;
-}
-.pill{
-  border:1px solid var(--cyan);background:rgba(0,243,255,0.1);color:var(--cyan);
-  padding:6px 12px;border-radius:50px;letter-spacing:0.5px;white-space:nowrap;
-  box-shadow:0 0 10px rgba(0,243,255,0.2);
-}
-.logo{
-  display:inline-block;position:relative;margin:10px auto 15px;padding:0 15px;
-  font-size:clamp(48px,12vw,80px);font-weight:900;line-height:.9;letter-spacing:-4px;
-  background:linear-gradient(-45deg,#fff 0%,#00f3ff 50%,#ff00cc 100%);
-  -webkit-background-clip:text;background-clip:text;color:transparent;
-  filter:drop-shadow(0 0 20px rgba(124,77,255,0.4));
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-}
-.logo span { display:block; }
-.logo::after{
-  content:"";display:block;height:3px;width:60%;margin:15px auto 0;border-radius:99px;
-  background:linear-gradient(90deg,transparent,var(--cyan),var(--pink),transparent);
-  box-shadow:0 0 15px var(--glow);
-  filter:blur(2px);
-}
-.subtitle{
-  font-size:13px;font-weight:600;letter-spacing:4px;color:#aaa;margin:5px 0 25px;text-transform:uppercase;
-}
-
-.panel{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:24px;
-  padding:clamp(20px,4vw,30px);
-  margin:10px 0;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 10px rgba(255,255,255,0.1);
-  backdrop-filter: blur(16px);
-  position: relative;
-}
-
-.section-label{
-  font-size:10px;font-weight:800;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;
-}
-.row{
-  display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;margin:12px 0;
-}
-select{
-  background:#0f1325;color:white;border:1px solid #444;border-radius:12px;
-  padding:10px 15px;font-weight:700;outline:none;cursor:pointer;
-  transition: 0.3s;
-}
-select:focus { border-color: var(--violet); box-shadow: 0 0 8px rgba(187, 134, 252, 0.3); }
-
-/* Улучшенные кубики палитры */
-.dice{
-  display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:15px auto;max-width:500px;
-}
-.die{
-  position:relative;aspect-ratio:1;border-radius:16px;
-  display:grid;place-items:center;cursor:pointer;
-  transition: transform 0.2s cubic-bezier(0.17, 0.67, 0.12, 1), filter 0.2s;
-  border: 2px solid transparent;
-}
-.die::before{
-  content: ''; position: absolute; inset: 4px; border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(2px);
-}
-.die:hover{
-  transform: scale(1.05) translateY(-4px);
-  filter: brightness(1.1);
-}
-.die.selected{
-  transform: scale(1.1) translateY(-6px);
-  box-shadow: 0 0 25px rgba(0, 243, 255, 0.4);
-  border-color: var(--cyan);
-}
-.pip{
-  width:20px;height:20px;border-radius:50%;
-  background: radial-gradient(circle, white 20%, rgba(255,255,255,0) 60%);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3), inset 0 2px 5px rgba(255,255,255,0.5);
-}
-
-/* Кнопка броска */
-.primary{
-  width:100%;max-width:450px;border:none;border-radius:16px;
-  padding:18px;color:white;font-size:18px;font-weight:900;letter-spacing:1px;
-  cursor:pointer;text-transform: uppercase;
-  background: linear-gradient(135deg, #ff00cc, #7c4dff, #00f3ff);
-  box-shadow: 0 0 30px rgba(124, 77, 255, 0.5), 0 4px 0 #330044;
-  position: relative; overflow: hidden;
-  transition: all 0.3s ease;
-}
-.primary::before{ content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.1); opacity: 0; transform: scaleX(0); transition: 0.3s; }
-.primary:hover::before{ opacity: 1; transform: scaleX(1); }
-.primary:active{ transform: translateY(4px); box-shadow: 0 0 15px rgba(124, 77, 255, 0.3); filter: brightness(0.9); }
-.primary.rolling{ animation: pulse 1.5s infinite; filter: grayscale(1); }
-@keyframes pulse { 0% { box-shadow: 0 0 20px rgba(0, 243, 255, 0.5); } 50% { box-shadow: 0 0 40px rgba(255, 0, 204, 0.5); } 100% { box-shadow: 0 0 20px rgba(124, 77, 255, 0.5); } }
-
-/* Результаты */
-.results{
-  display:grid;grid-template-columns:repeat(auto-fit, minmax(80px, 1fr));gap:12px;
-  margin:20px auto;max-width:600px;
-}
-.resultdie{
-  min-width:0;min-height:90px;border-radius:14px;padding:8px;
-  border:1px solid rgba(255,255,255,0.1);display:flex;flex-direction:column;
-  justify-content:center;align-items:center;gap:6px;font-weight:800;
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.3);
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  position: relative;
-  overflow: hidden;
-}
-.resultdie.shake{ animation: shake 0.5s; }
-@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
-.resultdie.win{ box-shadow: 0 0 25px var(--cyan); border-color: var(--cyan); }
-.resultdie .name{ font-size:12px; text-shadow: 0 1px 3px black; }
-.resultdie .number{ font-size:10px; opacity:0.7; }
-
-.status{
-  background: rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:12px;
-  padding:12px;margin-top:15px;color:var(--cyan);font-size:14px;font-weight:600;
-  text-align: left;
-}
-.btn{
-  background:rgba(255,255,255,0.05);color:white;border:1px solid rgba(255,255,255,0.2);
-  padding:10px 20px;border-radius:10px;cursor:pointer;font-weight:600;
-  transition: 0.3s;
-}
-.btn:hover{ background: rgba(255,255,255,0.1); border-color: white; }
-
-.stats{ color:var(--muted);font-size:13px; }
-.stats strong{ color:white; font-size:16px; }
-
-.admin{ display:none; text-align:left; margin-top:20px; padding-top:20px; border-top:1px dashed var(--border); }
-.admin.open{ display:block; }
-.admin label{ display:block; margin:10px 0 5px; font-size:12px; font-weight:700; color:var(--muted); }
-.admin input[type=checkbox]{ accent-color:var(--violet); }
-
-.foot{ font-size:11px; color:#555; line-height:1.6; margin:20px auto; max-width:600px; }
-
-@media(max-width:480px){
-  .panel{ padding: 15px; }
-  .dice, .results{ grid-template-columns: repeat(2, 1fr); }
-  .logo{ font-size: 36px; }
-}
-</style>
+  <meta charset="utf-8">
+  <title>TELEK DICE SHORT</title>
+  <style>
+    body { margin:0; min-height:100vh; background:#0b0d1a; color:#fff; font-family:sans-serif; display:flex; justify-content:center; align-items:center; overflow:hidden; }
+    .game { width:100%; max-width:600px; text-align:center; padding:20px; }
+    h1 { font-size:3rem; margin:0 0 10px; background:linear-gradient(90deg,#fff,#0ff,#f0f); -webkit-background-clip:text; color:transparent; text-shadow:0 0 20px rgba(0,255,255,.5); }
+    .panel { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:20px; padding:20px; backdrop-filter:blur(10px); }
+    .colors { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:20px 0; }
+    .color-btn { width:50px; height:50px; border-radius:12px; border:none; cursor:pointer; transition:.2s; position:relative; overflow:hidden; }
+    .color-btn::after { content:''; position:absolute; inset:0; background:rgba(255,255,255,0.2); opacity:0; transition:.1s; }
+    .color-btn:hover::after { opacity:1; }
+    .color-btn.active { transform:scale(1.1); box-shadow:0 0 20px currentColor; z-index:2; }
+    button { background:linear-gradient(45deg,#0ff,#f0f); color:#000; border:none; padding:15px 30px; font-weight:bold; font-size:1.1rem; border-radius:50px; cursor:pointer; box-shadow:0 0 20px rgba(0,255,255,.4); margin:15px auto; display:block; }
+    button:active { transform:scale(.95); }
+    .results { display:grid; grid-template-columns:repeat(auto-fit,minmax(60px,1fr)); gap:10px; margin:20px auto; }
+    .die-res { width:60px; height:60px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:bold; box-shadow:inset 0 0 10px rgba(0,0,0,.5),0 5px 15px rgba(0,0,0,.3); }
+    .win { box-shadow:0 0 30px currentColor !important; animation:pulse 1s infinite alternate; }
+    @keyframes pulse { from { transform:scale(1); } to { transform:scale(1.05); } }
+    #status { margin-top:15px; color:#aaa; font-size:.9rem; }
+  </style>
 </head>
 <body>
-
-<main class="wrap fade-in">
-  <div class="topline">
-    <span>⚡ NEON DICE CLUB</span>
-    <span class="pill">● LIVE MODE</span>
+  <div class="game">
+    <h1>TELEK DICE</h1>
+    <div class="panel">
+      <p style="color:#aaa">Выбери цвет и брось кубики!</p>
+      <div class="colors" id="colors"></div>
+      <button id="roll">⚡ ROLL DICE</button>
+      <div class="results" id="results"></div>
+      <div id="status">Кликни по экрану, чтобы включить музыку</div>
+    </div>
   </div>
-  <div class="logo"><span>TELEK</span><br><span>DICE</span></div>
-  <div class="subtitle">ROLL YOUR COLORS · OWN YOUR GAME</div>
 
-  <div class="panel">
-    <div class="section-label">НАСТРОЙ СВОЙ БРОСОК</div>
-    
-    <div class="row">
-      <label for="count" style="flex-grow:1; text-align:left;">Количество кубиков:</label>
-      <select id="count"></select>
-    </div>
+  <script>
+    // Звуки (короткие бесплатные сэмплы)
+    const sounds = {
+      click: new Audio('https://assets.mixkit.co/sfx/download/mixkit-quick-success-tone-287.mp3'),
+      roll: new Audio('https://www.soundjay.com/human/sounds/dice-roll-01.mp3'),
+      win: new Audio('https://assets.mixkit.co/sfx/download/mixkit-retro-arcade-game-over-213.mp3')
+    };
+    // Фоновая музыка
+    const bgm = new Audio('https://assets.mixkit.co/music/preview/mixkit-arcade-ambiance-1236.mp3');
+    bgm.loop = true;
+    let isAudioUnlocked = false;
 
-    <div class="section-label">ВЫБЕРИ ЦВЕТ (ТВОЙ СТИЛЬ)</div>
-    <div class="dice" id="palette"></div>
-    
-    <div class="row" style="justify-content:flex-start; padding-left:10px;">
-      <span class="section-label" style="margin-right:10px;">Твой цвет:</span>
-      <strong id="choice" style="color:var(--cyan)">Красный</strong>
-    </div>
+    document.addEventListener('click', () => {
+      if (!isAudioUnlocked) {
+        sounds.click.volume = 0.3;
+        sounds.roll.volume = 0.4;
+        sounds.win.volume = 0.5;
+        bgm.volume = 0.2;
+        try { bgm.play(); } catch(e) {}
+        document.getElementById('status').textContent = 'Музыка играет! Бросай!';
+        isAudioUnlocked = true;
+      }
+    }, { once: true });
 
-    <button class="primary" id="roll">⚡ ROLL DICE</button>
+    const colors = [
+      {name:'Красный',hex:'#ff3333'},
+      {name:'Оранжевый',hex:'#ffa000'},
+      {name:'Жёлтый',hex:'#ffff00'},
+      {name:'Зелёный',hex:'#00ff00'},
+      {name:'Голубой',hex:'#00ffff'},
+      {name:'Синий',hex:'#0066ff'},
+      {name:'Фиолетовый',hex:'#aa00ff'},
+      {name:'Розовый',hex:'#ff00aa'}
+    ];
+    let selectedColor = colors[0].hex;
+    const colorsContainer = document.getElementById('colors');
+    const resultsContainer = document.getElementById('results');
+    const status = document.getElementById('status');
 
-    <div class="section-label" style="margin-top:25px">РЕЗУЛЬТАТ БРОСКА</div>
-    <div class="results" id="results">
-      <div class="stats" style="grid-column:1/-1">Нажми ROLL DICE, чтобы испытать удачу!</div>
-    </div>
+    colors.forEach(c => {
+      const btn = document.createElement('button');
+      btn.className = 'color-btn';
+      btn.style.background = c.hex;
+      btn.onclick = () => {
+        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedColor = c.hex;
+        if (isAudioUnlocked) sounds.click.play().catch(()=>{})
+      };
+      colorsContainer.appendChild(btn);
+    });
+    colorsContainer.firstElementChild.classList.add('active');
 
-    <div class="status" id="status">
+    document.getElementById('roll').onclick = () => {
+      if (isAudioUnlocked) sounds.roll.play().catch(()=>{})
+      resultsContainer.innerHTML = '';
+      status.textContent = 'Кубики летят...';
+      setTimeout(() => {
+        const count = Math.floor(Math.random() * 5) + 3; // 3–7 кубиков
+        let wins = 0;
+        for (let i = 0; i < count; i++) {
+          const resColor = colors[Math.floor(Math.random() * colors.length)].hex;
+          const die = document.createElement('div');
+          die.className = 'die-res';
+          die.style.background = resColor;
+          die.textContent = i+1;
+          if (resColor === selectedColor) {
+            die.classList.add('win');
+            wins++;
+          }
+          resultsContainer.appendChild(die);
+        }
+        if (wins > 0) {
+          status.textContent = `Победа! Совпадений: ${wins}`;
+          if (isAudioUnlocked) sounds.win.play().catch(()=>{})
+        } else {
+          status.textContent = 'Не повезло. Попробуй ещё!';
+        }
+      }, 800);
+    };
+  </script>
+</body>
+</html>
