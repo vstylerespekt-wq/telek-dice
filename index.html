@@ -1,137 +1,133 @@
 from pathlib import Path
 
-html = r'''<!doctype html>
+html = r'''<!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#090b18">
-<title>TELEK DICE — Neon Trade</title>
+<title>TELEK DICE — MEOWL Classic Trade</title>
 <style>
-:root{--bg:#080a16;--panel:rgba(17,22,43,.86);--line:rgba(139,119,255,.3);--cyan:#3df5ff;--pink:#ff43c6;--violet:#8b5cff;--text:#f5f7ff;--muted:#a9b0d0}
+:root{--bg:#090b16;--panel:#12172a;--line:#343c60;--cyan:#55f5ee;--pink:#ff62d2;--purple:#9c7cff}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;padding:22px 13px 34px;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(ellipse at 12% 5%,#37206c 0,transparent 33%),radial-gradient(ellipse at 90% 30%,#073c58 0,transparent 35%),radial-gradient(ellipse at 50% 100%,#2d1047 0,transparent 42%),var(--bg);display:flex;justify-content:center;overflow-x:hidden}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.16;background-image:linear-gradient(rgba(117,126,255,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(117,126,255,.12) 1px,transparent 1px);background-size:34px 34px;mask-image:linear-gradient(to bottom,black,transparent 90%)}
-.wrap{position:relative;width:min(850px,100%);text-align:center}
-.topline{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:2px 0 22px;color:var(--muted);font-size:11px;font-weight:900;letter-spacing:2px}
-.pill{border:1px solid #3df5ff4a;background:#3df5ff10;color:var(--cyan);padding:7px 11px;border-radius:999px;letter-spacing:1px;white-space:nowrap}
-.logo{display:inline-block;margin:8px auto 10px;padding:0 10px;font-size:clamp(43px,10vw,76px);font-weight:1000;line-height:.92;letter-spacing:-3px;background:linear-gradient(100deg,#fff 4%,#9dfaff 28%,#b89aff 58%,#ff8de1 88%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 14px #5b7dff70)}
-.logo:after{content:"";display:block;height:4px;width:72%;margin:12px auto 0;border-radius:99px;background:linear-gradient(90deg,transparent,var(--cyan),var(--pink),transparent);box-shadow:0 0 18px #7b5cff}
-.subtitle{font-size:12px;font-weight:900;letter-spacing:3px;color:#b8c2ed;margin:18px 0 25px}
-.panel{background:linear-gradient(145deg,rgba(23,29,57,.92),rgba(10,14,30,.9));border:1px solid var(--line);border-radius:23px;padding:clamp(15px,4vw,24px);margin:14px 0;box-shadow:0 15px 50px #0006,inset 0 1px #ffffff0c;backdrop-filter:blur(16px)}
-.section-label{font-size:11px;font-weight:900;letter-spacing:2px;color:var(--muted)}
-.row{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;margin:12px 0}
-select{background:#10162d;color:#f6f7ff;border:1px solid #7266b9;border-radius:11px;padding:10px 13px;font-weight:800;outline:none}
-.trade-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px auto;max-width:680px}
-.trade{position:relative;overflow:hidden;min-height:82px;border:1px solid #ffffff32;border-radius:16px;padding:13px 8px;color:#fff;font-weight:1000;letter-spacing:.7px;cursor:pointer;text-shadow:0 2px 7px #0006;box-shadow:inset 0 1px #ffffff55,0 8px 18px #0004;transition:transform .16s,filter .16s,outline .16s}
-.trade:hover{transform:translateY(-3px);filter:brightness(1.12)}
-.trade.active{outline:3px solid #fff;outline-offset:3px;box-shadow:0 0 22px #ffffff35,inset 0 1px #ffffff80}
-.trade small{display:block;margin-top:6px;font-size:10px;letter-spacing:1px;opacity:.88}
-.trade:after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 20%,#ffffff18 45%,transparent 65%);transform:translateX(-120%);transition:transform .4s}
-.trade:hover:after{transform:translateX(120%)}
-.trade[data-type="add"]{background:linear-gradient(145deg,#21c7ef,#2262b8)}
-.trade[data-type="deal"]{background:linear-gradient(145deg,#a75cff,#5b35bd)}
-.trade[data-type="loss"]{background:linear-gradient(145deg,#ff5969,#a81e48)}
-.trade[data-type="fair"]{background:linear-gradient(145deg,#29d889,#087b56)}
-.trade[data-type="sign"]{background:linear-gradient(145deg,#ffd65c,#b87917);color:#271800;text-shadow:none}
-.trade[data-type="no"]{background:linear-gradient(145deg,#68718a,#30374d)}
-.dice{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:20px auto;max-width:520px}
-.die{position:relative;aspect-ratio:1;border:1px solid #ffffffc7;border-radius:20px;display:grid;place-items:center;min-width:0;cursor:pointer;box-shadow:0 0 0 3px #ffffff08,inset 0 1px #ffffff70,0 8px 18px #0005;transition:transform .18s,box-shadow .18s,outline .18s}
-.die:before{content:"";position:absolute;inset:5px;border-radius:14px;border:1px solid #ffffff40}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 20% 0,#28204e 0,transparent 45%),radial-gradient(ellipse at 90% 20%,#173448 0,transparent 35%),var(--bg);color:#f5f6ff;font:15px system-ui,sans-serif;padding:22px}
+.layout{width:min(1180px,100%);margin:auto;display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:22px;align-items:start}
+.game{min-width:0;text-align:center}.top{display:flex;justify-content:space-between;gap:12px;color:#9ba8d0;font-size:11px;font-weight:900;letter-spacing:2px}
+.tag{border:1px solid #55f5ee66;color:var(--cyan);border-radius:30px;padding:7px 10px}
+.logo{font-size:clamp(48px,8vw,78px);line-height:.9;font-weight:1000;letter-spacing:-3px;margin:28px 0 12px;background:linear-gradient(100deg,#fff,var(--cyan),var(--purple),var(--pink));background-clip:text;-webkit-background-clip:text;color:transparent;filter:drop-shadow(0 0 14px #786aff55)}
+.sub{color:#a9b0d0;font-size:11px;letter-spacing:3px;margin-bottom:22px}
+.panel,.trade{border:1px solid #6964a866;border-radius:22px;background:linear-gradient(145deg,#171d39ed,#0a0e1eee);box-shadow:0 15px 45px #0005;padding:22px 16px}
+.label{font-size:11px;font-weight:900;letter-spacing:2px;color:#a9b0d0}
+.row{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0}
+select{background:#10162d;color:#fff;border:1px solid #7266b9;border-radius:10px;padding:10px;font-weight:bold}
+.diceboard{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;max-width:520px;margin:20px auto}
+.die{aspect-ratio:1;border:2px solid #ffffffb5;border-radius:18px;display:grid;place-items:center;cursor:pointer;position:relative;transition:transform .18s,box-shadow .18s;background:linear-gradient(145deg,#202948,#10162c);box-shadow:inset 0 2px #ffffff30,0 8px 18px #0005}
 .die:hover{transform:translateY(-3px)}
-.die.selected{outline:3px solid var(--cyan);outline-offset:4px;box-shadow:0 0 22px #3df5ff55,inset 0 1px #ffffff80}
-.pip{width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#e8f7ff 65%);box-shadow:0 0 12px #ffffffb0,0 2px 4px #0005}
-.primary{width:100%;max-width:470px;border:1px solid #a9faff80;border-radius:15px;padding:17px 18px;color:#07111f;font-size:21px;font-weight:1000;letter-spacing:2px;cursor:pointer;background:linear-gradient(100deg,#46f6ff,#7a8cff 52%,#ff69dc);box-shadow:0 0 24px #786aff40,0 6px 0 #35356e;transition:transform .15s,filter .15s}
-.primary:hover{filter:brightness(1.08);box-shadow:0 0 32px #5deaff55,0 6px 0 #35356e}.primary:active{transform:translateY(3px);box-shadow:0 3px 0 #35356e}.primary:disabled{opacity:.65;cursor:wait}
-.results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px auto;max-width:550px}
-.resultdie{min-width:0;min-height:83px;border-radius:16px;padding:10px 4px;border:1px solid #ffffffb8;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;font-weight:900;box-shadow:inset 0 1px #ffffff75,0 8px 15px #0004;text-shadow:0 1px 5px #0008;animation:pop .28s ease-out}
-.resultdie .pip{width:13px;height:13px}.resultdie .name{font-size:12px}.resultdie .number{font-size:10px;opacity:.82}
-.rolling{animation:roll .13s infinite alternate}
-@keyframes roll{from{transform:rotate(-5deg) scale(.96);filter:brightness(.8)}to{transform:rotate(5deg) scale(1.04);filter:brightness(1.35)}}
-@keyframes pop{from{transform:scale(.7);opacity:.3}to{transform:scale(1);opacity:1}}
-.status{background:#080d20aa;border:1px solid #ffffff12;border-radius:12px;padding:12px;margin-top:13px;color:#dbe4ff;font-size:13px}
-.btn{background:#ffffff08;color:#e7eaff;border:1px solid #ffffff24;padding:10px 14px;border-radius:11px;cursor:pointer;font-weight:800}.btn:hover{border-color:#8b7cff;color:white}
-.stats{color:var(--muted);font-size:12px}.stats strong{color:white;font-size:15px}
-.admin{display:none;text-align:left}.admin.open{display:block}.admin label{display:block;margin:13px 0 7px;font-size:13px;font-weight:800}.admin input[type=checkbox]{accent-color:#7e6bff}.admin p{line-height:1.5}
-.foot{font-size:11px;color:#7f89ad;line-height:1.6;margin:18px auto;max-width:590px}
-@media(max-width:520px){.trade-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.topline{font-size:9px;letter-spacing:1px}.dice{gap:8px}.die{border-radius:15px}.die:before{inset:4px;border-radius:10px}.pip{width:13px;height:13px}.results{gap:7px}.resultdie{min-height:73px}.panel{border-radius:18px}}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+.die.selected{outline:3px solid var(--cyan);outline-offset:3px;box-shadow:0 0 24px #55f5ee66}
+.pip{width:18px;height:18px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#fff,#d9e5ff 60%,#8da1cf);box-shadow:0 0 13px #fff9}
+.primary{width:100%;max-width:460px;padding:17px;border:0;border-radius:14px;background:linear-gradient(100deg,var(--cyan),#8b7cff,var(--pink));color:#080a16;font-size:21px;font-weight:1000;letter-spacing:2px;cursor:pointer;box-shadow:0 6px 0 #34305e}
+.primary:active{transform:translateY(3px)}.primary:disabled{opacity:.6}
+.results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;max-width:560px;margin:20px auto}
+.resultdie{min-width:0;min-height:78px;border:1px solid #ffffff99;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;animation:pop .25s ease;text-shadow:0 1px 5px #0009;font-weight:800}
+.resultdie .pip{width:12px;height:12px}.resultdie .name{font-size:12px}.resultdie small{font-size:10px}
+.btn{background:#ffffff0a;color:white;border:1px solid #ffffff30;border-radius:10px;padding:10px 13px;cursor:pointer;font-weight:bold}
+.btn:hover,.btn.active{border-color:var(--cyan);color:var(--cyan)}
+.status{padding:13px;background:#080d20aa;border-radius:12px;border:1px solid #ffffff15;font-size:13px;line-height:1.5}
+.stats{font-size:12px;color:#a9b0d0}.stats strong{color:white;font-size:16px}
+.side{position:sticky;top:20px}.trade{padding:18px 14px}.trade h2{font-size:17px;margin:0 0 6px}.trade p{color:#a9b0d0;font-size:12px;line-height:1.45;margin:0 0 15px}
+.trade-list{display:grid;gap:9px}.trade-btn{width:100%;padding:12px 11px;text-align:left;border-radius:12px;color:white;border:1px solid #ffffff35;background:#ffffff09;font-weight:900;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;transition:.15s}
+.trade-btn:hover{transform:translateX(-2px);filter:brightness(1.15)}.trade-btn.active{outline:2px solid #fff;outline-offset:1px}
+.trade-btn small{font-weight:600;opacity:.8;font-size:10px}
+.add{border-color:#42dfff88;color:#55eaff}.deal{border-color:#a98aff88;color:#bba4ff}.loss{border-color:#ff626288;color:#ff7373}.fair{border-color:#4ae6a088;color:#61f0a8}.sign{border-color:#ffce6688;color:#ffd16d}.thanks{border-color:#9aa2b888;color:#c2c7d5}
+.trade-status{margin-top:13px;border-radius:10px;padding:11px;background:#070b17;border:1px solid #ffffff18;font-size:12px;line-height:1.45}
+.soundbox{margin-top:14px}.soundbox .row{margin-bottom:4px}
+footer{font-size:11px;color:#7f89ad;line-height:1.6;margin:18px}
+@keyframes pop{from{transform:scale(.75) rotate(-6deg);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes shake{from{transform:rotate(-4deg)}to{transform:rotate(4deg)}}
+.rolling{animation:shake .12s infinite alternate}
+@media(max-width:760px){body{padding:12px}.layout{grid-template-columns:1fr}.side{position:static}.trade-list{grid-template-columns:repeat(2,minmax(0,1fr))}.trade-btn{font-size:12px}.logo{margin-top:22px}.panel{padding:18px 10px}}
+@media(max-width:420px){.diceboard,.results{gap:8px}.die{border-radius:13px}.pip{width:13px;height:13px}.trade-list{grid-template-columns:1fr 1fr}}
 </style>
 </head>
-<body><main class="wrap">
-<div class="topline"><span>⚡ NEON DICE CLUB</span><span class="pill">● TELEK DICE 2.0</span></div>
-<div class="logo">TELEK<br>DICE</div>
-<div class="subtitle">ROLL YOUR COLORS · OWN YOUR GAME</div>
-
-<section class="panel">
-<div class="section-label">TRADE MACHINE · ВЫБЕРИ ВАРИАНТ</div>
-<div class="trade-grid" id="tradeGrid">
-<button class="trade" data-type="add" data-label="ADD MORE">ADD MORE<small>ДОБАВИТЬ ЕЩЁ</small></button>
-<button class="trade" data-type="deal" data-label="DEAL?">DEAL?<small>ПРЕДЛОЖЕНИЕ</small></button>
-<button class="trade" data-type="loss" data-label="L TRADE">L TRADE<small>НЕВЫГОДНО</small></button>
-<button class="trade active" data-type="fair" data-label="FAIR TRADE">FAIR TRADE<small>ЧЕСТНЫЙ ОБМЕН</small></button>
-<button class="trade" data-type="sign" data-label="SIGN">SIGN<small>ПОДТВЕРДИТЬ</small></button>
-<button class="trade" data-type="no" data-label="NO THANKS">NO THANKS<small>ОТКАЗАТЬСЯ</small></button>
-</div>
-<div class="row"><span class="section-label">ВЫБРАНО:</span><strong id="tradeChoice">FAIR TRADE</strong></div>
-</section>
-
-<section class="panel">
-<div class="section-label">НАСТРОЙ СВОЙ БРОСОК</div>
-<div class="row"><label for="count">КОЛИЧЕСТВО КУБИКОВ</label><select id="count"></select></div>
-<div class="section-label">ВЫБЕРИ ЦВЕТ</div>
-<div class="dice" id="palette"></div>
-<div class="row"><span class="section-label">ТВОЙ ЦВЕТ:</span><strong id="choice">Красный</strong></div>
-<button class="primary" id="roll">⚡ ROLL DICE</button>
-<div class="section-label" style="margin-top:25px">РЕЗУЛЬТАТ БРОСКА</div>
-<div class="results" id="results"><div class="stats" style="grid-column:1/-1">Нажми ROLL DICE, чтобы бросить кубики</div></div>
-<div class="status" id="status" aria-live="polite">Система готова к броску.</div>
-<div class="row">
-<button class="btn" id="reset">↻ Сбросить счёт</button>
-<button class="btn" id="adminToggle">⚙ Админ-панель</button>
-<button class="btn" id="soundToggle" aria-pressed="true">🔊 Звуки: вкл.</button>
-<button class="btn" id="musicToggle" aria-pressed="false">♫ Музыка: выкл.</button>
-</div>
-<div class="row stats"><span>ПОПАДАНИЯ: <strong id="score">0</strong></span><span>·</span><span>СЕРИЯ: <strong id="streak">0</strong></span></div>
-</section>
-
-<section class="panel admin" id="admin">
-<h3>⚙ Админ-панель · тестирование</h3>
-<p class="stats">Тестовый результат явно обозначается и не меняет обычную случайность.</p>
-<label><input type="checkbox" id="testMode"> Включить тестовый результат для всех кубиков</label>
-<label for="forced">Тестовый цвет</label><select id="forced"></select>
-</section>
-<div class="foot">TELEK DICE · Неофициальный демонстрационный проект. Звуки создаются браузером; музыка синтезируется локально. Не связан с Roblox или Meowl Dice.</div>
+<body>
+<div class="layout">
+<main class="game">
+  <div class="top"><span>🐾 MEOWL DICE CLUB</span><span class="tag">● MEOWL CLASSIC</span></div>
+  <div class="logo">MEOWL<br>DICE</div>
+  <div class="sub">ROLL YOUR DICE · KEEP THE CLASSIC VIBE</div>
+  <section class="panel">
+    <div class="label">НАСТРОЙ СВОЙ БРОСОК</div>
+    <div class="row"><label for="count">КОЛИЧЕСТВО КУБИКОВ</label><select id="count"></select></div>
+    <div class="label">ТВОИ КУБИКИ — НАЖМИ, ЧТОБЫ ВЫБРАТЬ</div>
+    <div class="diceboard" id="diceboard"></div>
+    <div class="row"><span class="label">ВЫБРАННЫЙ ЦВЕТ:</span><strong id="choice">Красный</strong></div>
+    <button class="primary" id="roll">🎲 ROLL DICE</button>
+    <div class="label" style="margin-top:26px">РЕЗУЛЬТАТ БРОСКА</div>
+    <div class="results" id="results"><div class="stats" style="grid-column:1/-1">Нажми ROLL DICE!</div></div>
+    <div class="status" id="status">Система готова к броску.</div>
+    <div class="row"><button class="btn" id="reset">↻ Сбросить счёт</button><button class="btn" id="adminToggle">⚙ Тестовый режим</button></div>
+    <div id="admin" hidden class="row"><label><input type="checkbox" id="testMode"> Тестовый результат</label><select id="forced"></select></div>
+    <div class="row stats">ПОПАДАНИЯ: <strong id="score">0</strong> · СЕРИЯ: <strong id="streak">0</strong></div>
+  </section>
+  <section class="panel soundbox">
+    <div class="label">🔊 ЗВУКИ И МУЗЫКА</div>
+    <div class="row"><button class="btn active" id="soundToggle">🔊 Звуки: ВКЛ</button><button class="btn" id="musicToggle">♫ Музыка: ВЫКЛ</button></div>
+    <div class="row" id="musicStyles">
+      <button class="btn active" data-style="meow">🐱 MEOW</button><button class="btn" data-style="chill">🌙 CHILL</button><button class="btn" data-style="arcade">🕹 ARCADE</button><button class="btn" data-style="neon">✨ NEON</button>
+    </div>
+    <div class="stats" id="musicInfo">Выбери стиль и включи музыку. Звук запускается после нажатия.</div>
+  </section>
+  <footer>MEOWL DICE · Классический вид кубиков, приятные звуки и музыкальные стили.</footer>
 </main>
+<aside class="side">
+  <section class="trade">
+    <h2>⚖ TRADE MACHINE</h2>
+    <p>Выбери вариант сделки. Цвета — оформление интерфейса TELEK DICE, не официальные игровые оценки.</p>
+    <div class="trade-list">
+      <button class="trade-btn add" data-trade="ADD MORE"><span>＋ ADD MORE</span><small>Голубой</small></button>
+      <button class="trade-btn deal" data-trade="DEAL?"><span>◆ DEAL?</span><small>Фиолетовый</small></button>
+      <button class="trade-btn loss" data-trade="L TRADE"><span>↘ L TRADE</span><small>Красный</small></button>
+      <button class="trade-btn fair" data-trade="FAIR TRADE"><span>✓ FAIR TRADE</span><small>Зелёный</small></button>
+      <button class="trade-btn sign" data-trade="SIGN"><span>✍ SIGN</span><small>Золотой</small></button>
+      <button class="trade-btn thanks" data-trade="NO THANKS"><span>✕ NO THANKS</span><small>Серый</small></button>
+    </div>
+    <div class="trade-status" id="tradeStatus">Пока ничего не выбрано.</div>
+  </section>
+</aside>
+</div>
 <script>
 const colors=[
-{name:'Красный',hex:'#f04452'},{name:'Оранжевый',hex:'#ff8a27'},
-{name:'Жёлтый',hex:'#f4df42'},{name:'Зелёный',hex:'#20e88a'},
-{name:'Синий',hex:'#3978ff'},{name:'Фиолетовый',hex:'#a45bff'},
-{name:'Розовый',hex:'#ff4fc8'},{name:'Чёрный',hex:'#34394e'}
-];
-let selected=0,score=0,streak=0,busy=false,soundOn=true,musicOn=false,audioCtx=null,musicTimer=null,musicStep=0;
-const palette=document.getElementById('palette'),count=document.getElementById('count'),forced=document.getElementById('forced'),results=document.getElementById('results');
-for(let n=1;n<=8;n++){const o=document.createElement('option');o.value=n;o.textContent=n+(n===1?' кубик':' кубика');count.appendChild(o)}
-colors.forEach((c,i)=>{const d=document.createElement('button');d.className='die';d.style.background=`linear-gradient(145deg,${c.hex},${c.hex}b8)`;d.title=c.name;d.setAttribute('aria-label',c.name);d.innerHTML='<span class="pip"></span>';d.onclick=()=>choose(i);palette.appendChild(d);const o=document.createElement('option');o.value=i;o.textContent=c.name;forced.appendChild(o)});
-function audio(){if(!audioCtx){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;audioCtx=new AC()}if(audioCtx.state==='suspended')audioCtx.resume();return audioCtx}
-function tone(freq=440,duration=.08,type='sine',volume=.035,delay=0){if(!soundOn)return;const ctx=audio();if(!ctx)return;const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type=type;osc.frequency.setValueAtTime(freq,ctx.currentTime+delay);gain.gain.setValueAtTime(.0001,ctx.currentTime+delay);gain.gain.exponentialRampToValueAtTime(volume,ctx.currentTime+delay+.012);gain.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+delay+duration);osc.connect(gain);gain.connect(ctx.destination);osc.start(ctx.currentTime+delay);osc.stop(ctx.currentTime+delay+duration+.02)}
-function clickSound(){tone(680,.055,'triangle',.025)}
-function choose(i){selected=i;[...palette.children].forEach((d,j)=>d.classList.toggle('selected',i===j));document.getElementById('choice').textContent=colors[i].name;clickSound()}
-function render(nums,test){results.innerHTML='';nums.forEach((n,i)=>{const c=colors[n],el=document.createElement('div');el.className='resultdie';el.style.background=`linear-gradient(145deg,${c.hex},${c.hex}b8)`;el.innerHTML=`<span class="pip"></span><span class="name">${c.name}</span><span class="number">КУБИК ${i+1}${test?' · ТЕСТ':''}</span>`;results.appendChild(el)})}
-function roll(){if(busy)return;audio();busy=true;const btn=document.getElementById('roll');btn.disabled=true;btn.textContent='⏳ ROLLING...';const n=Number(count.value),test=document.getElementById('testMode').checked,forcedColor=Number(forced.value);results.innerHTML='';for(let i=0;i<n;i++){const el=document.createElement('div');el.className='resultdie rolling';el.style.background='linear-gradient(145deg,#343c65,#141b35)';el.innerHTML='<span class="pip"></span><span class="name">...</span>';results.appendChild(el)}for(let i=0;i<4;i++)tone(220+i*70,.06,'square',.012,i*.07);setTimeout(()=>{const nums=Array.from({length:n},()=>test?forcedColor:Math.floor(Math.random()*colors.length));render(nums,test);const hits=nums.filter(x=>x===selected).length;if(hits){score+=hits;streak++}else streak=0;document.getElementById('score').textContent=score;document.getElementById('streak').textContent=streak;document.getElementById('status').textContent=(test?'ТЕСТОВЫЙ РЕЗУЛЬТАТ · ':'ВЫПАЛО · ')+nums.map(x=>colors[x].name).join(' / ')+' · Совпадений: '+hits+' · '+document.getElementById('tradeChoice').textContent;nums.forEach((x,i)=>tone(x===selected?820:330,.12,'sine',.035,i*.055));btn.disabled=false;btn.textContent='⚡ ROLL DICE';busy=false},750)}
-document.getElementById('roll').addEventListener('click',roll);
-document.getElementById('reset').addEventListener('click',()=>{clickSound();score=0;streak=0;document.getElementById('score').textContent='0';document.getElementById('streak').textContent='0';results.innerHTML='<div class="stats" style="grid-column:1/-1">Нажми ROLL DICE, чтобы бросить кубики</div>';document.getElementById('status').textContent='Счёт сброшен.'});
-document.getElementById('adminToggle').addEventListener('click',()=>{clickSound();document.getElementById('admin').classList.toggle('open')});
-document.querySelectorAll('.trade').forEach(btn=>btn.addEventListener('click',()=>{clickSound();document.querySelectorAll('.trade').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('tradeChoice').textContent=btn.dataset.label;document.getElementById('status').textContent='Выбран вариант: '+btn.dataset.label+'.'}));
-document.getElementById('soundToggle').addEventListener('click',()=>{soundOn=!soundOn;const b=document.getElementById('soundToggle');b.textContent=soundOn?'🔊 Звуки: вкл.':'🔇 Звуки: выкл.';b.setAttribute('aria-pressed',String(soundOn));if(soundOn)clickSound()});
-function musicNote(){if(!musicOn)return;const ctx=audio();if(!ctx)return;const melody=[261.63,329.63,392,329.63,293.66,349.23,440,349.23,261.63,329.63,392,523.25,440,392,329.63,293.66];const f=melody[musicStep%melody.length];const now=ctx.currentTime;const osc=ctx.createOscillator(),gain=ctx.createGain(),filter=ctx.createBiquadFilter();osc.type='triangle';osc.frequency.setValueAtTime(f,now);filter.type='lowpass';filter.frequency.value=1200;gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.018,now+.025);gain.gain.exponentialRampToValueAtTime(.0001,now+.24);osc.connect(filter);filter.connect(gain);gain.connect(ctx.destination);osc.start(now);osc.stop(now+.26);if(musicStep%4===0){const bass=ctx.createOscillator(),bg=ctx.createGain();bass.type='sine';bass.frequency.value=f/2;bg.gain.setValueAtTime(.0001,now);bg.gain.exponentialRampToValueAtTime(.012,now+.02);bg.gain.exponentialRampToValueAtTime(.0001,now+.32);bass.connect(bg);bg.connect(ctx.destination);bass.start(now);bass.stop(now+.34)}musicStep++}
-function startMusic(){audio();if(!audioCtx)return;musicOn=true;musicNote();musicTimer=setInterval(musicNote,300);const b=document.getElementById('musicToggle');b.textContent='♫ Музыка: вкл.';b.setAttribute('aria-pressed','true')}
-function stopMusic(){musicOn=false;if(musicTimer)clearInterval(musicTimer);musicTimer=null;const b=document.getElementById('musicToggle');b.textContent='♫ Музыка: выкл.';b.setAttribute('aria-pressed','false')}
-document.getElementById('musicToggle').addEventListener('click',()=>{if(musicOn){stopMusic()}else{startMusic()}});
-document.querySelectorAll('button').forEach(b=>b.addEventListener('pointerdown',()=>{if(b.id!=='soundToggle')clickSound()},{once:true}));
-choose(0);
-</script></body></html>'''
-path = Path("/mnt/data/telek_dice_neon_trade.html")
-path.write_text(html, encoding="utf-8")
-print(f"Готово: {path}")
+{name:'Красный',hex:'#ef4444'},{name:'Оранжевый',hex:'#fb923c'},
+{name:'Жёлтый',hex:'#facc15'},{name:'Зелёный',hex:'#22c55e'},
+{name:'Синий',hex:'#3b82f6'},{name:'Фиолетовый',hex:'#a855f7'},
+{name:'Розовый',hex:'#ec4899'},{name:'Чёрный',hex:'#3f4352'}];
+let selected=0,score=0,streak=0,busy=false,soundOn=true,musicOn=false,audio=null,musicTimer=null,musicStep=0,style='meow';
+const $=id=>document.getElementById(id), board=$('diceboard'),count=$('count'),results=$('results'),forced=$('forced');
+for(let n=1;n<=8;n++){let o=document.createElement('option');o.value=n;o.textContent=n+' '+(n===1?'кубик':'кубика');count.appendChild(o)}
+colors.forEach((c,i)=>{let o=document.createElement('option');o.value=i;o.textContent=c.name;forced.appendChild(o)});
+function initAudio(){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;if(!audio)audio=new AC();if(audio.state==='suspended')audio.resume();return audio}
+function tone(freq,duration=.09,type='sine',volume=.025,delay=0){if((!soundOn&&!musicOn)||!initAudio())return;let ctx=audio,osc=ctx.createOscillator(),gain=ctx.createGain(),t=ctx.currentTime+delay;osc.type=type;osc.frequency.setValueAtTime(freq,t);gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(volume,t+.012);gain.gain.exponentialRampToValueAtTime(.0001,t+duration);osc.connect(gain);gain.connect(ctx.destination);osc.start(t);osc.stop(t+duration+.02)}
+function clickSound(){if(soundOn){tone(style==='meow'?740:620,.055,'sine',.022);if(style==='meow')tone(980,.07,'sine',.016,.045)}}
+function meow(){if(!soundOn)return;tone(680,.09,'triangle',.03);tone(880,.12,'sine',.027,.07);tone(560,.15,'triangle',.023,.16)}
+function rollSound(){if(!soundOn)return;[170,230,310,390].forEach((f,i)=>tone(f,.12,'triangle',.025,i*.075))}
+function winSound(){if(style==='meow'){meow();return}if(!soundOn)return;[523,659,784,1046].forEach((f,i)=>tone(f,.14,'sine',.03,i*.075))}
+function renderDice(){board.innerHTML='';let n=Number(count.value);for(let i=0;i<n;i++){let d=document.createElement('button');d.className='die';d.style.background=`linear-gradient(145deg,${colors[selected].hex},${colors[selected].hex}bb)`;d.innerHTML='<span class="pip"></span>';d.setAttribute('aria-label','Выбрать '+colors[selected].name);d.onclick=()=>{selected=(selected+1)%colors.length;clickSound();renderDice();$('choice').textContent=colors[selected].name};board.appendChild(d)}}
+function render(nums,test){results.innerHTML='';nums.forEach((n,i)=>{let c=colors[n],el=document.createElement('div');el.className='resultdie';el.style.background=`linear-gradient(145deg,${c.hex},${c.hex}bb)`;el.innerHTML=`<span class="pip"></span><span class="name">${c.name}</span><small>КУБИК ${i+1}${test?' · ТЕСТ':''}</small>`;results.appendChild(el)})}
+function roll(){if(busy)return;initAudio();clickSound();rollSound();busy=true;$('roll').disabled=true;$('roll').textContent='⏳ ROLLING...';let n=Number(count.value),test=$('testMode').checked,fc=Number(forced.value);results.innerHTML='';for(let i=0;i<n;i++){let el=document.createElement('div');el.className='resultdie rolling';el.style.background='linear-gradient(145deg,#343c65,#141b35)';el.innerHTML='<span class="pip"></span><span>...</span>';results.appendChild(el)}setTimeout(()=>{let nums=Array.from({length:n},()=>test?fc:Math.floor(Math.random()*colors.length));render(nums,test);let hits=nums.filter(x=>x===selected).length;if(hits){score+=hits;streak++;winSound()}else{streak=0;if(soundOn)tone(260,.16,'triangle',.02)}$('score').textContent=score;$('streak').textContent=streak;$('status').textContent=(test?'ТЕСТ · ':'ВЫПАЛО · ')+nums.map(x=>colors[x].name).join(' / ')+' · Совпадений: '+hits;$('roll').disabled=false;$('roll').textContent='🎲 ROLL DICE';busy=false},700)}
+$('count').onchange=()=>{clickSound();renderDice()};$('roll').onclick=roll;
+$('reset').onclick=()=>{clickSound();score=0;streak=0;$('score').textContent='0';$('streak').textContent='0';results.innerHTML='<div class="stats" style="grid-column:1/-1">Нажми ROLL DICE!</div>';$('status').textContent='Счёт сброшен.'};
+$('adminToggle').onclick=()=>{clickSound();$('admin').hidden=!$('admin').hidden};
+$('soundToggle').onclick=()=>{soundOn=!soundOn;$('soundToggle').textContent=soundOn?'🔊 Звуки: ВКЛ':'🔇 Звуки: ВЫКЛ';$('soundToggle').classList.toggle('active',soundOn);if(soundOn){initAudio();clickSound()}};
+const melodies={meow:[659,784,988,784,659,523,587,659],chill:[261,329,392,329,293,349,440,349],arcade:[523,659,784,1046,784,659,880,1046],neon:[392,494,587,784,587,494,440,587]};
+function musicTick(){if(!musicOn)return;let a=melodies[style],i=musicStep%a.length;tone(a[i],.22,'sine',.018);tone(a[i]/2,.27,'triangle',.01);if(style==='meow'&&i===3)tone(1050,.12,'triangle',.012,.12);musicStep++}
+function stopMusic(){musicOn=false;clearInterval(musicTimer);musicTimer=null;$('musicToggle').textContent='♫ Музыка: ВЫКЛ';$('musicToggle').classList.remove('active');$('musicInfo').textContent='Музыка выключена.'}
+function startMusic(){if(!initAudio()){ $('musicInfo').textContent='Браузер не поддерживает музыку.';return}musicOn=true;musicStep=0;musicTick();musicTimer=setInterval(musicTick,300);$('musicToggle').textContent='♫ Музыка: ВКЛ';$('musicToggle').classList.add('active');$('musicInfo').textContent='Играет стиль '+style.toUpperCase()+'.'}
+$('musicToggle').onclick=()=>{clickSound();musicOn?stopMusic():startMusic()};
+document.querySelectorAll('[data-style]').forEach(b=>b.onclick=()=>{clickSound();style=b.dataset.style;document.querySelectorAll('[data-style]').forEach(x=>x.classList.toggle('active',x===b));$('musicInfo').textContent='Выбран стиль '+style.toUpperCase()+'.';if(musicOn){stopMusic();startMusic()}});
+document.querySelectorAll('[data-trade]').forEach(b=>b.onclick=()=>{clickSound();document.querySelectorAll('[data-trade]').forEach(x=>x.classList.toggle('active',x===b));$('tradeStatus').textContent='Выбрано: '+b.dataset.trade+'. Это визуальная метка для твоего интерфейса.'});
+renderDice();
+</script>
+</body>
+</html>'''
+path = Path('/mnt/data/telek_dice_meowl_classic_trade.html')
+path.write_text(html, encoding='utf-8')
+print(f"Создан HTML-файл: {path.name} ({len(html)} символов)")
