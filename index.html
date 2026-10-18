@@ -1,555 +1,266 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TELEK DICE</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#100b18">
+<title>TELEK DICE — MEOWL Style</title>
 <style>
-:root {
-  --glass: rgba(20, 22, 28, .70);
-  --glass-border: rgba(255,255,255,.19);
-  --text: #fff;
-  --muted: rgba(255,255,255,.74);
-  --accent: #ffb6d9;
-  --accent2: #c9b6ff;
-}
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  min-height: 100vh;
-  color: var(--text);
-  font-family: "Nunito", sans-serif;
-  background: #171922;
-  background-image:
-    linear-gradient(120deg, rgba(9,12,22,.55), rgba(14,12,22,.48)),
-    url("https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=2200&q=85");
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  transition: background-image .5s;
-}
-button, input, select { font: inherit; }
-button { cursor: pointer; }
-button:disabled { opacity: .55; cursor: wait; }
-button:focus-visible, select:focus-visible, input:focus-visible {
-  outline: 2px solid white;
-  outline-offset: 3px;
-}
-.wrap { width: min(1120px, 92%); margin: auto; padding: 25px 0 40px; }
-.top { display:flex; justify-content:space-between; align-items:center; gap:15px; flex-wrap:wrap; margin-bottom:22px; }
-.logo { font-weight:900; font-size:clamp(26px,4vw,42px); letter-spacing:2px; text-shadow:0 4px 20px #0008; }
-.subtitle { color:var(--muted); font-size:14px; }
-.pill { border:1px solid var(--glass-border); background:var(--glass); padding:8px 13px; border-radius:99px; color:white; }
-.panel {
-  background:var(--glass);
-  border:1px solid var(--glass-border);
-  border-radius:23px;
-  padding:22px;
-  margin:16px 0;
-  backdrop-filter:blur(15px);
-  box-shadow:0 12px 40px #0002;
-}
-h2 { font-size:21px; margin:0 0 16px; }
-h3 { margin:0 0 12px; font-size:16px; }
-.label { color:var(--muted); display:block; font-size:13px; margin-bottom:7px; }
-.row { display:flex; flex-wrap:wrap; gap:12px; align-items:end; }
-.field { flex:1; min-width:130px; }
-select, input[type="number"] {
-  width:100%; color:white; background:rgba(255,255,255,.11);
-  border:1px solid var(--glass-border); border-radius:12px; padding:11px 12px;
-}
-select option { color:#222; }
-.primary, .btn {
-  border:1px solid rgba(255,255,255,.2); color:white; border-radius:13px;
-  padding:11px 17px; font-weight:800; transition:transform .15s, filter .15s;
-}
-.primary { background:linear-gradient(135deg,#d56ea9,#8d77db); }
-.btn { background:rgba(255,255,255,.11); }
-.primary:hover, .btn:hover { transform:translateY(-2px); filter:brightness(1.13); }
-.btn.active { background:linear-gradient(135deg,#8e78d9,#c16ba0); }
-.dice-grid { display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:13px; min-height:125px; padding:18px 0; }
-.die {
-  width:72px; height:72px; border-radius:18px; background:#f3f3f3; color:#222;
-  display:grid; place-items:center; font-size:37px; font-weight:900;
-  box-shadow:0 8px 18px #0004, inset 0 2px 2px #fff9;
-  border:1px solid #ffffffa8; user-select:none;
-}
-.die.rolling { animation:casino .42s ease-in-out infinite alternate; }
-@keyframes casino {
-  from { transform:rotate(-8deg) scale(.91); filter:hue-rotate(0deg); }
-  to { transform:rotate(8deg) scale(1.08); filter:hue-rotate(160deg); }
-}
-.results { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:8px 0 14px; }
-.resultdie { border:1px solid var(--glass-border); border-radius:12px; padding:8px 12px; background:#ffffff12; }
-.status { text-align:center; color:var(--muted); min-height:24px; margin-top:10px; }
-.stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:18px; }
-.stat { background:#ffffff0d; border:1px solid var(--glass-border); border-radius:14px; padding:13px; text-align:center; }
-.stat strong { display:block; font-size:24px; }
-.stat span { color:var(--muted); font-size:12px; }
-.options-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:15px; }
-.trade-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px; }
-.trade-card { border:1px solid var(--glass-border); background:#ffffff0a; border-radius:16px; padding:15px; }
-.trade-result { margin-top:13px; padding:13px; border-radius:12px; background:#ffffff12; line-height:1.6; }
-.switchrow { display:flex; gap:10px; align-items:center; margin:10px 0; color:var(--muted); }
-input[type="checkbox"] { accent-color:#d98ab9; width:17px; height:17px; }
-footer { text-align:center; color:#ffffffa8; font-size:12px; padding:15px; }
-.hidden { display:none !important; }
-
-/* Language welcome screen */
-.welcome {
-  position:fixed; inset:0; z-index:1000; display:grid; place-items:center;
-  padding:20px; background:linear-gradient(135deg,rgba(12,13,22,.76),rgba(26,15,32,.78));
-  backdrop-filter:blur(12px);
-}
-.welcome-card {
-  width:min(440px,100%); text-align:center; padding:35px 25px;
-  border-radius:26px; background:rgba(31,28,40,.91);
-  border:1px solid #ffffff35; box-shadow:0 25px 90px #0008;
-}
-.welcome-card h1 { margin:0; font-size:34px; letter-spacing:2px; }
-.welcome-card p { color:var(--muted); margin:8px 0 25px; }
-.lang-buttons { display:flex; gap:12px; }
-.lang-buttons button { flex:1; padding:15px 10px; font-size:16px; }
-@media(max-width:550px) {
-  .panel { padding:17px; }
-  .die { width:58px; height:58px; font-size:30px; border-radius:15px; }
-  .stats { grid-template-columns:1fr; }
-  .top { align-items:flex-start; }
-}
+:root{--text:#fff8f0;--muted:#c9b9d2;--line:#ffb7df55;--pink:#ff4fbd;--gold:#ffd46a;--ease:cubic-bezier(.2,.8,.2,1);--photo:none}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(ellipse at 50% 0%,#55305b 0,#21142d 42%,#0d0913 100%);overflow-x:hidden;transition:background .65s var(--ease)}
+body:before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;background-image:linear-gradient(180deg,#10081735,#100817bb),var(--photo);background-size:cover;background-position:center;background-attachment:fixed;opacity:var(--photo-opacity,.9);transition:opacity .55s ease}
+body:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.24;background-image:radial-gradient(#ffd46a 1px,transparent 1px);background-size:28px 28px}
+.leaf{position:fixed;pointer-events:none;opacity:.45;font-size:26px;animation:float 12s ease-in-out infinite;z-index:0}.l1{top:13%;left:7%}.l2{top:38%;right:8%;animation-delay:-4s}.l3{bottom:12%;left:12%;animation-delay:-7s}
+.wrap{position:relative;z-index:1;width:min(900px,100%);margin:auto;padding:22px 14px 30px;text-align:center}
+.top{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:900;letter-spacing:1.5px;color:var(--muted)}
+.pill{border:1px solid #ffb5e966;color:#ffc2ec;padding:7px 10px;border-radius:20px;background:#170f2099;backdrop-filter:blur(10px)}
+.logo{font-size:clamp(48px,11vw,78px);font-weight:1000;line-height:.88;letter-spacing:-3px;margin:30px 0 14px;color:#ffcf72;text-shadow:3px 4px 0 #58263c,0 0 25px #ff9cdb77;animation:logoIn .75s var(--ease) both}
+.subtitle{font-size:11px;letter-spacing:2px;color:#f5c7e9;margin-bottom:24px}
+.panel{padding:22px 15px;margin:14px 0;border:1px solid var(--line);border-radius:22px;background:linear-gradient(145deg,#321c38ed,#170f20f2);box-shadow:0 16px 45px #0006;backdrop-filter:blur(14px);transition:transform .3s var(--ease),border-color .3s,box-shadow .3s}
+.panel:hover{border-color:#ffb7df88;box-shadow:0 20px 50px #0007}
+.label{font-size:11px;font-weight:900;letter-spacing:1.7px;color:#f2c7e4}
+.row{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0}
+select,input{background:#21152a;color:white;border:1px solid #ffb6df99;border-radius:10px;padding:10px;font-weight:bold;max-width:100%;transition:border-color .2s,box-shadow .2s}
+select:focus,input:focus{outline:none;border-color:#ff8fd5;box-shadow:0 0 0 3px #ff4fbd22}
+.dice-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;max-width:510px;margin:22px auto}
+.die{aspect-ratio:1;border:3px solid #fff1d8;border-radius:22%;display:grid;place-items:center;position:relative;box-shadow:inset 0 0 0 2px #ffffff50,inset 0 -7px 12px #0002,0 7px 0 #5c334a,0 10px 18px #0005;transition:transform .35s var(--ease),filter .35s;overflow:hidden}
+.die:before{content:"";position:absolute;inset:5px;border:1px solid #ffffff9c;border-radius:18%;pointer-events:none}
+.die .pip{width:17px;height:17px;background:#fff9df;border-radius:50%;box-shadow:0 0 13px #fff8c8,0 0 25px #fff7}
+.die.rolling{animation:shake .14s infinite alternate}
+.primary{width:100%;max-width:460px;padding:17px;border:0;border-radius:15px;background:linear-gradient(105deg,#ffd76d,#ff9d58,#ff4fbd);background-size:180% 100%;color:#291222;font-size:21px;font-weight:1000;letter-spacing:2px;cursor:pointer;box-shadow:0 6px 0 #763455,0 12px 22px #0004;transition:transform .2s var(--ease),box-shadow .2s,filter .25s,background-position .4s}
+.primary:hover{transform:translateY(-2px);background-position:100% 0;filter:saturate(1.12);box-shadow:0 8px 0 #763455,0 15px 26px #0005}
+.primary:active{transform:translateY(3px);box-shadow:0 3px 0 #763455}
+.primary:disabled{opacity:.7;cursor:wait;transform:none}
+.btn{background:#ffffff09;color:white;border:1px solid #ffffff35;border-radius:10px;padding:10px 13px;cursor:pointer;font-weight:bold;transition:transform .2s var(--ease),border-color .2s,background .2s,color .2s}
+.btn:hover,.btn.active{border-color:#ff8fd5;color:#ffb9e7;background:#ff4fbd10}.btn:hover{transform:translateY(-1px)}
+.results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;max-width:520px;margin:18px auto}
+.resultdie{min-width:0;min-height:76px;border:2px solid #fff1d8;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;animation:pop .35s var(--ease) both;box-shadow:0 5px 0 #0004}
+.resultdie .pip{width:12px;height:12px;background:#fff9df;border-radius:50%;box-shadow:0 0 10px #fff}
+.name{font-size:12px;font-weight:900}.small{font-size:9px;opacity:.85}
+.status{padding:13px;background:#0c0814a8;border-radius:12px;border:1px solid #ffffff18;font-size:13px;line-height:1.5}
+.stats{font-size:12px;color:var(--muted)}.stats strong{color:white;font-size:16px}
+.trade-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:520px;margin:16px auto}
+.trade-card{padding:14px;border:1px solid #ffffff25;border-radius:14px;background:#0c081455}
+.trade-card label{display:block;font-size:11px;color:var(--muted);margin-bottom:8px}
+.trade-result{min-height:48px;padding:12px;border-radius:12px;background:#0c0814a8;line-height:1.5;font-size:13px}
+.photo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-width:520px;margin:14px auto}
+.photo-choice{position:relative;aspect-ratio:1.3;padding:0;overflow:hidden;border:2px solid #ffffff30;border-radius:12px;background:#21152a;color:white;cursor:pointer;transition:transform .25s,border-color .25s,box-shadow .25s}
+.photo-choice img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s}
+.photo-choice span{position:absolute;bottom:0;left:0;right:0;padding:16px 4px 6px;background:linear-gradient(transparent,#090610e8);font-size:10px;font-weight:800}
+.photo-choice:hover{transform:translateY(-2px)}.photo-choice:hover img{transform:scale(1.06)}
+.photo-choice.active{border-color:#ff67c8;box-shadow:0 0 0 2px #ff67c833,0 0 15px #ff4fbd33}
+.pinterest-links{gap:8px 13px}.pinterest-links a{color:#ffc4e9;font-size:11px;text-decoration:none;border-bottom:1px solid #ffb5e966;padding-bottom:2px;transition:color .2s,border-color .2s}.pinterest-links a:hover{color:#fff;border-color:#fff}
+.mega-panel{position:relative;overflow:hidden}
+.mega-panel:before{content:"";position:absolute;width:240px;height:240px;left:50%;top:25px;transform:translateX(-50%);background:radial-gradient(circle,#ff4fbd25,transparent 68%);pointer-events:none}
+.mega-title{font-size:12px;letter-spacing:2px;color:#ffb7e6;font-weight:900}
+.mega-stage{height:210px;display:grid;place-items:center;position:relative;perspective:900px}
+.orbit{position:absolute;width:175px;height:175px;border-radius:50%;border:2px solid #ffb15c99;box-shadow:0 0 18px #ff8dbe55,inset 0 0 20px #d44cff22;transform:rotateX(67deg);animation:orbit 8s linear infinite}
+.orbit:before,.orbit:after{content:"";position:absolute;inset:12px;border:2px solid #e64eff99;border-radius:50%}.orbit:after{inset:27px;border-color:#ffd46a99}
+.mega-die{width:100px;height:100px;position:relative;display:grid;place-items:center;border:2px solid #fff4ff;border-radius:24px;background:linear-gradient(140deg,#ffb1d9,#a335ff 48%,#3427a7);box-shadow:inset -10px -12px 25px #170b6c88,inset 8px 8px 20px #fff8,0 0 24px #e34bffb0,0 0 65px #8c48ff55;transform:rotate(-14deg);z-index:2}
+.mega-die:before{content:"";position:absolute;inset:7px;border:1px solid #fff9;border-radius:18px}
+.mega-die .pip{width:16px;height:16px;background:#fff;border-radius:50%;box-shadow:0 0 16px #fff,0 0 25px #ffb5ef;position:absolute}
+.mega-die .p1{top:17px;left:17px}.mega-die .p2{top:17px;right:17px}.mega-die .p3{top:40px;left:40px}.mega-die .p4{bottom:17px;left:17px}.mega-die .p5{bottom:17px;right:17px}
+.mega-die.spinning{animation:megaSpin 2.1s cubic-bezier(.15,.7,.15,1) both;filter:saturate(1.35) brightness(1.15)}
+.mega-die.spinning .pip{animation:pipPulse .22s infinite alternate}
+.mega-caption{font-size:12px;color:#e2c9ee;min-height:20px;margin:8px 0}
+.progress{height:5px;width:min(280px,90%);margin:10px auto 0;border-radius:20px;background:#ffffff18;overflow:hidden}
+.progress span{display:block;width:0;height:100%;background:linear-gradient(90deg,#ff4fbd,#9c65ff,#ffd46a);border-radius:20px}
+.progress.running span{animation:progress 2.1s linear forwards}
+.music-bars{height:40px;display:flex;align-items:center;justify-content:center;gap:4px;margin:12px 0}
+.music-bars i{display:block;width:3px;height:7px;border-radius:4px;background:linear-gradient(#ff7dd1,#9e52ff)}
+.music-bars.playing i{animation:bars .6s ease-in-out infinite alternate}.music-bars i:nth-child(3n){animation-delay:-.3s}.music-bars i:nth-child(2n){animation-delay:-.17s}
+footer{font-size:11px;color:#b4a0bd;line-height:1.6;margin:20px}
+@keyframes pop{from{transform:scale(.75) rotate(-7deg);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes shake{from{transform:rotate(-5deg) scale(.97)}to{transform:rotate(5deg) scale(1.03)}}
+@keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(24px) rotate(35deg)}}
+@keyframes logoIn{from{opacity:0;transform:translateY(10px);filter:blur(5px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes orbit{to{transform:rotateX(67deg) rotateZ(360deg)}}
+@keyframes megaSpin{0%{transform:rotate(-14deg) scale(.78)}18%{transform:rotate(190deg) scale(1.08)}42%{transform:rotate(480deg) scale(.94)}68%{transform:rotate(800deg) scale(1.12)}85%{transform:rotate(1020deg) scale(.98)}100%{transform:rotate(1066deg) scale(1)}}
+@keyframes pipPulse{to{opacity:.25;transform:scale(.7)}}
+@keyframes progress{0%{width:0}35%{width:35%}68%{width:70%}88%{width:88%}100%{width:100%}}
+@keyframes bars{from{height:6px}to{height:34px}}
+@media(max-width:430px){.dice-grid,.results{gap:8px}.die{border-radius:18%}.panel{padding:17px 10px}.die .pip{width:13px;height:13px}.trade-grid{grid-template-columns:1fr}.mega-stage{height:185px}.mega-die{width:90px;height:90px}.mega-die .p3{top:35px;left:35px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 </head>
-
-<body>
-<div class="welcome" id="welcome">
-  <div class="welcome-card">
-    <h1>TELEK DICE</h1>
-    <p id="welcomeText">Выбери язык / Choose your language</p>
-    <div class="lang-buttons">
-      <button class="primary" onclick="setLanguage('ru')">🇷🇺 Русский</button>
-      <button class="primary" onclick="setLanguage('en')">🇬🇧 English</button>
-    </div>
-  </div>
-</div>
-
+<body style="--photo:url('https://i.pinimg.com/originals/2a/fa/0a/2afa0a1cf7148fe7913004eeb29aa2b1.jpg');--photo-opacity:.9;background:linear-gradient(135deg,#57301d,#1b1025)">
+<span class="leaf l1">🍂</span><span class="leaf l2">🍁</span><span class="leaf l3">🍃</span>
 <main class="wrap">
-  <header class="top">
-    <div>
-      <div class="logo">🎲 TELEK DICE</div>
-      <div class="subtitle" data-i18n="subtitle">Твой уютный мир кубиков</div>
-    </div>
-    <button class="pill" onclick="showLanguage()" data-i18n="changeLang">🌐 Язык</button>
-  </header>
+  <div class="top"><span>🐾 NEON DICE CLUB</span><span class="pill">● MEOWL STYLE</span></div>
+  <h1 class="logo">TELEK<br>DICE</h1>
+  <div class="subtitle">🐾 ROLL YOUR COLORS · MEOW VIBES 🐾</div>
 
   <section class="panel">
-    <h2 data-i18n="rollTitle">🎲 Бросок кубиков</h2>
-    <div class="row">
-      <div class="field">
-        <label class="label" data-i18n="diceCount">Количество кубиков</label>
-        <select id="diceCount">
-          <option value="1">1</option><option value="2">2</option>
-          <option value="3" selected>3</option><option value="4">4</option>
-          <option value="5">5</option><option value="6">6</option>
-          <option value="7">7</option><option value="8">8</option>
-        </select>
-      </div>
-      <button class="primary" id="rollBtn" onclick="rollDice(false)" data-i18n="roll">БРОСИТЬ</button>
-      <button class="primary" id="megaBtn" onclick="rollDice(true)" data-i18n="mega">✨ MEGA ROLL</button>
-      <button class="btn" id="fastBtn" onclick="toggleFast()" data-i18n="fast">⚡ Fast Roll: OFF</button>
-    </div>
+    <div class="label">НАСТРОЙ СВОЙ БРОСОК</div>
+    <div class="row"><label for="count">КОЛИЧЕСТВО КУБИКОВ</label><select id="count"></select></div>
+    <div class="dice-grid" id="diceGrid" aria-label="Кубики"></div>
+    <div class="row"><button class="primary" id="roll">🎲 ROLL DICE</button></div>
+    <div class="row"><button class="btn active" id="fastRoll" aria-pressed="false">⚡ Fast Roll: ВЫКЛ</button><span class="stats">Без анимации — мгновенный результат</span></div>
+    <div class="label" style="margin-top:26px">РЕЗУЛЬТАТ БРОСКА</div>
+    <div class="results" id="results"><div class="stats" style="grid-column:1/-1">Нажми ROLL DICE!</div></div>
+    <div class="status" id="status" aria-live="polite">Система готова к броску.</div>
+    <div class="row"><button class="btn" id="reset">↻ Сбросить счёт</button></div>
+    <div class="row stats">БРОСКИ: <strong id="rolls">0</strong> · СОВПАДЕНИЯ: <strong id="score">0</strong> · СЕРИЯ: <strong id="streak">0</strong></div>
+  </section>
 
-    <div class="dice-grid" id="diceGrid">
-      <div class="die" style="background:#ffb6d9">⚄</div>
-      <div class="die" style="background:#b9c8ff">⚂</div>
-      <div class="die" style="background:#c8f2d0">⚅</div>
-    </div>
-    <div class="results" id="results"></div>
-    <div class="status" id="status" data-i18n="ready">Готов к броску!</div>
-
-    <div class="stats">
-      <div class="stat"><strong id="rollsStat">0</strong><span data-i18n="totalRolls">Всего бросков</span></div>
-      <div class="stat"><strong id="sumStat">0</strong><span data-i18n="lastSum">Сумма последнего броска</span></div>
-      <div class="stat"><strong id="bestStat">—</strong><span data-i18n="bestRoll">Лучший бросок</span></div>
-    </div>
-    <div style="text-align:center;margin-top:14px">
-      <button class="btn" onclick="resetStats()" data-i18n="resetStats">Сбросить статистику</button>
-    </div>
+  <section class="panel mega-panel" id="megaRollSection">
+    <div class="mega-title">👑 MEGA ROLL · УЛЬТРА-БРОСОК</div>
+    <div class="mega-stage" aria-hidden="true"><div class="orbit"></div><div class="mega-die" id="megaDie"><i class="pip p1"></i><i class="pip p2"></i><i class="pip p3"></i><i class="pip p4"></i><i class="pip p5"></i></div></div>
+    <button class="primary" id="megaRoll">✨ MEGA ROLL ✨</button>
+    <div class="mega-caption" id="megaCaption" aria-live="polite">Нажми кнопку — кубик закрутится и откроет результат…</div>
+    <div class="progress" id="megaProgress"><span></span></div>
   </section>
 
   <section class="panel">
-    <h2 data-i18n="backgroundTitle">🌲 Фотофоны</h2>
-    <div class="options-grid">
-      <div>
-        <label class="label" data-i18n="chooseBackground">Выбери атмосферу</label>
-        <select id="backgroundSelect" onchange="changeBackground(this.value)">
-          <option value="forest" data-i18n="forest">🍂 Лесная осень</option>
-          <option value="winter" data-i18n="winter">❄️ Зимний лес</option>
-          <option value="ocean" data-i18n="ocean">🌊 Океан</option>
-          <option value="flowers" data-i18n="flowers">🌸 Цветы и весна</option>
-          <option value="mountains" data-i18n="mountains">🏔️ Горы</option>
-          <option value="night" data-i18n="night">🌌 Ночное небо</option>
-        </select>
-      </div>
-      <div>
-        <label class="label" data-i18n="backgroundNote">Фотографии загружаются из Unsplash. Для них нужен интернет.</label>
-      </div>
+    <div class="label">🎨 ВЫБОР ФОНА · ФОТОГРАФИИ ПРИРОДЫ</div>
+    <div class="row"><label for="backgroundStyle">СТИЛЬ СТРАНИЦЫ</label><select id="backgroundStyle">
+      <option value="meowl">🐾 MEOWL — исходный</option>
+      <option value="autumn">🍂 Осень — лес</option><option value="winter">❄️ Зима — снег</option>
+      <option value="spring">🌸 Весна — цветы</option><option value="forest">🏞️ Горы и озеро</option>
+      <option value="sunset">🌇 Закат</option><option value="ocean">🌊 Океан</option>
+      <option value="city">🌃 Ночной город</option><option value="night">🌌 Космос</option>
+      <option value="mono">🖤 Тёмный монохром</option>
+    </select></div>
+    <div class="photo-grid">
+      <button class="photo-choice active" data-bg="autumn"><img loading="lazy" src="https://i.pinimg.com/originals/2a/fa/0a/2afa0a1cf7148fe7913004eeb29aa2b1.jpg" alt="Осенний лес"><span>🍂 Осень</span></button>
+      <button class="photo-choice" data-bg="winter"><img loading="lazy" src="https://img.goodfon.ru/wallpaper/nbig/7/f7/winter-snow-tree-zima-sneg-forest-hut-house-khizhina-les-d-8.webp" alt="Зимний пейзаж"><span>❄️ Зима</span></button>
+      <button class="photo-choice" data-bg="spring"><img loading="lazy" src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=400&q=75" alt="Весенние цветы"><span>🌸 Весна</span></button>
+      <button class="photo-choice" data-bg="forest"><img loading="lazy" src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=400&q=75" alt="Горы и озеро"><span>🏞️ Горы</span></button>
+      <button class="photo-choice" data-bg="sunset"><img loading="lazy" src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=400&q=75" alt="Закат"><span>🌇 Закат</span></button>
+      <button class="photo-choice" data-bg="ocean"><img loading="lazy" src="https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=400&q=75" alt="Океан"><span>🌊 Океан</span></button>
+      <button class="photo-choice" data-bg="city"><img loading="lazy" src="https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=400&q=75" alt="Ночной город"><span>🌃 Город</span></button>
+      <button class="photo-choice" data-bg="night"><img loading="lazy" src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=400&q=75" alt="Космос"><span>🌌 Космос</span></button>
     </div>
+    <div class="stats">Фон меняется плавно и не влияет на игровой счёт. Фотографии загружаются из интернета.</div>
+    <div class="row pinterest-links"><span class="stats">Референсы в Pinterest:</span><a href="https://www.pinterest.com/pin/cozy-cabin-in-the-forest-tranquil-fall-escape-in-2024--1145321748982152488/" target="_blank" rel="noopener noreferrer">🍂 Осенняя хижина</a><a href="https://ru.pinterest.com/pin/winter-wallpaper-cozy-cabin-in-the-snowy-woods--354095589456085644/" target="_blank" rel="noopener noreferrer">❄️ Зимний лес</a><a href="https://www.pinterest.com/pin/8514686790157263/" target="_blank" rel="noopener noreferrer">☕ Уютное окно</a></div>
   </section>
 
   <section class="panel">
-    <h2 data-i18n="soundTitle">🎧 Звук и музыка</h2>
-    <div class="row">
-      <button class="btn active" id="soundBtn" onclick="toggleSound()" data-i18n="soundOn">🔊 Звуки: ВКЛ</button>
-      <button class="btn" id="musicBtn" onclick="toggleMusic()" data-i18n="musicOff">🎵 Музыка: ВЫКЛ</button>
-      <div class="field">
-        <label class="label" data-i18n="musicStyle">Стиль музыки</label>
-        <select id="musicStyle">
-          <option value="chill" data-i18n="chill">Chill</option>
-          <option value="arcade" data-i18n="arcade">Arcade</option>
-          <option value="autumn" data-i18n="autumn">Autumn</option>
-        </select>
-      </div>
-    </div>
-    <p class="subtitle" style="margin-top:12px" data-i18n="audioNote">Музыка создаётся прямо в браузере. Нажми «Музыка», чтобы включить её.</p>
+    <div class="label">🔊 ЗВУКИ И МУЗЫКА</div>
+    <div class="row"><button class="btn active" id="soundToggle">🔊 Звуки: ВКЛ</button><button class="btn" id="musicToggle">♫ Музыка: ВЫКЛ</button></div>
+    <div class="row"><label for="musicStyle">МУЗЫКАЛЬНЫЙ СТИЛЬ</label><select id="musicStyle"><option value="meow">🐱 MEOW melody</option><option value="chill">🌙 Chill neon</option><option value="arcade">🕹️ Arcade</option><option value="autumn">🍂 Autumn vibes</option></select></div>
+    <div class="music-bars" id="musicBars" aria-hidden="true"></div>
+    <div class="stats" id="musicInfo">Выбери стиль и включи музыку. Звук запускается после нажатия кнопки.</div>
   </section>
 
-  <section class="panel">
-    <h2 data-i18n="tradeTitle">🔄 Trade Machine</h2>
+  <section class="panel" id="tradeMachine">
+    <div class="label">🔁 TRADE MACHINE · СИСТЕМА ОБМЕНА</div>
+    <p class="stats">Выбери две стороны обмена. Машина покажет предложение и проверит количества.</p>
     <div class="trade-grid">
-      <div class="trade-card">
-        <h3 data-i18n="giveTitle">Что отдаёшь?</h3>
-        <label class="label" data-i18n="color">Цвет</label>
-        <select id="giveColor"></select>
-        <label class="label" style="margin-top:10px" data-i18n="amount">Количество</label>
-        <input id="giveAmount" type="number" min="1" max="999" value="2">
-      </div>
-      <div class="trade-card">
-        <h3 data-i18n="getTitle">Что хочешь получить?</h3>
-        <label class="label" data-i18n="color">Цвет</label>
-        <select id="getColor"></select>
-        <label class="label" style="margin-top:10px" data-i18n="amount">Количество</label>
-        <input id="getAmount" type="number" min="1" max="999" value="1">
-      </div>
+      <div class="trade-card"><label for="giveColor">ТЫ ОТДАЁШЬ</label><select id="giveColor"></select><label for="giveAmount" style="margin-top:12px">КОЛИЧЕСТВО</label><input id="giveAmount" type="number" min="1" max="999" value="1"></div>
+      <div class="trade-card"><label for="getColor">ТЫ ПОЛУЧАЕШЬ</label><select id="getColor"></select><label for="getAmount" style="margin-top:12px">КОЛИЧЕСТВО</label><input id="getAmount" type="number" min="1" max="999" value="1"></div>
     </div>
-    <div class="row" style="margin-top:14px">
-      <button class="primary" onclick="checkTrade()" data-i18n="checkTrade">Проверить обмен</button>
-      <button class="btn" onclick="resetTrade()" data-i18n="clear">Очистить</button>
-    </div>
-    <div class="trade-result" id="tradeResult" data-i18n="tradeHint">Настрой обмен и нажми «Проверить обмен».</div>
-    <p class="subtitle" style="margin-top:10px" data-i18n="tradeNote">Это игровая симуляция — обмен не отправляется на сервер.</p>
+    <div class="row"><button class="btn" id="checkTrade">⚙️ Проверить обмен</button><button class="btn" id="resetTrade">↻ Сбросить обмен</button></div>
+    <div class="trade-result" id="tradeResult" aria-live="polite">Настрой обмен и нажми «Проверить обмен».</div>
+    <p class="stats">Важно: это локальный симулятор. Он не подключён к аккаунтам, инвентарю или онлайн-рынку.</p>
   </section>
-
-  <footer>TELEK DICE · <span data-i18n="footer">Бросай кубики и наслаждайся атмосферой ✨</span></footer>
+  <footer>TELEK DICE · MEOWL-inspired style · Счёт хранится в этой вкладке и не является глобальным онлайном.</footer>
 </main>
-
 <script>
-const translations = {
-  ru: {
-    subtitle:"Твой уютный мир кубиков",changeLang:"🌐 Язык",rollTitle:"🎲 Бросок кубиков",
-    diceCount:"Количество кубиков",roll:"🎲 БРОСИТЬ",mega:"✨ MEGA ROLL",fast:"⚡ Fast Roll: ",
-    ready:"Готов к броску!",totalRolls:"Всего бросков",lastSum:"Сумма последнего броска",
-    bestRoll:"Лучший бросок",resetStats:"Сбросить статистику",backgroundTitle:"🌲 Фотофоны",
-    chooseBackground:"Выбери атмосферу",forest:"🍂 Лесная осень",winter:"❄️ Зимний лес",
-    ocean:"🌊 Океан",flowers:"🌸 Цветы и весна",mountains:"🏔️ Горы",night:"🌌 Ночное небо",
-    backgroundNote:"Фотографии загружаются из Unsplash. Для них нужен интернет.",
-    soundTitle:"🎧 Звук и музыка",soundOn:"🔊 Звуки: ВКЛ",soundOff:"🔇 Звуки: ВЫКЛ",
-    musicOn:"🎵 Музыка: ВКЛ",musicOff:"🎵 Музыка: ВЫКЛ",musicStyle:"Стиль музыки",
-    chill:"Спокойная",arcade:"Аркадная",autumn:"Осенняя",
-    audioNote:"Музыка создаётся прямо в браузере. Нажми «Музыка», чтобы включить её.",
-    tradeTitle:"🔄 Trade Machine",giveTitle:"Что отдаёшь?",getTitle:"Что хочешь получить?",
-    color:"Цвет",amount:"Количество",checkTrade:"Проверить обмен",clear:"Очистить",
-    tradeHint:"Настрой обмен и нажми «Проверить обмен».",
-    tradeNote:"Это игровая симуляция — обмен не отправляется на сервер.",
-    footer:"Бросай кубики и наслаждайся атмосферой ✨",rolling:"Кубики крутятся…",
-    result:"Результат",sum:"Сумма",fastOn:"⚡ Fast Roll: ON",fastOff:"⚡ Fast Roll: OFF",
-    tradeGood:"Обмен выглядит сбалансированным.",tradeBad:"Количество отдаваемого и получаемого отличается.",
-    chooseLang:"Выбери язык / Choose your language",rolls:"Бросков выполнено",resetDone:"Статистика сброшена.",
-    colors:["Красный","Оранжевый","Жёлтый","Зелёный","Голубой","Фиолетовый","Розовый","Чёрный"]
-  },
-  en: {
-    subtitle:"Your cozy dice universe",changeLang:"🌐 Language",rollTitle:"🎲 Roll the dice",
-    diceCount:"Number of dice",roll:"🎲 ROLL DICE",mega:"✨ MEGA ROLL",fast:"⚡ Fast Roll: ",
-    ready:"Ready to roll!",totalRolls:"Total rolls",lastSum:"Last roll sum",
-    bestRoll:"Best roll",resetStats:"Reset statistics",backgroundTitle:"🌲 Photo backgrounds",
-    chooseBackground:"Choose your atmosphere",forest:"🍂 Autumn forest",winter:"❄️ Winter forest",
-    ocean:"🌊 Ocean",flowers:"🌸 Flowers & spring",mountains:"🏔️ Mountains",night:"🌌 Night sky",
-    backgroundNote:"Photos load from Unsplash. An internet connection is required.",
-    soundTitle:"🎧 Sound & music",soundOn:"🔊 Sound: ON",soundOff:"🔇 Sound: OFF",
-    musicOn:"🎵 Music: ON",musicOff:"🎵 Music: OFF",musicStyle:"Music style",
-    chill:"Chill",arcade:"Arcade",autumn:"Autumn",
-    audioNote:"Music is generated in your browser. Press Music to turn it on.",
-    tradeTitle:"🔄 Trade Machine",giveTitle:"What will you give?",getTitle:"What do you want?",
-    color:"Color",amount:"Amount",checkTrade:"Check trade",clear:"Clear",
-    tradeHint:"Set up your trade and press Check trade.",
-    tradeNote:"This is a game simulation — no trade is sent to a server.",
-    footer:"Roll the dice and enjoy the atmosphere ✨",rolling:"Dice are rolling…",
-    result:"Result",sum:"Sum",fastOn:"⚡ Fast Roll: ON",fastOff:"⚡ Fast Roll: OFF",
-    tradeGood:"This trade looks balanced.",tradeBad:"The given and received amounts are different.",
-    chooseLang:"Choose your language",rolls:"Rolls completed",resetDone:"Statistics reset.",
-    colors:["Red","Orange","Yellow","Green","Blue","Purple","Pink","Black"]
-  }
-};
-
-let language = "ru";
-let fastRoll = false;
-let soundEnabled = true;
-let musicEnabled = false;
-let rollCount = 0;
-let bestRoll = 0;
-let lastSum = 0;
-let audioContext = null;
-let musicTimer = null;
-let musicStep = 0;
-
-const colorValues = [
-  {key:"red",hex:"#ff626f"},{key:"orange",hex:"#ffad66"},
-  {key:"yellow",hex:"#ffe27a"},{key:"green",hex:"#7be0a0"},
-  {key:"blue",hex:"#80caff"},{key:"purple",hex:"#b59aff"},
-  {key:"pink",hex:"#ffacd5"},{key:"black",hex:"#333540"}
+const colors=[
+ {name:'Красный',hex:'#ed403c'},{name:'Оранжевый',hex:'#ff852e'},
+ {name:'Жёлтый',hex:'#f3d743'},{name:'Зелёный',hex:'#21c968'},
+ {name:'Синий',hex:'#3479f6'},{name:'Фиолетовый',hex:'#9b42e9'},
+ {name:'Розовый',hex:'#ef42b5'},{name:'Чёрный',hex:'#393541'}
 ];
-
-const backgrounds = {
-  forest:"https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=2200&q=85",
-  winter:"https://images.unsplash.com/photo-1418985991508-e47386d96a71?auto=format&fit=crop&w=2200&q=85",
-  ocean:"https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=2200&q=85",
-  flowers:"https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=2200&q=85",
-  mountains:"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2200&q=85",
-  night:"https://images.unsplash.com/photo-1472120435266-818c60f2e9c3?auto=format&fit=crop&w=2200&q=85"
+const $=id=>document.getElementById(id);
+let rolls=0,score=0,streak=0,busy=false,soundOn=true,musicOn=false,fastRoll=false,audio=null,musicTimer=null,musicStep=0,megaBusy=false,megaTimer=null,megaColorTimer=null;
+for(let n=1;n<=8;n++){let o=document.createElement('option');o.value=n;o.textContent=n+(n===1?' кубик':' кубика');$('count').append(o)}
+function ctx(){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;if(!audio)audio=new AC();if(audio.state==='suspended')audio.resume();return audio}
+function tone(freq,duration=.12,type='sine',volume=.025,delay=0){const c=ctx();if(!c)return;let o=c.createOscillator(),g=c.createGain(),t=c.currentTime+delay;o.type=type;o.frequency.setValueAtTime(freq,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(volume,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+duration);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+duration+.03)}
+function clickSound(){if(soundOn){tone(720,.055,'sine',.025);tone(960,.045,'sine',.012,.025)}}
+function meow(){if(!soundOn)return;tone(520,.10,'triangle',.025);tone(760,.14,'sine',.022,.09);tone(610,.16,'triangle',.02,.20)}
+function rollSound(){if(soundOn){tone(180,.15,'triangle',.03);tone(280,.15,'triangle',.025,.09);tone(390,.18,'triangle',.02,.18)}}
+function winSound(){if(soundOn)[523,659,784,1046].forEach((f,i)=>tone(f,.15,'sine',.028,i*.07))}
+function makeDie(c,small=false){let d=document.createElement('div');d.className=small?'resultdie':'die';d.style.background=`linear-gradient(145deg,${c.hex},${c.hex}dd)`;d.innerHTML=small?'<span class="pip"></span><span class="name">'+c.name+'</span>':'<span class="pip"></span>';return d}
+function drawIdle(){let grid=$('diceGrid');grid.innerHTML='';for(let i=0;i<Number($('count').value);i++)grid.append(makeDie(colors[i%colors.length]))}
+function render(nums,mega=false){let r=$('results');r.innerHTML='';nums.forEach((n,i)=>{let d=makeDie(colors[n],true);let small=document.createElement('span');small.className='small';small.textContent=mega?'MEGA ROLL':'КУБИК '+(i+1);d.append(small);d.style.animationDelay=(i*.055)+'s';r.append(d)})}
+function finishRoll(nums){const grid=$('diceGrid');grid.innerHTML='';nums.forEach(x=>grid.append(makeDie(colors[x])));render(nums);rolls++;score+=nums.length;streak++;$('rolls').textContent=rolls;$('score').textContent=score;$('streak').textContent=streak;$('status').textContent='Выпало: '+nums.map(x=>colors[x].name).join(' · ')+'. Бросок завершён!';if(nums.some(x=>x===6))meow();else winSound();$('roll').disabled=false;$('roll').textContent='🎲 ROLL DICE';busy=false}
+$('count').value='4';
+$('count').onchange=()=>{clickSound();drawIdle()};
+$('roll').onclick=()=>{if(busy||megaBusy)return;ctx();clickSound();busy=true;$('roll').disabled=true;$('roll').textContent=fastRoll?'⚡ RESULT...':'⏳ ROLLING...';const n=Number($('count').value),nums=Array.from({length:n},()=>Math.floor(Math.random()*colors.length));if(fastRoll){finishRoll(nums);return}rollSound();const grid=$('diceGrid');grid.innerHTML='';for(let i=0;i<n;i++){let d=makeDie(colors[Math.floor(Math.random()*colors.length)]);d.classList.add('rolling');grid.append(d)}setTimeout(()=>finishRoll(nums),750)};
+$('fastRoll').onclick=()=>{fastRoll=!fastRoll;$('fastRoll').textContent=fastRoll?'⚡ Fast Roll: ВКЛ':'⚡ Fast Roll: ВЫКЛ';$('fastRoll').classList.toggle('active',fastRoll);$('fastRoll').setAttribute('aria-pressed',String(fastRoll));clickSound()};
+$('reset').onclick=()=>{clickSound();rolls=score=streak=0;$('rolls').textContent='0';$('score').textContent='0';$('streak').textContent='0';$('results').innerHTML='<div class="stats" style="grid-column:1/-1">Нажми ROLL DICE!</div>';$('status').textContent='Счёт сброшен.';drawIdle()};
+$('soundToggle').onclick=()=>{soundOn=!soundOn;$('soundToggle').textContent=soundOn?'🔊 Звуки: ВКЛ':'🔇 Звуки: ВЫКЛ';$('soundToggle').classList.toggle('active',soundOn);if(soundOn){ctx();clickSound()}};
+const tunes={meow:[523,659,784,659,587,698,880,698],chill:[261,329,392,329,293,349,440,349],arcade:[440,554,659,880,659,554,784,988],autumn:[392,440,523,587,523,440,349,392]};
+function musicTick(){if(!musicOn)return;let a=tunes[$('musicStyle').value]||tunes.meow,i=musicStep%a.length;tone(a[i],.22,'sine',.018);tone(a[i]/2,.27,'triangle',.011,.02);if($('musicStyle').value==='meow'&&musicStep%4===0&&soundOn)tone(780,.08,'triangle',.008,.12);musicStep++}
+function stopMusic(){musicOn=false;clearInterval(musicTimer);musicTimer=null;$('musicToggle').textContent='♫ Музыка: ВЫКЛ';$('musicToggle').classList.remove('active');$('musicBars').classList.remove('playing');$('musicInfo').textContent='Музыка выключена.'}
+function startMusic(){if(!ctx()){$('musicInfo').textContent='Браузер не поддерживает встроенную музыку.';return}musicOn=true;musicStep=0;musicTick();musicTimer=setInterval(musicTick,300);$('musicToggle').textContent='♫ Музыка: ВКЛ';$('musicToggle').classList.add('active');$('musicBars').classList.add('playing');$('musicInfo').textContent='Играет стиль: '+$('musicStyle').selectedOptions[0].textContent}
+$('musicToggle').onclick=()=>{clickSound();musicOn?stopMusic():startMusic()};
+$('musicStyle').onchange=()=>{clickSound();if(musicOn){stopMusic();startMusic()}else $('musicInfo').textContent='Выбран стиль: '+$('musicStyle').selectedOptions[0].textContent};
+const backgrounds={
+ meowl:{css:'radial-gradient(ellipse at 50% 0%,#55305b 0,#21142d 42%,#0d0913 100%)',photo:''},
+ midnight:{css:'radial-gradient(ellipse at 50% 0%,#164b76 0,#101a38 44%,#070b18 100%)',photo:'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=1800&q=80'},
+ mint:{css:'radial-gradient(ellipse at 50% 0%,#347c70 0,#173b3a 44%,#081715 100%)',photo:'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1800&q=80'},
+ sunset:{css:'radial-gradient(ellipse at 50% 0%,#9c416e 0,#492448 44%,#160d24 100%)',photo:'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=80'},
+ mono:{css:'radial-gradient(ellipse at 50% 0%,#45404b 0,#24212a 44%,#0a090d 100%)',photo:''},
+ autumn:{css:'linear-gradient(135deg,#57301d,#1b1025)',photo:'https://i.pinimg.com/originals/2a/fa/0a/2afa0a1cf7148fe7913004eeb29aa2b1.jpg'},
+ winter:{css:'linear-gradient(135deg,#193653,#0a1024)',photo:'https://img.goodfon.ru/wallpaper/nbig/7/f7/winter-snow-tree-zima-sneg-forest-hut-house-khizhina-les-d-8.webp'},
+ spring:{css:'linear-gradient(135deg,#5d354f,#15251d)',photo:'https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=1800&q=85'},
+ forest:{css:'linear-gradient(135deg,#244a43,#0b101b)',photo:'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1800&q=85'},
+ ocean:{css:'linear-gradient(135deg,#174c70,#080e20)',photo:'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1800&q=85'},
+ city:{css:'linear-gradient(135deg,#34234e,#080a18)',photo:'https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=1800&q=85'},
+ night:{css:'linear-gradient(135deg,#1c2456,#080714)',photo:'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=1800&q=85'}
 };
-
-function setLanguage(lang) {
-  language = lang;
-  document.documentElement.lang = lang;
-  document.querySelectorAll("[data-i18n]").forEach(el => {
-    const key = el.dataset.i18n;
-    if (translations[lang][key] !== undefined) el.textContent = translations[lang][key];
-  });
-  document.getElementById("welcome").classList.add("hidden");
-  document.getElementById("fastBtn").textContent = fastRoll ? translations[lang].fastOn : translations[lang].fastOff;
-  document.getElementById("soundBtn").textContent = soundEnabled ? translations[lang].soundOn : translations[lang].soundOff;
-  document.getElementById("musicBtn").textContent = musicEnabled ? translations[lang].musicOn : translations[lang].musicOff;
-  document.getElementById("status").textContent = translations[lang].ready;
-  document.getElementById("tradeResult").textContent = translations[lang].tradeHint;
-  fillTradeColors();
-}
-function showLanguage() {
-  document.getElementById("welcome").classList.remove("hidden");
-}
-function changeBackground(name) {
-  document.body.style.backgroundImage =
-    `linear-gradient(120deg,rgba(9,12,22,.50),rgba(14,12,22,.42)),url("${backgrounds[name]}")`;
-}
-function fillTradeColors() {
-  ["giveColor","getColor"].forEach((id, index) => {
-    const el = document.getElementById(id);
-    const previous = el.value;
-    el.innerHTML = "";
-    colorValues.forEach((c,i) => {
-      const option = document.createElement("option");
-      option.value = c.key;
-      option.textContent = translations[language].colors[i];
-      el.appendChild(option);
-    });
-    if (previous) el.value = previous;
-    else el.selectedIndex = index === 0 ? 0 : 3;
-  });
-}
-function toggleFast() {
-  fastRoll = !fastRoll;
-  document.getElementById("fastBtn").textContent = fastRoll ? translations[language].fastOn : translations[language].fastOff;
-  document.getElementById("fastBtn").classList.toggle("active", fastRoll);
-}
-function getAudio() {
-  if (!audioContext) {
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (AudioCtx) audioContext = new AudioCtx();
-  }
-  if (audioContext && audioContext.state === "suspended") audioContext.resume();
-  return audioContext;
-}
-function tone(freq=440,duration=.09,type="sine",volume=.06) {
-  if (!soundEnabled) return;
-  const ctx = getAudio();
-  if (!ctx) return;
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-  osc.type = type;
-  osc.frequency.value = freq;
-  gain.gain.setValueAtTime(volume,ctx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+duration);
-  osc.connect(gain); gain.connect(ctx.destination);
-  osc.start(); osc.stop(ctx.currentTime+duration);
-}
-function clickSound() { tone(520,.045,"sine",.035); }
-function rollSound() {
-  tone(170,.12,"triangle",.045);
-  setTimeout(() => tone(250,.10,"triangle",.035),80);
-}
-function winSound() {
-  [523,659,784,1046].forEach((f,i) => setTimeout(() => tone(f,.15,"sine",.045),i*85));
-}
-function toggleSound() {
-  soundEnabled = !soundEnabled;
-  document.getElementById("soundBtn").textContent = soundEnabled ? translations[language].soundOn : translations[language].soundOff;
-  document.getElementById("soundBtn").classList.toggle("active",soundEnabled);
-  if (soundEnabled) clickSound();
-}
-function toggleMusic() {
-  musicEnabled = !musicEnabled;
-  document.getElementById("musicBtn").textContent = musicEnabled ? translations[language].musicOn : translations[language].musicOff;
-  document.getElementById("musicBtn").classList.toggle("active",musicEnabled);
-  if (musicEnabled) startMusic(); else stopMusic();
-}
-function startMusic() {
-  stopMusic();
-  const styles = {
-    chill:[261.63,329.63,392,329.63,293.66,349.23,440,349.23],
-    arcade:[392,523.25,659.25,783.99,659.25,523.25,587.33,783.99],
-    autumn:[220,261.63,329.63,293.66,196,246.94,293.66,261.63]
-  };
-  const play = () => {
-    if (!musicEnabled) return;
-    const style = document.getElementById("musicStyle").value;
-    const notes = styles[style] || styles.chill;
-    const freq = notes[musicStep % notes.length];
-    const ctx = getAudio();
-    if (ctx) {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.value = freq;
-      gain.gain.value = .018;
-      gain.gain.setTargetAtTime(.001,ctx.currentTime+.25,.18);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(); osc.stop(ctx.currentTime+.8);
-    }
-    musicStep++;
-  };
-  play();
-  musicTimer = setInterval(play,420);
-}
-function stopMusic() {
-  if (musicTimer) clearInterval(musicTimer);
-  musicTimer = null;
-}
-function makeDie(color, face, rolling=false) {
-  const die = document.createElement("div");
-  die.className = "die" + (rolling ? " rolling" : "");
-  die.style.background = color;
-  die.textContent = face;
-  return die;
-}
-const faces = ["⚀","⚁","⚂","⚃","⚄","⚅"];
-function randomInt(max) { return Math.floor(Math.random()*max); }
-function shuffle(array) {
-  for (let i=array.length-1;i>0;i--) {
-    const j=randomInt(i+1); [array[i],array[j]]=[array[j],array[i]];
-  }
-  return array;
-}
-let rollingNow = false;
-async function rollDice(mega) {
-  if (rollingNow) return;
-  rollingNow = true;
-  const count = Number(document.getElementById("diceCount").value);
-  const grid = document.getElementById("diceGrid");
-  const results = document.getElementById("results");
-  const status = document.getElementById("status");
-  const rollBtn = document.getElementById("rollBtn");
-  const megaBtn = document.getElementById("megaBtn");
-  rollBtn.disabled = megaBtn.disabled = true;
-  results.innerHTML = "";
-  status.textContent = translations[language].rolling;
-  grid.innerHTML = "";
-  const dice = [];
-  for (let i=0;i<count;i++) {
-    const die = makeDie(colorValues[randomInt(8)].hex,faces[randomInt(6)],true);
-    grid.appendChild(die); dice.push(die);
-  }
-  rollSound();
-
-  const duration = fastRoll ? 450 : (mega ? 2700 : 1250);
-  const intervals = dice.map((die,i) => setInterval(() => {
-    const colorIndex = randomInt(8);
-    die.style.background = colorValues[colorIndex].hex;
-    die.textContent = faces[randomInt(6)];
-    if (mega) die.style.transform = `rotate(${randomInt(50)-25}deg) scale(${.85+Math.random()*.3})`;
-  }, mega ? 65+i*8 : fastRoll ? 60 : 90));
-
-  await new Promise(resolve => setTimeout(resolve,duration));
-  intervals.forEach(clearInterval);
-
-  let finalColors;
-  if (mega) {
-    finalColors = shuffle([...colorValues]).slice(0,count);
-  } else {
-    finalColors = Array.from({length:count},()=>colorValues[randomInt(8)]);
-  }
-  const values = [];
-  dice.forEach((die,i) => {
-    const value = randomInt(6)+1;
-    values.push(value);
-    die.classList.remove("rolling");
-    die.style.transition = "transform .35s ease, background .35s ease";
-    die.style.transform = "rotate(0deg) scale(1)";
-    die.style.background = finalColors[i].hex;
-    die.textContent = faces[value-1];
-    const chip = document.createElement("div");
-    chip.className = "resultdie";
-    chip.textContent = `${translations[language].result} ${i+1}: ${value}`;
-    results.appendChild(chip);
-  });
-  lastSum = values.reduce((a,b)=>a+b,0);
-  rollCount++;
-  if (lastSum > bestRoll) bestRoll = lastSum;
-  document.getElementById("rollsStat").textContent = rollCount;
-  document.getElementById("sumStat").textContent = lastSum;
-  document.getElementById("bestStat").textContent = bestRoll;
-  status.textContent = `${translations[language].sum}: ${lastSum} · ${translations[language].rolls}: ${rollCount}`;
-  if (lastSum >= count*5) winSound(); else tone(340,.08);
-  rollingNow = false;
-  rollBtn.disabled = megaBtn.disabled = false;
-}
-function resetStats() {
-  rollCount=0; bestRoll=0; lastSum=0;
-  document.getElementById("rollsStat").textContent="0";
-  document.getElementById("sumStat").textContent="0";
-  document.getElementById("bestStat").textContent="—";
-  document.getElementById("results").innerHTML="";
-  document.getElementById("status").textContent=translations[language].resetDone;
+function setBackground(key){
+  const b=backgrounds[key]||backgrounds.meowl;
+  document.body.style.setProperty('--photo-opacity','.18');
+  document.body.style.background=b.css;
+  document.body.style.setProperty('--photo',b.photo?`url("${b.photo}")`:'none');
+  $('backgroundStyle').value=key;
+  document.querySelectorAll('.photo-choice').forEach(el=>el.classList.toggle('active',el.dataset.bg===key));
+  requestAnimationFrame(()=>requestAnimationFrame(()=>document.body.style.setProperty('--photo-opacity','.9')));
   clickSound();
 }
-function checkTrade() {
-  const give = Number(document.getElementById("giveAmount").value);
-  const get = Number(document.getElementById("getAmount").value);
-  const giveColor = document.getElementById("giveColor");
-  const getColor = document.getElementById("getColor");
-  const same = giveColor.value === getColor.value;
-  let message;
-  if (give < 1 || get < 1 || !Number.isFinite(give) || !Number.isFinite(get)) {
-    message = language === "ru" ? "Укажи количество не меньше 1." : "Enter an amount of at least 1.";
-  } else if (same) {
-    message = language === "ru" ? "Выбран один и тот же цвет. Попробуй обменять разные цвета." : "You selected the same color. Try trading different colors.";
-  } else if (give === get) {
-    message = translations[language].tradeGood;
-  } else {
-    message = translations[language].tradeBad;
-  }
-  document.getElementById("tradeResult").textContent = message;
-  clickSound();
+$('backgroundStyle').onchange=()=>setBackground($('backgroundStyle').value);
+document.querySelectorAll('.photo-choice').forEach(el=>el.onclick=()=>setBackground(el.dataset.bg));
+function shuffledColorResults(count){
+  // Mega Roll uses each available color at most once per round, so the result is visibly varied.
+  const bag=colors.map((_,i)=>i);
+  for(let i=bag.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[bag[i],bag[j]]=[bag[j],bag[i]]}
+  return bag.slice(0,Math.min(count,bag.length));
 }
-function resetTrade() {
-  document.getElementById("giveAmount").value=2;
-  document.getElementById("getAmount").value=1;
-  document.getElementById("giveColor").selectedIndex=0;
-  document.getElementById("getColor").selectedIndex=3;
-  document.getElementById("tradeResult").textContent=translations[language].tradeHint;
+function startMegaRoll(){
+  if(megaBusy||busy)return;
+  ctx();clickSound();megaBusy=true;
+  $('megaRoll').disabled=true;$('megaRoll').textContent='✨ КУБИКИ КРУТЯТСЯ…';$('roll').disabled=true;
+  $('megaCaption').textContent='Цвета меняются… сейчас выпадет комбинация!';
+  const die=$('megaDie'),progress=$('megaProgress'),count=Number($('count').value);
+  const nums=shuffledColorResults(count);
+  die.classList.remove('spinning');progress.classList.remove('running');
+  void die.offsetWidth;void progress.offsetWidth;
+  die.classList.add('spinning');progress.classList.add('running');rollSound();
+  $('diceGrid').querySelectorAll('.die').forEach((d,i)=>{d.classList.add('rolling');d.style.animationDelay=(i*.035)+'s'});
+  if(megaColorTimer)clearInterval(megaColorTimer);
+  megaColorTimer=setInterval(()=>{
+    const c=colors[Math.floor(Math.random()*colors.length)];
+    die.style.background=`linear-gradient(140deg,${c.hex},${c.hex}dd)`;
+  },135);
+  megaTimer=setTimeout(()=>{
+    clearInterval(megaColorTimer);megaColorTimer=null;
+    die.classList.remove('spinning');progress.classList.remove('running');
+    const mainColor=colors[nums[0]];
+    die.style.background=`linear-gradient(140deg,${mainColor.hex},${mainColor.hex}dd)`;
+    const list=nums.map(n=>colors[n].name);
+    $('megaCaption').textContent='🎉 РЕЗУЛЬТАТ: '+list.join(' · ');
+    $('status').textContent='MEGA ROLL: выпали цвета — '+list.join(' · ')+'.';
+    $('diceGrid').querySelectorAll('.die').forEach(d=>d.classList.remove('rolling'));
+    rolls++;score+=nums.length;streak++;
+    $('rolls').textContent=rolls;$('score').textContent=score;$('streak').textContent=streak;
+    render(nums,true);
+    const grid=$('diceGrid');grid.innerHTML='';nums.forEach(n=>grid.append(makeDie(colors[n])));
+    if(nums.includes(6))meow();else winSound();
+    $('megaRoll').disabled=false;$('megaRoll').textContent='✨ ЕЩЁ РАЗ';
+    $('roll').disabled=false;$('roll').textContent='🎲 ROLL DICE';megaBusy=false;
+  },2150);
 }
-fillTradeColors();
+$('megaRoll').onclick=startMegaRoll;
+function fillTradeColors(){['giveColor','getColor'].forEach((id,idx)=>{const sel=$(id);colors.forEach((c,i)=>{const op=document.createElement('option');op.value=String(i);op.textContent=c.name;sel.append(op)});sel.value=idx===0?'0':'1'})}
+function checkTrade(){const gi=Number($('giveColor').value),ge=Number($('getColor').value),ga=Number($('giveAmount').value),ea=Number($('getAmount').value);if(!Number.isInteger(ga)||!Number.isInteger(ea)||ga<1||ea<1||ga>999||ea>999){$('tradeResult').textContent='Укажи количество от 1 до 999 для обеих сторон.';return}if(gi===ge){$('tradeResult').textContent='Выбери разные цвета для обмена.';return}const verdict=ga===ea?'⚖️ Количества равны. Предложение сбалансировано по количеству.':ga>ea?'📦 Ты отдаёшь больше предметов, чем получаешь.':'✨ Ты получаешь больше предметов, чем отдаёшь.';$('tradeResult').textContent='Предложение: '+ga+' × '+colors[gi].name+' → '+ea+' × '+colors[ge].name+'. '+verdict}
+$('checkTrade').onclick=()=>{clickSound();checkTrade()};
+$('resetTrade').onclick=()=>{$('giveColor').value='0';$('getColor').value='1';$('giveAmount').value='1';$('getAmount').value='1';$('tradeResult').textContent='Настрой обмен и нажми «Проверить обмен».';clickSound()};
+for(let i=0;i<18;i++)$('musicBars').append(document.createElement('i'));
+fillTradeColors();drawIdle();setBackground('autumn');
 </script>
-</body>
-</html>
+</body></html>
