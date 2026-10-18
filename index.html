@@ -1,395 +1,501 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🐾 NEON DICE CLUB · MEOWL STYLE</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Pacifico&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      font-family: 'Montserrat', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: #fff;
-      overflow-x: hidden;
-      transition: background 0.8s ease;
-    }
-    
-    /* Экран выбора языка */
-    #language-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 10000;
-      animation: fadeIn 0.6s ease;
-    }
-    #language-screen h1 {
-      font-family: 'Pacifico', cursive;
-      font-size: 3rem;
-      margin-bottom: 2rem;
-      text-shadow: 0 0 20px rgba(255,255,255,0.5);
-    }
-    .language-buttons {
-      display: flex;
-      gap: 2rem;
-    }
-    .lang-btn {
-      padding: 1.5rem 3rem;
-      font-size: 1.5rem;
-      font-weight: 600;
-      border: 3px solid #fff;
-      border-radius: 20px;
-      background: rgba(255,255,255,0.1);
-      color: #fff;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
-    }
-    .lang-btn:hover {
-      background: rgba(255,255,255,0.3);
-      transform: translateY(-5px) scale(1.05);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
-    
-    .hidden {
-      display: none !important;
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    
-    header {
-      text-align: center;
-      padding: 2rem 1rem;
-      animation: slideDown 0.8s ease;
-    }
-    header h1 {
-      font-family: 'Pacifico', cursive;
-      font-size: 2.5rem;
-      text-shadow: 0 0 20px rgba(255,255,255,0.6);
-      margin-bottom: 0.5rem;
-    }
-    
-    @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translateY(-50px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    
-    main {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 1rem;
-    }
-    
-    section {
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(15px);
-      border-radius: 20px;
-      padding: 2rem;
-      margin-bottom: 2rem;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-      animation: fadeInUp 0.6s ease;
-      transition: all 0.4s ease;
-    }
-    
-    section:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
-    }
-    
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    
-    h2 {
-      font-size: 1.8rem;
-      margin-bottom: 1.5rem;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    }
-    
-    button {
-      padding: 1rem 2rem;
-      font-size: 1.1rem;
-      font-weight: 600;
-      font-family: 'Montserrat', sans-serif;
-      border: 2px solid #fff;
-      border-radius: 15px;
-      background: rgba(255,255,255,0.2);
-      color: #fff;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin: 0.5rem;
-    }
-    
-    button:hover {
-      background: rgba(255,255,255,0.4);
-      transform: scale(1.05);
-      box-shadow: 0 5px 20px rgba(255,255,255,0.3);
-    }
-    
-    button:active {
-      transform: scale(0.98);
-    }
-    
-    input, select {
-      padding: 0.8rem;
-      font-size: 1rem;
-      font-family: 'Montserrat', sans-serif;
-      border: 2px solid rgba(255,255,255,0.5);
-      border-radius: 10px;
-      background: rgba(255,255,255,0.15);
-      color: #fff;
-      margin: 0.5rem;
-      transition: all 0.3s ease;
-    }
-    
-    input:focus, select:focus {
-      outline: none;
-      border-color: #fff;
-      background: rgba(255,255,255,0.25);
-      box-shadow: 0 0 15px rgba(255,255,255,0.4);
-    }
-    
-    .dice-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      justify-content: center;
-      margin: 2rem 0;
-    }
-    
-    .dice {
-      width: 80px;
-      height: 80px;
-      background: rgba(255,255,255,0.3);
-      border-radius: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.5rem;
-      font-weight: 700;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-      transition: all 0.4s ease;
-      animation: diceAppear 0.5s ease;
-    }
-    
-    @keyframes diceAppear {
-      from {
-        opacity: 0;
-        transform: scale(0) rotate(180deg);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1) rotate(0deg);
-      }
-    }
-    
-    .dice.rolling {
-      animation: roll 0.6s ease-in-out;
-    }
-    
-    @keyframes roll {
-      0%, 100% { transform: rotate(0deg); }
-      25% { transform: rotate(90deg) scale(1.1); }
-      50% { transform: rotate(180deg) scale(1.2); }
-      75% { transform: rotate(270deg) scale(1.1); }
-    }
-    
-    footer {
-      text-align: center;
-      padding: 2rem;
-      font-size: 0.9rem;
-      opacity: 0.8;
-    }
-    
-    @media (max-width: 768px) {
-      header h1 {
-        font-size: 2rem;
-      }
-      section {
-        padding: 1.5rem;
-      }
-      .lang-btn {
-        padding: 1rem 2rem;
-        font-size: 1.2rem;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEON DICE CLUB · MEOWL STYLE</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  min-height: 100vh;
+  padding: 20px;
+  transition: background 0.8s ease;
+}
+
+body.autumn { background: linear-gradient(135deg, #f09819 0%, #edde5d 100%); }
+body.winter { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+body.spring { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+body.mountains { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+body.sunset { background: linear-gradient(135deg, #ff6a00 0%, #ee0979 100%); }
+body.ocean { background: linear-gradient(135deg, #2e3192 0%, #1bffff 100%); }
+body.city { background: linear-gradient(135deg, #434343 0%, #000000 100%); }
+body.space { background: linear-gradient(135deg, #000428 0%, #004e92 100%); }
+body.dark { background: linear-gradient(135deg, #232526 0%, #414345 100%); }
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.header {
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 2.5em;
+  font-weight: 900;
+  text-shadow: 0 0 20px rgba(255,255,255,0.5);
+  margin-bottom: 10px;
+}
+
+.header p {
+  font-size: 1.2em;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.lang-selector {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.lang-btn {
+  background: rgba(255,255,255,0.2);
+  border: 2px solid rgba(255,255,255,0.4);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.lang-btn:hover {
+  background: rgba(255,255,255,0.3);
+  transform: scale(1.05);
+}
+
+.lang-btn.active {
+  background: rgba(255,255,255,0.5);
+  border-color: #fff;
+}
+
+.section {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 30px;
+  margin-bottom: 20px;
+  border: 2px solid rgba(255,255,255,0.2);
+}
+
+.section h2 {
+  font-size: 1.8em;
+  font-weight: 900;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px rgba(255,255,255,0.3);
+}
+
+.dice-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin: 25px 0;
+  min-height: 100px;
+}
+
+.die {
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2em;
+  font-weight: 900;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  border: 3px solid rgba(255,255,255,0.3);
+  animation: diceRoll 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes diceRoll {
+  0% { transform: rotate(0deg) scale(0.5); opacity: 0; }
+  50% { transform: rotate(180deg) scale(1.1); }
+  100% { transform: rotate(360deg) scale(1); opacity: 1; }
+}
+
+.controls {
+  margin: 25px 0;
+}
+
+.control-group {
+  margin-bottom: 20px;
+}
+
+.control-group label {
+  display: block;
+  font-weight: 800;
+  margin-bottom: 10px;
+  font-size: 1.1em;
+}
+
+input[type="number"] {
+  width: 100px;
+  padding: 12px;
+  font-size: 1.1em;
+  font-weight: 700;
+  border-radius: 10px;
+  border: 2px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  text-align: center;
+}
+
+button {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: #fff;
+  border: none;
+  padding: 15px 35px;
+  font-size: 1.2em;
+  font-weight: 900;
+  border-radius: 12px;
+  cursor: pointer;
+  margin: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+button:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+}
+
+button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.result-box {
+  background: rgba(0,0,0,0.3);
+  padding: 20px;
+  border-radius: 12px;
+  margin: 20px 0;
+  min-height: 80px;
+  font-weight: 700;
+  font-size: 1.1em;
+}
+
+.stats {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 20px;
+  font-weight: 800;
+  font-size: 1.1em;
+}
+
+select {
+  padding: 12px 20px;
+  font-size: 1.05em;
+  font-weight: 700;
+  border-radius: 10px;
+  border: 2px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  cursor: pointer;
+  margin: 10px;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px;
+  font-weight: 800;
+}
+
+.mega-die {
+  width: 150px;
+  height: 150px;
+  font-size: 4em;
+  margin: 20px auto;
+}
+
+@media (max-width: 600px) {
+  .header h1 { font-size: 1.8em; }
+  .die { width: 60px; height: 60px; font-size: 1.8em; }
+  .stats { flex-direction: column; gap: 10px; }
+}
+</style>
 </head>
 <body>
 
-  <!-- Экран выбора языка -->
-  <div id="language-screen">
-    <h1>🐾 NEON DICE CLUB</h1>
-    <div class="language-buttons">
-      <button class="lang-btn" onclick="selectLanguage('ru')">🇷🇺 Русский</button>
-      <button class="lang-btn" onclick="selectLanguage('en')">🇬🇧 English</button>
+<div class="lang-selector">
+  <button class="lang-btn active" onclick="setLanguage('ru')" data-lang="ru">RU</button>
+  <button class="lang-btn" onclick="setLanguage('en')" data-lang="en">EN</button>
+</div>
+
+<div class="container">
+  <div class="header">
+    <h1>🍂🍁🍃</h1>
+    <h1>🐾 NEON DICE CLUB● MEOWL STYLE</h1>
+    <p class="tagline">🐾 <span data-text="rollcolors">ROLL YOUR COLORS</span> · MEOW VIBES 🐾</p>
+  </div>
+
+  <div class="section">
+    <h2 data-text="setuproll">НАСТРОЙ СВОЙ БРОСОК</h2>
+    <div class="controls">
+      <div class="control-group">
+        <label data-text="dicecount">КОЛИЧЕСТВО КУБИКОВ</label>
+        <input type="number" id="diceCount" value="5" min="1" max="20">
+      </div>
+      <button id="rollBtn" onclick="rollDice()">🎲 <span data-text="rolldice">ROLL DICE</span></button>
+      <div class="toggle">
+        <label>⚡ Fast Roll:</label>
+        <button id="fastToggle" onclick="toggleFast()"><span data-text="off">ВЫКЛ</span></button>
+      </div>
+    </div>
+
+    <div class="result-box" id="result">
+      <p data-text="clickroll">Нажми ROLL DICE!</p>
+      <p data-text="ready">Система готова к броску.</p>
+    </div>
+
+    <div class="dice-container" id="diceContainer"></div>
+
+    <button onclick="resetStats()">↻ <span data-text="resetstats">Сбросить счёт</span></button>
+    <div class="stats">
+      <span data-text="rolls">БРОСКИ</span>: <span id="rollCount">0</span> · 
+      <span data-text="matches">СОВПАДЕНИЯ</span>: <span id="matchCount">0</span> · 
+      <span data-text="streak">СЕРИЯ</span>: <span id="streakCount">0</span>
     </div>
   </div>
 
-  <!-- Основной контент -->
-  <div id="main-content" class="hidden">
-    <header>
-      <h1 id="main-title">🍂🍁🍃</h1>
-      <h1 id="site-title">🐾 NEON DICE CLUB● MEOWL STYLE</h1>
-      <p id="subtitle">🐾 ROLL YOUR COLORS · MEOW VIBES 🐾</p>
-    </header>
-
-    <main>
-      <section>
-        <h2 id="setup-title">НАСТРОЙ СВОЙ БРОСОК</h2>
-        <label id="dice-count-label">КОЛИЧЕСТВО КУБИКОВ</label>
-        <input type="number" id="diceCount" min="1" max="10" value="3">
-        <button id="rollBtn">🎲 ROLL DICE</button>
-        <label>
-          <input type="checkbox" id="fastRoll">
-          <span id="fast-roll-label">⚡ Fast Roll: ВЫКЛ</span>
-        </label>
-        
-        <h3 id="result-title">РЕЗУЛЬТАТ БРОСКА</h3>
-        <div id="result">Нажми ROLL DICE!</div>
-        <div class="dice-container" id="diceContainer"></div>
-        
-        <button id="resetBtn">↻ Сбросить счёт</button>
-        <p id="stats">БРОСКИ: 0 · СОВПАДЕНИЯ: 0 · СЕРИЯ: 0</p>
-      </section>
-
-      <!-- Остальные секции... -->
-    </main>
-
-    <footer>
-      TELEK DICE · MEOWL-inspired style · Счёт хранится в этой вкладке
-    </footer>
+  <div class="section">
+    <h2>👑 MEGA ROLL · <span data-text="ultraroll">УЛЬТРА-БРОСОК</span></h2>
+    <button onclick="megaRoll()">✨ MEGA ROLL ✨</button>
+    <div class="result-box" id="megaResult" data-text="megainfo">Нажми кнопку — кубик закрутится и откроет результат…</div>
+    <div class="dice-container">
+      <div class="die mega-die" id="megaDie">🎲</div>
+    </div>
   </div>
 
-  <script>
-    let currentLang = 'ru';
-    const translations = {
-      ru: {
-        mainTitle: '🍂🍁🍃',
-        siteTitle: '🐾 NEON DICE CLUB● MEOWL STYLE',
-        subtitle: '🐾 ROLL YOUR COLORS · MEOW VIBES 🐾',
-        setupTitle: 'НАСТРОЙ СВОЙ БРОСОК',
-        diceCountLabel: 'КОЛИЧЕСТВО КУБИКОВ',
-        rollBtn: '🎲 ROLL DICE',
-        fastRollLabel: '⚡ Fast Roll: ВЫКЛ',
-        resultTitle: 'РЕЗУЛЬТАТ БРОСКА',
-        resultInitial: 'Нажми ROLL DICE!',
-        resetBtn: '↻ Сбросить счёт',
-        stats: 'БРОСКИ: {rolls} · СОВПАДЕНИЯ: {matches} · СЕРИЯ: {streak}'
-      },
-      en: {
-        mainTitle: '🍂🍁🍃',
-        siteTitle: '🐾 NEON DICE CLUB● MEOWL STYLE',
-        subtitle: '🐾 ROLL YOUR COLORS · MEOW VIBES 🐾',
-        setupTitle: 'SET UP YOUR ROLL',
-        diceCountLabel: 'NUMBER OF DICE',
-        rollBtn: '🎲 ROLL DICE',
-        fastRollLabel: '⚡ Fast Roll: OFF',
-        resultTitle: 'ROLL RESULT',
-        resultInitial: 'Press ROLL DICE!',
-        resetBtn: '↻ Reset Score',
-        stats: 'ROLLS: {rolls} · MATCHES: {matches} · STREAK: {streak}'
-      }
-    };
+  <div class="section">
+    <h2>🎨 <span data-text="bgchoice">ВЫБОР ФОНА</span> · <span data-text="naturephotos">ФОТОГРАФИИ ПРИРОДЫ</span></h2>
+    <select id="bgSelect" onchange="changeBackground()">
+      <option value="">🐾 MEOWL — <span data-text="original">исходный</span></option>
+      <option value="autumn">🍂 <span data-text="autumn">Осень</span></option>
+      <option value="winter">❄️ <span data-text="winter">Зима</span></option>
+      <option value="spring">🌸 <span data-text="spring">Весна</span></option>
+      <option value="mountains">🏞️ <span data-text="mountains">Горы и озеро</span></option>
+      <option value="sunset">🌇 <span data-text="sunset">Закат</span></option>
+      <option value="ocean">🌊 <span data-text="ocean">Океан</span></option>
+      <option value="city">🌃 <span data-text="city">Ночной город</span></option>
+      <option value="space">🌌 <span data-text="space">Космос</span></option>
+      <option value="dark">🖤 <span data-text="darkm">Тёмный монохром</span></option>
+    </select>
+  </div>
 
-    function selectLanguage(lang) {
-      currentLang = lang;
-      document.getElementById('language-screen').classList.add('hidden');
-      document.getElementById('main-content').classList.remove('hidden');
-      updateLanguage();
+  <div class="section">
+    <h2>🔊 <span data-text="soundmusic">ЗВУКИ И МУЗЫКА</span></h2>
+    <div class="toggle">
+      🔊 <span data-text="sounds">Звуки</span>: <button id="soundToggle" onclick="toggleSound()"><span data-text="on">ВКЛ</span></button>
+    </div>
+    <div class="toggle">
+      ♫ <span data-text="music">Музыка</span>: <button id="musicToggle" onclick="toggleMusic()"><span data-text="off">ВЫКЛ</span></button>
+    </div>
+    <select id="musicStyle">
+      <option>🐱 MEOW melody</option>
+      <option>🌙 Chill neon</option>
+      <option>🕹️ Arcade</option>
+      <option>🍂 Autumn vibes</option>
+    </select>
+  </div>
+
+  <footer style="margin-top:40px; opacity:0.7; font-weight:700;">
+    TELEK DICE · MEOWL-inspired style · <span data-text="footer">Счёт хранится в этой вкладке и не является глобальным онлайном.</span>
+  </footer>
+</div>
+
+<script>
+let rollCount = 0;
+let matchCount = 0;
+let streakCount = 0;
+let fastMode = false;
+let soundEnabled = true;
+let musicEnabled = false;
+let currentLang = 'ru';
+
+const translations = {
+  ru: {
+    rollcolors: "ROLL YOUR COLORS",
+    setuproll: "НАСТРОЙ СВОЙ БРОСОК",
+    dicecount: "КОЛИЧЕСТВО КУБИКОВ",
+    rolldice: "ROLL DICE",
+    off: "ВЫКЛ",
+    on: "ВКЛ",
+    clickroll: "Нажми ROLL DICE!",
+    ready: "Система готова к броску.",
+    resetstats: "Сбросить счёт",
+    rolls: "БРОСКИ",
+    matches: "СОВПАДЕНИЯ",
+    streak: "СЕРИЯ",
+    ultraroll: "УЛЬТРА-БРОСОК",
+    megainfo: "Нажми кнопку — кубик закрутится и откроет результат…",
+    bgchoice: "ВЫБОР ФОНА",
+    naturephotos: "ФОТОГРАФИИ ПРИРОДЫ",
+    original: "исходный",
+    autumn: "Осень",
+    winter: "Зима",
+    spring: "Весна",
+    mountains: "Горы и озеро",
+    sunset: "Закат",
+    ocean: "Океан",
+    city: "Ночной город",
+    space: "Космос",
+    darkm: "Тёмный монохром",
+    soundmusic: "ЗВУКИ И МУЗЫКА",
+    sounds: "Звуки",
+    music: "Музыка",
+    footer: "Счёт хранится в этой вкладке и не является глобальным онлайном."
+  },
+  en: {
+    rollcolors: "ROLL YOUR COLORS",
+    setuproll: "SETUP YOUR ROLL",
+    dicecount: "NUMBER OF DICE",
+    rolldice: "ROLL DICE",
+    off: "OFF",
+    on: "ON",
+    clickroll: "Click ROLL DICE!",
+    ready: "System ready to roll.",
+    resetstats: "Reset Stats",
+    rolls: "ROLLS",
+    matches: "MATCHES",
+    streak: "STREAK",
+    ultraroll: "ULTRA-ROLL",
+    megainfo: "Click the button — the die will spin and reveal the result…",
+    bgchoice: "BACKGROUND CHOICE",
+    naturephotos: "NATURE PHOTOS",
+    original: "original",
+    autumn: "Autumn",
+    winter: "Winter",
+    spring: "Spring",
+    mountains: "Mountains & Lake",
+    sunset: "Sunset",
+    ocean: "Ocean",
+    city: "Night City",
+    space: "Space",
+    darkm: "Dark Monochrome",
+    soundmusic: "SOUNDS & MUSIC",
+    sounds: "Sounds",
+    music: "Music",
+    footer: "Score is stored in this tab and is not global online."
+  }
+};
+
+function setLanguage(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+  document.querySelectorAll('[data-text]').forEach(el => {
+    const key = el.dataset.text;
+    if (translations[lang][key]) {
+      el.textContent = translations[lang][key];
     }
+  });
+}
 
-    function updateLanguage() {
-      const t = translations[currentLang];
-      document.getElementById('main-title').textContent = t.mainTitle;
-      document.getElementById('site-title').textContent = t.siteTitle;
-      document.getElementById('subtitle').textContent = t.subtitle;
-      document.getElementById('setup-title').textContent = t.setupTitle;
-      document.getElementById('dice-count-label').textContent = t.diceCountLabel;
-      document.getElementById('rollBtn').textContent = t.rollBtn;
-      document.querySelector('#fast-roll-label').textContent = t.fastRollLabel;
-      document.getElementById('result-title').textContent = t.resultTitle;
-      document.getElementById('result').textContent = t.resultInitial;
-      document.getElementById('resetBtn').textContent = t.resetBtn;
-      updateStats();
-    }
+function rollDice() {
+  const count = parseInt(document.getElementById('diceCount').value) || 5;
+  const container = document.getElementById('diceContainer');
+  container.innerHTML = '';
+  
+  const results = [];
+  for (let i = 0; i < count; i++) {
+    const die = document.createElement('div');
+    die.className = 'die';
+    if (fastMode) die.style.animation = 'none';
+    const value = Math.floor(Math.random() * 6) + 1;
+    results.push(value);
+    die.textContent = value;
+    container.appendChild(die);
+  }
+  
+  rollCount++;
+  const matches = results.filter((v, i, a) => a.indexOf(v) !== i).length;
+  if (matches > 0) {
+    matchCount++;
+    streakCount++;
+  } else {
+    streakCount = 0;
+  }
+  
+  document.getElementById('rollCount').textContent = rollCount;
+  document.getElementById('matchCount').textContent = matchCount;
+  document.getElementById('streakCount').textContent = streakCount;
+  
+  const resultText = currentLang === 'ru' 
+    ? `Бросок ${rollCount}: ${results.join(', ')}`
+    : `Roll ${rollCount}: ${results.join(', ')}`;
+  document.getElementById('result').textContent = resultText;
+}
 
-    let stats = { rolls: 0, matches: 0, streak: 0 };
+function megaRoll() {
+  const die = document.getElementById('megaDie');
+  die.style.animation = 'none';
+  setTimeout(() => {
+    die.style.animation = 'diceRoll 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+    const value = Math.floor(Math.random() * 6) + 1;
+    die.textContent = value;
+    const resultText = currentLang === 'ru' 
+      ? `Ты выбросил: ${value}`
+      : `You rolled: ${value}`;
+    document.getElementById('megaResult').textContent = resultText;
+  }, 10);
+}
 
-    function updateStats() {
-      const t = translations[currentLang];
-      document.getElementById('stats').textContent = t.stats
-        .replace('{rolls}', stats.rolls)
-        .replace('{matches}', stats.matches)
-        .replace('{streak}', stats.streak);
-    }
+function toggleFast() {
+  fastMode = !fastMode;
+  const text = fastMode 
+    ? (currentLang === 'ru' ? 'ВКЛ' : 'ON') 
+    : (currentLang === 'ru' ? 'ВЫКЛ' : 'OFF');
+  document.getElementById('fastToggle').innerHTML = `<span data-text="${fastMode ? 'on' : 'off'}">${text}</span>`;
+}
 
-    document.getElementById('rollBtn').addEventListener('click', () => {
-      const count = parseInt(document.getElementById('diceCount').value);
-      const fastRoll = document.getElementById('fastRoll').checked;
-      const container = document.getElementById('diceContainer');
-      container.innerHTML = '';
-      
-      const results = [];
-      for (let i = 0; i < count; i++) {
-        const value = Math.floor(Math.random() * 6) + 1;
-        results.push(value);
-        const dice = document.createElement('div');
-        dice.className = 'dice';
-        if (!fastRoll) dice.classList.add('rolling');
-        dice.textContent = value;
-        container.appendChild(dice);
-      }
-      
-      stats.rolls++;
-      const allSame = results.every(v => v === results[0]);
-      if (allSame && count > 1) {
-        stats.matches++;
-        stats.streak++;
-      } else {
-        stats.streak = 0;
-      }
-      
-      updateStats();
-      document.getElementById('result').textContent = `${results.join(' · ')}${allSame && count > 1 ? ' 🎉' : ''}`;
-    });
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  const text = soundEnabled 
+    ? (currentLang === 'ru' ? 'ВКЛ' : 'ON') 
+    : (currentLang === 'ru' ? 'ВЫКЛ' : 'OFF');
+  document.getElementById('soundToggle').innerHTML = `<span data-text="${soundEnabled ? 'on' : 'off'}">${text}</span>`;
+}
 
-    document.getElementById('resetBtn').addEventListener('click', () => {
-      stats = { rolls: 0, matches: 0, streak: 0 };
-      updateStats();
-      document.getElementById('diceContainer').innerHTML = '';
-      document.getElementById('result').textContent = translations[currentLang].resultInitial;
-    });
-  </script>
+function toggleMusic() {
+  musicEnabled = !musicEnabled;
+  const text = musicEnabled 
+    ? (currentLang === 'ru' ? 'ВКЛ' : 'ON') 
+    : (currentLang === 'ru' ? 'ВЫКЛ' : 'OFF');
+  document.getElementById('musicToggle').innerHTML = `<span data-text="${musicEnabled ? 'on' : 'off'}">${text}</span>`;
+}
+
+function resetStats() {
+  rollCount = 0;
+  matchCount = 0;
+  streakCount = 0;
+  document.getElementById('rollCount').textContent = '0';
+  document.getElementById('matchCount').textContent = '0';
+  document.getElementById('streakCount').textContent = '0';
+}
+
+function changeBackground() {
+  const bg = document.getElementById('bgSelect').value;
+  document.body.className = bg;
+}
+</script>
 
 </body>
 </html>
