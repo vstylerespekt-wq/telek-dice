@@ -1,114 +1,113 @@
 from pathlib import Path
 
-html = r'''<!doctype html>
+html = r'''<!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#24140d">
-<title>TELEK DICE — Meow Autumn Edition</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TELEK DICE — MEOWL Style</title>
 <style>
-:root{--ink:#fff9ec;--muted:#ffe2bd;--gold:#ffbd4a;--orange:#ff762e;--panel:rgba(49,25,17,.76);--line:rgba(255,207,126,.42)}
+:root{--bg:#100b18;--panel:#1d1424;--line:#ffffff25;--text:#fff8f0;--muted:#c9b9d2;--accent:#ff4fbd;--gold:#ffd46a}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;padding:18px 12px 35px;color:var(--ink);font-family:"Trebuchet MS",system-ui,sans-serif;display:flex;justify-content:center;overflow-x:hidden;background:linear-gradient(180deg,rgba(33,17,10,.32),rgba(26,13,8,.88)),radial-gradient(ellipse at 50% 0,#eaa64d 0,transparent 44%),linear-gradient(140deg,#703b22,#21130f 65%,#442116);background-attachment:fixed}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;background-image:radial-gradient(#ffd88a 1px,transparent 1px);background-size:25px 25px}
-.leaves{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
-.leaf{position:absolute;top:-12vh;opacity:.7;font-size:clamp(18px,3vw,35px);animation:fall linear infinite;filter:drop-shadow(0 3px 4px #160900)}
-.leaf:nth-child(1){left:4%;animation-duration:14s}.leaf:nth-child(2){left:16%;animation-duration:19s;animation-delay:-8s}.leaf:nth-child(3){left:29%;animation-duration:16s;animation-delay:-4s}.leaf:nth-child(4){left:43%;animation-duration:22s;animation-delay:-13s}.leaf:nth-child(5){left:58%;animation-duration:15s;animation-delay:-6s}.leaf:nth-child(6){left:72%;animation-duration:20s;animation-delay:-10s}.leaf:nth-child(7){left:86%;animation-duration:17s;animation-delay:-3s}.leaf:nth-child(8){left:96%;animation-duration:23s;animation-delay:-15s}
-@keyframes fall{0%{transform:translate3d(0,-10vh,0) rotate(0)}50%{transform:translate3d(45px,55vh,0) rotate(190deg)}100%{transform:translate3d(-25px,115vh,0) rotate(390deg)}}
-.wrap{position:relative;z-index:1;width:min(780px,100%);text-align:center}
-.topline{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:10px;font-weight:1000;letter-spacing:1.5px;color:#ffe1b3}
-.pill{padding:7px 10px;border:1px solid #ffd08088;background:#3c1c14aa;border-radius:99px;white-space:nowrap;color:#ffda83}
-.logo{margin:25px 0 8px;font-size:clamp(44px,11vw,78px);line-height:.91;font-weight:1000;letter-spacing:-3px;color:#ffd05b;-webkit-text-stroke:1px #57230e;text-shadow:3px 4px 0 #6e2a0c,6px 7px 0 #1c100b,0 0 28px #ff9c35aa}
-.subtitle{font-size:11px;letter-spacing:2px;font-weight:1000;color:#ffe2bd;margin:18px 0 22px}
-.panel{margin:14px 0;padding:clamp(15px,4vw,23px);border:1px solid var(--line);border-radius:24px;background:linear-gradient(145deg,rgba(85,43,25,.82),var(--panel));box-shadow:0 18px 45px #14080088,inset 0 1px #fff3;backdrop-filter:blur(9px)}
-.label{font-size:11px;font-weight:1000;letter-spacing:1.5px;color:#ffd89a}
-.row{display:flex;justify-content:center;align-items:center;gap:9px;flex-wrap:wrap;margin:13px 0}
-select{max-width:100%;background:#2b1711;color:#fff4df;border:1px solid #f3bd71;border-radius:11px;padding:10px 12px;font-weight:900}
-.palette,.results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;max-width:530px;margin:19px auto}
-.die{position:relative;aspect-ratio:1;min-width:0;border:4px solid #fff9e9;border-radius:20px;display:grid;place-items:center;cursor:pointer;box-shadow:0 7px 0 #31170e,0 10px 20px #14090077,inset 0 1px 5px #fff9;transition:transform .16s,outline .16s}
-.die:after{content:"";position:absolute;inset:5px;border:1px solid #ffffff70;border-radius:12px;pointer-events:none}
-.die:hover{transform:translateY(-3px) rotate(-1deg)}.die.selected{outline:4px solid #ffe071;outline-offset:3px;box-shadow:0 0 24px #ffd75d99,0 7px 0 #31170e}
-.pip{width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 32% 28%,white,#fff9d8 68%);box-shadow:0 0 12px #fff9}
-.primary{width:100%;max-width:470px;border:0;border-radius:17px;padding:17px;color:#281306;font-size:23px;font-weight:1000;letter-spacing:1px;cursor:pointer;background:linear-gradient(100deg,#ffd95e,#ff9b38 55%,#ff703c);box-shadow:0 6px 0 #7d3519,0 0 24px #ffb23e55;transition:transform .15s,filter .15s}
-.primary:hover{filter:brightness(1.08)}.primary:active{transform:translateY(3px);box-shadow:0 3px 0 #7d3519}.primary:disabled{opacity:.65;cursor:wait}
-.results{gap:9px}.resultdie{min-width:0;min-height:82px;border:2px solid #fff7df;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;box-shadow:0 5px 0 #31170e99,inset 0 1px #fff9;text-shadow:0 1px 5px #0008;animation:pop .25s ease}.resultdie .pip{width:13px;height:13px}.resultdie .name{font-size:12px;font-weight:1000}.resultdie small{font-size:9px}
-@keyframes pop{from{transform:scale(.72) rotate(-7deg);opacity:0}to{transform:scale(1);opacity:1}}
-.rolling{animation:shake .12s infinite alternate}@keyframes shake{from{transform:rotate(-5deg)}to{transform:rotate(5deg)}}
-.status{padding:12px;border:1px solid #ffdda333;border-radius:13px;background:#1b0e0bbd;font-size:13px;line-height:1.5}
-.btn{border:1px solid #ffdb9a66;border-radius:11px;padding:10px 13px;background:#ffffff0d;color:#fff2db;cursor:pointer;font-weight:900}.btn:hover,.btn.active{border-color:#ffd15b;color:#ffdc80;background:#ffb43d18}
-.stats{font-size:12px;color:#ffe2bd}.stats strong{font-size:16px;color:#fff}
-.admin{display:none;text-align:left}.admin.open{display:block}.admin label{display:block;margin:12px 0;font-size:13px}
-.foot{font-size:11px;color:#e5bd92;line-height:1.6;margin:18px auto;max-width:600px}
-@media(max-width:430px){.topline{font-size:8px;letter-spacing:.8px}.palette,.results{gap:7px}.die{border-radius:15px;border-width:3px}.pip{width:13px;height:13px}.panel{border-radius:19px}.resultdie{min-height:72px}}
+body{margin:0;min-height:100vh;color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(ellipse at 50% 0%,#55305b 0,#21142d 42%,#0d0913 100%);overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.25;background-image:radial-gradient(#ffd46a 1px,transparent 1px);background-size:24px 24px}
+.leaf{position:fixed;pointer-events:none;opacity:.55;font-size:26px;animation:float 12s ease-in-out infinite;z-index:0}.l1{top:13%;left:7%}.l2{top:38%;right:8%;animation-delay:-4s}.l3{bottom:12%;left:12%;animation-delay:-7s}
+.wrap{position:relative;z-index:1;width:min(760px,100%);margin:auto;padding:22px 14px 30px;text-align:center}
+.top{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:900;letter-spacing:1.5px;color:var(--muted)}
+.pill{border:1px solid #ffb5e966;color:#ffc2ec;padding:7px 10px;border-radius:20px}
+.logo{font-size:clamp(48px,11vw,78px);font-weight:1000;line-height:.88;letter-spacing:-3px;margin:30px 0 14px;color:#ffcf72;text-shadow:3px 4px 0 #58263c,0 0 25px #ff9cdb77}
+.subtitle{font-size:11px;letter-spacing:2px;color:#f5c7e9;margin-bottom:24px}
+.panel{padding:22px 15px;margin:14px 0;border:1px solid #ffb7df55;border-radius:22px;background:linear-gradient(145deg,#321c38ee,#170f20f5);box-shadow:0 16px 45px #0006}
+.label{font-size:11px;font-weight:900;letter-spacing:1.7px;color:#f2c7e4}
+.row{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0}
+select{background:#21152a;color:white;border:1px solid #ffb6df99;border-radius:10px;padding:10px;font-weight:bold}
+.dice-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;max-width:510px;margin:22px auto}
+.die{aspect-ratio:1;border:3px solid #fff1d8;border-radius:22%;display:grid;place-items:center;position:relative;box-shadow:inset 0 0 0 2px #ffffff50,inset 0 -7px 12px #0002,0 7px 0 #5c334a,0 10px 18px #0005;transition:transform .18s,filter .18s;overflow:hidden}
+.die:before{content:"";position:absolute;inset:5px;border:1px solid #ffffff9c;border-radius:18%;pointer-events:none}
+.die .pip{width:17px;height:17px;background:#fff9df;border-radius:50%;box-shadow:0 0 13px #fff8c8,0 0 25px #fff7}
+.die.rolling{animation:shake .12s infinite alternate}
+.primary{width:100%;max-width:460px;padding:17px;border:0;border-radius:15px;background:linear-gradient(100deg,#ffd76d,#ff9d58,#ff4fbd);color:#291222;font-size:21px;font-weight:1000;letter-spacing:2px;cursor:pointer;box-shadow:0 6px 0 #763455,0 12px 22px #0004}
+.primary:active{transform:translateY(3px);box-shadow:0 3px 0 #763455}
+.primary:disabled{opacity:.7;cursor:wait}
+.btn{background:#ffffff09;color:white;border:1px solid #ffffff35;border-radius:10px;padding:10px 13px;cursor:pointer;font-weight:bold}
+.btn:hover,.btn.active{border-color:#ff8fd5;color:#ffb9e7}
+.results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;max-width:520px;margin:18px auto}
+.resultdie{min-width:0;min-height:76px;border:2px solid #fff1d8;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;animation:pop .25s ease;box-shadow:0 5px 0 #0004}
+.resultdie .pip{width:12px;height:12px;background:#fff9df;border-radius:50%;box-shadow:0 0 10px #fff}
+.name{font-size:12px;font-weight:900}.small{font-size:9px;opacity:.85}
+.status{padding:13px;background:#0c0814a8;border-radius:12px;border:1px solid #ffffff18;font-size:13px;line-height:1.5}
+.stats{font-size:12px;color:var(--muted)}.stats strong{color:white;font-size:16px}
+footer{font-size:11px;color:#b4a0bd;line-height:1.6;margin:20px}
+@keyframes pop{from{transform:scale(.7) rotate(-8deg);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes shake{from{transform:rotate(-5deg) scale(.97)}to{transform:rotate(5deg) scale(1.03)}}
+@keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(24px) rotate(35deg)}}
+@media(max-width:430px){.dice-grid,.results{gap:8px}.die{border-radius:18%}.panel{padding:17px 10px}.die .pip{width:13px;height:13px}}
 </style>
 </head>
 <body>
-<div class="leaves" aria-hidden="true"><span class="leaf">🍁</span><span class="leaf">🍂</span><span class="leaf">🍃</span><span class="leaf">🍁</span><span class="leaf">🍂</span><span class="leaf">🍁</span><span class="leaf">🍃</span><span class="leaf">🍂</span></div>
+<span class="leaf l1">🍂</span><span class="leaf l2">🍁</span><span class="leaf l3">🍃</span>
 <main class="wrap">
-<div class="topline"><span>🍂 NEON DICE CLUB</span><span class="pill">● MEOW AUTUMN STYLE</span></div>
-<div class="logo">TELEK<br>DICE</div>
-<div class="subtitle">🍁 ROLL YOUR COLORS · AUTUMN VIBES 🍁</div>
-<section class="panel">
-<div class="label">НАСТРОЙ СВОЙ БРОСОК</div>
-<div class="row"><label for="count">КОЛИЧЕСТВО КУБИКОВ</label><select id="count"></select></div>
-<div class="label">ВЫБЕРИ ЦВЕТ</div><div class="palette" id="palette"></div>
-<div class="row"><span class="label">ТВОЙ ЦВЕТ:</span><strong id="choice">Красный</strong></div>
-<button class="primary" id="roll">🎲 ROLL DICE</button>
-<div class="label" style="margin-top:25px">РЕЗУЛЬТАТ БРОСКА</div>
-<div class="results" id="results"><div class="stats" style="grid-column:1/-1">Нажми ROLL DICE, чтобы бросить кубики</div></div>
-<div class="status" id="status">🍁 Система готова к броску.</div>
-<div class="row"><button class="btn" id="reset">↻ Сбросить счёт</button><button class="btn" id="adminToggle">⚙ Админ-панель</button></div>
-<div class="row stats"><span>ПОПАДАНИЯ: <strong id="score">0</strong></span><span>·</span><span>СЕРИЯ: <strong id="streak">0</strong></span></div>
-</section>
-<section class="panel">
-<div class="label">🎵 МУЗЫКА И ПРИЯТНЫЕ ЗВУКИ</div>
-<div class="row"><button class="btn active" id="soundToggle">🔊 Звуки: ВКЛ</button><button class="btn" id="musicToggle">♫ Музыка: ВЫКЛ</button></div>
-<div class="row"><label for="musicStyle">МУЗЫКАЛЬНЫЙ СТИЛЬ</label><select id="musicStyle"><option value="meow">🐱 Meow style</option><option value="autumn">🍂 Autumn chill</option><option value="neon">💜 Neon synth</option><option value="arcade">🕹 Arcade</option></select></div>
-<div class="stats" id="musicInfo">Выбери стиль и нажми «Музыка». Звук включается после нажатия, как требуют браузеры.</div>
-</section>
-<section class="panel admin" id="admin"><h3>⚙ Админ-панель · тестирование</h3><p class="stats">Тестовые результаты помечаются отдельно и не являются случайным броском.</p><label><input type="checkbox" id="testMode"> Включить тестовый результат для всех кубиков</label><label for="forced">Тестовый цвет</label><select id="forced"></select></section>
-<div class="foot">TELEK DICE · Meow-inspired autumn edition. Обычные броски случайные. Счётчик показывает результаты этой вкладки, а не игроков со всего мира.</div>
+  <div class="top"><span>🐾 NEON DICE CLUB</span><span class="pill">● MEOWL STYLE</span></div>
+  <div class="logo">TELEK<br>DICE</div>
+  <div class="subtitle">🐾 ROLL YOUR COLORS · MEOW VIBES 🐾</div>
+  <section class="panel">
+    <div class="label">НАСТРОЙ СВОЙ БРОСОК</div>
+    <div class="row"><label for="count">КОЛИЧЕСТВО КУБИКОВ</label><select id="count"></select></div>
+    <div class="dice-grid" id="diceGrid" aria-label="Кубики"></div>
+    <button class="primary" id="roll">🎲 ROLL DICE</button>
+    <div class="label" style="margin-top:26px">РЕЗУЛЬТАТ БРОСКА</div>
+    <div class="results" id="results"><div class="stats" style="grid-column:1/-1">Нажми ROLL DICE!</div></div>
+    <div class="status" id="status">Система готова к броску.</div>
+    <div class="row"><button class="btn" id="reset">↻ Сбросить счёт</button></div>
+    <div class="row stats">БРОСКИ: <strong id="rolls">0</strong> · СОВПАДЕНИЯ: <strong id="score">0</strong> · СЕРИЯ: <strong id="streak">0</strong></div>
+  </section>
+  <section class="panel">
+    <div class="label">🔊 ЗВУКИ И МУЗЫКА</div>
+    <div class="row"><button class="btn active" id="soundToggle">🔊 Звуки: ВКЛ</button><button class="btn" id="musicToggle">♫ Музыка: ВЫКЛ</button></div>
+    <div class="row"><label for="musicStyle">МУЗЫКАЛЬНЫЙ СТИЛЬ</label><select id="musicStyle"><option value="meow">🐱 MEOW melody</option><option value="chill">🌙 Chill neon</option><option value="arcade">🕹️ Arcade</option><option value="autumn">🍂 Autumn vibes</option></select></div>
+    <div class="stats" id="musicInfo">Выбери стиль и включи музыку. Звук запускается после нажатия кнопки.</div>
+  </section>
+  <footer>TELEK DICE · MEOWL-inspired style · Счёт хранится в этой вкладке и не является глобальным онлайном.</footer>
 </main>
 <script>
 const colors=[
-{name:'Красный',hex:'#e94339'},{name:'Оранжевый',hex:'#ff852e'},
-{name:'Жёлтый',hex:'#f5d642'},{name:'Зелёный',hex:'#1dbb55'},
-{name:'Синий',hex:'#3478ff'},{name:'Фиолетовый',hex:'#963cf2'},
-{name:'Розовый',hex:'#ff4fc8'},{name:'Чёрный',hex:'#34323d'}
+ {name:'Красный',hex:'#ed403c'},{name:'Оранжевый',hex:'#ff852e'},
+ {name:'Жёлтый',hex:'#f3d743'},{name:'Зелёный',hex:'#21c968'},
+ {name:'Синий',hex:'#3479f6'},{name:'Фиолетовый',hex:'#9b42e9'},
+ {name:'Розовый',hex:'#ef42b5'},{name:'Чёрный',hex:'#393541'}
 ];
-let selected=0,score=0,streak=0,busy=false,soundOn=true,musicOn=false,audio=null,musicTimer=null,musicStep=0;
-const $=id=>document.getElementById(id),palette=$('palette'),count=$('count'),forced=$('forced'),results=$('results');
-for(let n=1;n<=8;n++){const o=document.createElement('option');o.value=n;o.textContent=n+(n===1?' кубик':' кубика');count.appendChild(o)}
-colors.forEach((c,i)=>{const d=document.createElement('button');d.className='die';d.style.background=`linear-gradient(145deg,${c.hex},${c.hex}bd)`;d.title=c.name;d.setAttribute('aria-label',c.name);d.innerHTML='<span class="pip"></span>';d.onclick=()=>{choose(i);clickSound()};palette.appendChild(d);const o=document.createElement('option');o.value=i;o.textContent=c.name;forced.appendChild(o)});
-function initAudio(){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;if(!audio)audio=new AC();if(audio.state==='suspended')audio.resume();return audio}
-function tone(freq,duration=.09,type='sine',volume=.025,delay=0){const ctx=initAudio();if(!ctx)return;const osc=ctx.createOscillator(),gain=ctx.createGain(),t=ctx.currentTime+delay;osc.type=type;osc.frequency.setValueAtTime(freq,t);gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(volume,t+.012);gain.gain.exponentialRampToValueAtTime(.0001,t+duration);osc.connect(gain);gain.connect(ctx.destination);osc.start(t);osc.stop(t+duration+.02)}
-function clickSound(){if(soundOn){tone(740,.055,'sine',.022);tone(980,.045,'sine',.012,.035)}}
-function rollSound(){if(!soundOn)return;tone(170,.15,'triangle',.035);tone(260,.15,'triangle',.027,.09);tone(390,.18,'triangle',.022,.18)}
-function winSound(){if(!soundOn)return;[523,659,784,1046].forEach((f,i)=>tone(f,.15,'sine',.03,i*.075))}
-function loseSound(){if(!soundOn)return;tone(330,.12,'triangle',.02);tone(247,.17,'triangle',.02,.1)}
-function choose(i){selected=i;[...palette.children].forEach((d,j)=>d.classList.toggle('selected',i===j));$('choice').textContent=colors[i].name}
-function render(nums,test){results.innerHTML='';nums.forEach((n,i)=>{const c=colors[n],el=document.createElement('div');el.className='resultdie';el.style.background=`linear-gradient(145deg,${c.hex},${c.hex}bd)`;el.innerHTML=`<span class="pip"></span><span class="name">${c.name}</span><small>КУБИК ${i+1}${test?' · ТЕСТ':''}</small>`;results.appendChild(el)})}
-function roll(){if(busy)return;initAudio();clickSound();rollSound();busy=true;$('roll').disabled=true;$('roll').textContent='⏳ ROLLING...';const n=Number(count.value),test=$('testMode').checked,fc=Number(forced.value);results.innerHTML='';for(let i=0;i<n;i++){const el=document.createElement('div');el.className='resultdie rolling';el.style.background='linear-gradient(145deg,#593722,#29170f)';el.innerHTML='<span class="pip"></span><span>...</span>';results.appendChild(el)}setTimeout(()=>{const nums=Array.from({length:n},()=>test?fc:Math.floor(Math.random()*colors.length));render(nums,test);const hits=nums.filter(x=>x===selected).length;if(hits){score+=hits;streak++;winSound()}else{streak=0;loseSound()}$('score').textContent=score;$('streak').textContent=streak;$('status').textContent=(test?'ТЕСТОВЫЙ РЕЗУЛЬТАТ · ':'ВЫПАЛО · ')+nums.map(x=>colors[x].name).join(' / ')+' · Совпадений: '+hits;$('roll').disabled=false;$('roll').textContent='🎲 ROLL DICE';busy=false},750)}
-$('roll').onclick=roll;
-$('reset').onclick=()=>{clickSound();score=0;streak=0;$('score').textContent='0';$('streak').textContent='0';results.innerHTML='<div class="stats" style="grid-column:1/-1">Нажми ROLL DICE, чтобы бросить кубики</div>';$('status').textContent='Счёт сброшен.'};
-$('adminToggle').onclick=()=>{clickSound();$('admin').classList.toggle('open')};
-$('soundToggle').onclick=()=>{soundOn=!soundOn;$('soundToggle').textContent=soundOn?'🔊 Звуки: ВКЛ':'🔇 Звуки: ВЫКЛ';$('soundToggle').classList.toggle('active',soundOn);if(soundOn){initAudio();clickSound()}};
-const melodies={
-meow:[659.25,783.99,987.77,783.99,659.25,523.25,587.33,783.99],
-autumn:[392,440,523.25,440,349.23,392,293.66,329.63],
-neon:[261.63,329.63,392,523.25,392,329.63,293.66,349.23],
-arcade:[523.25,659.25,783.99,1046.5,783.99,659.25,523.25,392]
+const $=id=>document.getElementById(id);
+let rolls=0,score=0,streak=0,busy=false,soundOn=true,musicOn=false,audio=null,musicTimer=null,musicStep=0;
+for(let n=1;n<=8;n++){let o=document.createElement('option');o.value=n;o.textContent=n+(n===1?' кубик':' кубика');$('count').append(o)}
+function ctx(){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;if(!audio)audio=new AC();if(audio.state==='suspended')audio.resume();return audio}
+function tone(freq,duration=.12,type='sine',volume=.025,delay=0){const c=ctx();if(!c)return;let o=c.createOscillator(),g=c.createGain(),t=c.currentTime+delay;o.type=type;o.frequency.setValueAtTime(freq,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(volume,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+duration);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+duration+.03)}
+function clickSound(){if(soundOn){tone(720,.055,'sine',.025);tone(960,.045,'sine',.012,.025)}}
+function meow(){if(!soundOn)return;tone(520,.10,'triangle',.025);tone(760,.14,'sine',.022,.09);tone(610,.16,'triangle',.02,.20)}
+function rollSound(){if(soundOn){tone(180,.15,'triangle',.03);tone(280,.15,'triangle',.025,.09);tone(390,.18,'triangle',.02,.18)}}
+function winSound(){if(soundOn)[523,659,784,1046].forEach((f,i)=>tone(f,.15,'sine',.028,i*.07))}
+function makeDie(c,small=false){let d=document.createElement('div');d.className=small?'resultdie':'die';d.style.background=`linear-gradient(145deg,${c.hex},${c.hex}dd)`;if(small)d.innerHTML='<span class="pip"></span><span class="name">'+c.name+'</span>';else d.innerHTML='<span class="pip"></span>';return d}
+function drawIdle(){let grid=$('diceGrid');grid.innerHTML='';for(let i=0;i<Number($('count').value);i++){let d=makeDie(colors[i%colors.length]);grid.append(d)}}
+function render(nums){let r=$('results');r.innerHTML='';nums.forEach((n,i)=>{let d=makeDie(colors[n],true);let small=document.createElement('span');small.className='small';small.textContent='КУБИК '+(i+1);d.append(small);r.append(d)})}
+$('count').onchange=()=>{clickSound();drawIdle()};
+$('roll').onclick=()=>{
+ if(busy)return;ctx();clickSound();rollSound();busy=true;$('roll').disabled=true;$('roll').textContent='⏳ ROLLING...';
+ const grid=$('diceGrid'),n=Number($('count').value);grid.innerHTML='';
+ for(let i=0;i<n;i++){let d=makeDie(colors[Math.floor(Math.random()*colors.length)]);d.classList.add('rolling');grid.append(d)}
+ setTimeout(()=>{const nums=Array.from({length:n},()=>Math.floor(Math.random()*colors.length));grid.innerHTML='';nums.forEach(x=>grid.append(makeDie(colors[x])));render(nums);rolls++;const hits=nums.length;score+=hits;streak++;$('rolls').textContent=rolls;$('score').textContent=score;$('streak').textContent=streak;$('status').textContent='Выпало: '+nums.map(x=>colors[x].name).join(' · ')+'. Бросок завершён!';if(nums.some(x=>x===6))meow();else winSound();$('roll').disabled=false;$('roll').textContent='🎲 ROLL DICE';busy=false},700)
 };
-function musicTick(){if(!musicOn)return;const style=$('musicStyle').value,mel=melodies[style],i=musicStep%mel.length;const wave=style==='neon'?'sawtooth':style==='arcade'?'square':'sine';tone(mel[i],style==='autumn'?.34:.22,wave,style==='arcade'?.012:.017);if(style==='meow'&&i%2===0)tone(mel[i]*2,.09,'sine',.008,.04);if(style==='neon')tone(mel[i]/2,.3,'triangle',.008);musicStep++}
+$('reset').onclick=()=>{clickSound();rolls=score=streak=0;$('rolls').textContent='0';$('score').textContent='0';$('streak').textContent='0';$('results').innerHTML='<div class="stats" style="grid-column:1/-1">Нажми ROLL DICE!</div>';$('status').textContent='Счёт сброшен.';drawIdle()};
+$('soundToggle').onclick=()=>{soundOn=!soundOn;$('soundToggle').textContent=soundOn?'🔊 Звуки: ВКЛ':'🔇 Звуки: ВЫКЛ';$('soundToggle').classList.toggle('active',soundOn);if(soundOn){ctx();clickSound()}};
+const tunes={meow:[523,659,784,659,587,698,880,698],chill:[261,329,392,329,293,349,440,349],arcade:[440,554,659,880,659,554,784,988],autumn:[392,440,523,587,523,440,349,392]};
+function musicTick(){if(!musicOn)return;let a=tunes[$('musicStyle').value]||tunes.meow,i=musicStep%a.length;tone(a[i],.22,'sine',.018);tone(a[i]/2,.27,'triangle',.011,.02);if($('musicStyle').value==='meow'&&musicStep%4===0&&soundOn)tone(780,.08,'triangle',.008,.12);musicStep++}
 function stopMusic(){musicOn=false;clearInterval(musicTimer);musicTimer=null;$('musicToggle').textContent='♫ Музыка: ВЫКЛ';$('musicToggle').classList.remove('active');$('musicInfo').textContent='Музыка выключена.'}
-function startMusic(){if(!initAudio()){$('musicInfo').textContent='Этот браузер не поддерживает встроенную музыку.';return}musicOn=true;musicStep=0;musicTick();musicTimer=setInterval(musicTick,$('musicStyle').value==='autumn'?390:270);$('musicToggle').textContent='♫ Музыка: ВКЛ';$('musicToggle').classList.add('active');$('musicInfo').textContent='Играет стиль: '+$('musicStyle').selectedOptions[0].textContent}
+function startMusic(){if(!ctx()){$('musicInfo').textContent='Браузер не поддерживает встроенную музыку.';return}musicOn=true;musicStep=0;musicTick();musicTimer=setInterval(musicTick,300);$('musicToggle').textContent='♫ Музыка: ВКЛ';$('musicToggle').classList.add('active');$('musicInfo').textContent='Играет стиль: '+$('musicStyle').selectedOptions[0].textContent}
 $('musicToggle').onclick=()=>{clickSound();musicOn?stopMusic():startMusic()};
-$('musicStyle').onchange=()=>{clickSound();if(musicOn){clearInterval(musicTimer);musicStep=0;musicTick();musicTimer=setInterval(musicTick,$('musicStyle').value==='autumn'?390:270);$('musicInfo').textContent='Играет стиль: '+$('musicStyle').selectedOptions[0].textContent}};
-choose(0);
+$('musicStyle').onchange=()=>{clickSound();if(musicOn){stopMusic();startMusic()}else $('musicInfo').textContent='Выбран стиль: '+$('musicStyle').selectedOptions[0].textContent};
+drawIdle();
 </script>
 </body>
-</html>'''
-out=Path('/mnt/data/telek_dice_meow_autumn.html')
-out.write_text(html, encoding='utf-8')
-print(f"Created {out} ({len(html)} characters)")
+</html>
+'''
+out = Path("/mnt/data/telek_dice_meowl_classic.html")
+out.write_text(html, encoding="utf-8")
+print(f"Готово: {out.name} ({len(html)} символов)")
