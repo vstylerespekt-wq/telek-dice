@@ -1,101 +1,113 @@
 from pathlib import Path
-p = Path("/mnt/data/telek_dice_meowl_classic.html")
-html = p.read_text(encoding="utf-8")
 
-# Add background selector and Fast Roll toggle without replacing existing layout or dice logic.
-html = html.replace(
-'''  <section class="panel">
-    <div class="label">🔊 ЗВУКИ И МУЗЫКА</div>''',
-'''  <section class="panel">
-    <div class="label">⚡ РЕЖИМ БРОСКА</div>
-    <div class="row"><button class="btn" id="fastRollToggle">⚡ Fast Roll: ВЫКЛ</button></div>
-    <div class="stats">Fast Roll показывает результат сразу, без анимации.</div>
+html = r'''<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TELEK DICE — MEOWL Style</title>
+<style>
+:root{--bg:#100b18;--panel:#1d1424;--line:#ffffff25;--text:#fff8f0;--muted:#c9b9d2;--accent:#ff4fbd;--gold:#ffd46a}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(ellipse at 50% 0%,#55305b 0,#21142d 42%,#0d0913 100%);overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.25;background-image:radial-gradient(#ffd46a 1px,transparent 1px);background-size:24px 24px}
+.leaf{position:fixed;pointer-events:none;opacity:.55;font-size:26px;animation:float 12s ease-in-out infinite;z-index:0}.l1{top:13%;left:7%}.l2{top:38%;right:8%;animation-delay:-4s}.l3{bottom:12%;left:12%;animation-delay:-7s}
+.wrap{position:relative;z-index:1;width:min(760px,100%);margin:auto;padding:22px 14px 30px;text-align:center}
+.top{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:900;letter-spacing:1.5px;color:var(--muted)}
+.pill{border:1px solid #ffb5e966;color:#ffc2ec;padding:7px 10px;border-radius:20px}
+.logo{font-size:clamp(48px,11vw,78px);font-weight:1000;line-height:.88;letter-spacing:-3px;margin:30px 0 14px;color:#ffcf72;text-shadow:3px 4px 0 #58263c,0 0 25px #ff9cdb77}
+.subtitle{font-size:11px;letter-spacing:2px;color:#f5c7e9;margin-bottom:24px}
+.panel{padding:22px 15px;margin:14px 0;border:1px solid #ffb7df55;border-radius:22px;background:linear-gradient(145deg,#321c38ee,#170f20f5);box-shadow:0 16px 45px #0006}
+.label{font-size:11px;font-weight:900;letter-spacing:1.7px;color:#f2c7e4}
+.row{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0}
+select{background:#21152a;color:white;border:1px solid #ffb6df99;border-radius:10px;padding:10px;font-weight:bold}
+.dice-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;max-width:510px;margin:22px auto}
+.die{aspect-ratio:1;border:3px solid #fff1d8;border-radius:22%;display:grid;place-items:center;position:relative;box-shadow:inset 0 0 0 2px #ffffff50,inset 0 -7px 12px #0002,0 7px 0 #5c334a,0 10px 18px #0005;transition:transform .18s,filter .18s;overflow:hidden}
+.die:before{content:"";position:absolute;inset:5px;border:1px solid #ffffff9c;border-radius:18%;pointer-events:none}
+.die .pip{width:17px;height:17px;background:#fff9df;border-radius:50%;box-shadow:0 0 13px #fff8c8,0 0 25px #fff7}
+.die.rolling{animation:shake .12s infinite alternate}
+.primary{width:100%;max-width:460px;padding:17px;border:0;border-radius:15px;background:linear-gradient(100deg,#ffd76d,#ff9d58,#ff4fbd);color:#291222;font-size:21px;font-weight:1000;letter-spacing:2px;cursor:pointer;box-shadow:0 6px 0 #763455,0 12px 22px #0004}
+.primary:active{transform:translateY(3px);box-shadow:0 3px 0 #763455}
+.primary:disabled{opacity:.7;cursor:wait}
+.btn{background:#ffffff09;color:white;border:1px solid #ffffff35;border-radius:10px;padding:10px 13px;cursor:pointer;font-weight:bold}
+.btn:hover,.btn.active{border-color:#ff8fd5;color:#ffb9e7}
+.results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;max-width:520px;margin:18px auto}
+.resultdie{min-width:0;min-height:76px;border:2px solid #fff1d8;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;animation:pop .25s ease;box-shadow:0 5px 0 #0004}
+.resultdie .pip{width:12px;height:12px;background:#fff9df;border-radius:50%;box-shadow:0 0 10px #fff}
+.name{font-size:12px;font-weight:900}.small{font-size:9px;opacity:.85}
+.status{padding:13px;background:#0c0814a8;border-radius:12px;border:1px solid #ffffff18;font-size:13px;line-height:1.5}
+.stats{font-size:12px;color:var(--muted)}.stats strong{color:white;font-size:16px}
+footer{font-size:11px;color:#b4a0bd;line-height:1.6;margin:20px}
+@keyframes pop{from{transform:scale(.7) rotate(-8deg);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes shake{from{transform:rotate(-5deg) scale(.97)}to{transform:rotate(5deg) scale(1.03)}}
+@keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(24px) rotate(35deg)}}
+@media(max-width:430px){.dice-grid,.results{gap:8px}.die{border-radius:18%}.panel{padding:17px 10px}.die .pip{width:13px;height:13px}}
+</style>
+</head>
+<body>
+<span class="leaf l1">🍂</span><span class="leaf l2">🍁</span><span class="leaf l3">🍃</span>
+<main class="wrap">
+  <div class="top"><span>🐾 NEON DICE CLUB</span><span class="pill">● MEOWL STYLE</span></div>
+  <div class="logo">TELEK<br>DICE</div>
+  <div class="subtitle">🐾 ROLL YOUR COLORS · MEOW VIBES 🐾</div>
+  <section class="panel">
+    <div class="label">НАСТРОЙ СВОЙ БРОСОК</div>
+    <div class="row"><label for="count">КОЛИЧЕСТВО КУБИКОВ</label><select id="count"></select></div>
+    <div class="dice-grid" id="diceGrid" aria-label="Кубики"></div>
+    <button class="primary" id="roll">🎲 ROLL DICE</button>
+    <div class="label" style="margin-top:26px">РЕЗУЛЬТАТ БРОСКА</div>
+    <div class="results" id="results"><div class="stats" style="grid-column:1/-1">Нажми ROLL DICE!</div></div>
+    <div class="status" id="status">Система готова к броску.</div>
+    <div class="row"><button class="btn" id="reset">↻ Сбросить счёт</button></div>
+    <div class="row stats">БРОСКИ: <strong id="rolls">0</strong> · СОВПАДЕНИЯ: <strong id="score">0</strong> · СЕРИЯ: <strong id="streak">0</strong></div>
   </section>
   <section class="panel">
-    <div class="label">🎨 ФОН И ОФОРМЛЕНИЕ</div>
-    <div class="row"><label for="bgStyle">ФОН</label><select id="bgStyle">
-      <option value="meowl">🐾 MEOWL — розовый</option>
-      <option value="purple">💜 Фиолетовый неон</option>
-      <option value="blue">🌌 Синий космос</option>
-      <option value="dark">🌑 Тёмный</option>
-      <option value="sunset">🌇 Закат</option>
-    </select></div>
+    <div class="label">🔊 ЗВУКИ И МУЗЫКА</div>
+    <div class="row"><button class="btn active" id="soundToggle">🔊 Звуки: ВКЛ</button><button class="btn" id="musicToggle">♫ Музыка: ВЫКЛ</button></div>
+    <div class="row"><label for="musicStyle">МУЗЫКАЛЬНЫЙ СТИЛЬ</label><select id="musicStyle"><option value="meow">🐱 MEOW melody</option><option value="chill">🌙 Chill neon</option><option value="arcade">🕹️ Arcade</option><option value="autumn">🍂 Autumn vibes</option></select></div>
+    <div class="stats" id="musicInfo">Выбери стиль и включи музыку. Звук запускается после нажатия кнопки.</div>
   </section>
-  <section class="panel">
-    <div class="label">🔊 ЗВУКИ И МУЗЫКА</div>''', 1)
-
-# Add a compact Trade Machine panel; it does not touch the existing dice/result code.
-html = html.replace(
-'''  <footer>TELEK DICE · MEOWL-inspired style · Счёт хранится в этой вкладке и не является глобальным онлайном.</footer>''',
-'''  <section class="panel" id="tradeMachine">
-    <div class="label">🤝 TRADE MACHINE</div>
-    <div class="row">
-      <button class="btn trade-btn" data-trade="ADD MORE">➕ ADD MORE</button>
-      <button class="btn trade-btn" data-trade="DEAL?">💜 DEAL?</button>
-      <button class="btn trade-btn" data-trade="L TRADE">🔴 L TRADE</button>
-      <button class="btn trade-btn" data-trade="FAIR TRADE">🟢 FAIR TRADE</button>
-      <button class="btn trade-btn" data-trade="SIGN">🟡 SIGN</button>
-      <button class="btn trade-btn" data-trade="NO THANKS">⚪ NO THANKS</button>
-    </div>
-    <div class="status" id="tradeStatus">Выбери вариант трейда.</div>
-  </section>
-  <footer>TELEK DICE · MEOWL-inspired style · Счёт хранится в этой вкладке и не является глобальным онлайном.</footer>''', 1)
-
-# Add background themes and trade styling.
-html = html.replace(
-'''@media(max-width:430px){.dice-grid,.results{gap:8px}.die{border-radius:18%}.panel{padding:17px 10px}.die .pip{width:13px;height:13px}}''',
-'''#tradeMachine .trade-btn{flex:1 1 30%;min-width:105px}
-body.bg-purple{background:radial-gradient(ellipse at 15% 10%,#9c00ff 0,transparent 30%),radial-gradient(ellipse at 85% 45%,#ec00ff 0,transparent 32%),linear-gradient(135deg,#080014,#21002f 55%,#080014)}
-body.bg-blue{background:radial-gradient(ellipse at 50% 0%,#174fbd 0,transparent 40%),linear-gradient(145deg,#02091b,#071c3a,#09051b)}
-body.bg-dark{background:linear-gradient(145deg,#050505,#17131b,#050505)}
-body.bg-sunset{background:radial-gradient(ellipse at 50% 0%,#ff9c5b 0,transparent 40%),linear-gradient(145deg,#36143e,#7a285c,#17102b)}
-@media(max-width:430px){.dice-grid,.results{gap:8px}.die{border-radius:18%}.panel{padding:17px 10px}.die .pip{width:13px;height:13px}}''', 1)
-
-# Fast Roll uses the same result logic, merely skips the visual roll timeout/animation.
-html = html.replace(
-'''let rolls=0,score=0,streak=0,busy=false,soundOn=true,musicOn=false,audio=null,musicTimer=null,musicStep=0;''',
-'''let rolls=0,score=0,streak=0,busy=false,soundOn=true,musicOn=false,audio=null,musicTimer=null,musicStep=0,fastRoll=false;''', 1)
-
-old = '''$('roll').onclick=()=>{
+  <footer>TELEK DICE · MEOWL-inspired style · Счёт хранится в этой вкладке и не является глобальным онлайном.</footer>
+</main>
+<script>
+const colors=[
+ {name:'Красный',hex:'#ed403c'},{name:'Оранжевый',hex:'#ff852e'},
+ {name:'Жёлтый',hex:'#f3d743'},{name:'Зелёный',hex:'#21c968'},
+ {name:'Синий',hex:'#3479f6'},{name:'Фиолетовый',hex:'#9b42e9'},
+ {name:'Розовый',hex:'#ef42b5'},{name:'Чёрный',hex:'#393541'}
+];
+const $=id=>document.getElementById(id);
+let rolls=0,score=0,streak=0,busy=false,soundOn=true,musicOn=false,audio=null,musicTimer=null,musicStep=0;
+for(let n=1;n<=8;n++){let o=document.createElement('option');o.value=n;o.textContent=n+(n===1?' кубик':' кубика');$('count').append(o)}
+function ctx(){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;if(!audio)audio=new AC();if(audio.state==='suspended')audio.resume();return audio}
+function tone(freq,duration=.12,type='sine',volume=.025,delay=0){const c=ctx();if(!c)return;let o=c.createOscillator(),g=c.createGain(),t=c.currentTime+delay;o.type=type;o.frequency.setValueAtTime(freq,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(volume,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+duration);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+duration+.03)}
+function clickSound(){if(soundOn){tone(720,.055,'sine',.025);tone(960,.045,'sine',.012,.025)}}
+function meow(){if(!soundOn)return;tone(520,.10,'triangle',.025);tone(760,.14,'sine',.022,.09);tone(610,.16,'triangle',.02,.20)}
+function rollSound(){if(soundOn){tone(180,.15,'triangle',.03);tone(280,.15,'triangle',.025,.09);tone(390,.18,'triangle',.02,.18)}}
+function winSound(){if(soundOn)[523,659,784,1046].forEach((f,i)=>tone(f,.15,'sine',.028,i*.07))}
+function makeDie(c,small=false){let d=document.createElement('div');d.className=small?'resultdie':'die';d.style.background=`linear-gradient(145deg,${c.hex},${c.hex}dd)`;if(small)d.innerHTML='<span class="pip"></span><span class="name">'+c.name+'</span>';else d.innerHTML='<span class="pip"></span>';return d}
+function drawIdle(){let grid=$('diceGrid');grid.innerHTML='';for(let i=0;i<Number($('count').value);i++){let d=makeDie(colors[i%colors.length]);grid.append(d)}}
+function render(nums){let r=$('results');r.innerHTML='';nums.forEach((n,i)=>{let d=makeDie(colors[n],true);let small=document.createElement('span');small.className='small';small.textContent='КУБИК '+(i+1);d.append(small);r.append(d)})}
+$('count').onchange=()=>{clickSound();drawIdle()};
+$('roll').onclick=()=>{
  if(busy)return;ctx();clickSound();rollSound();busy=true;$('roll').disabled=true;$('roll').textContent='⏳ ROLLING...';
  const grid=$('diceGrid'),n=Number($('count').value);grid.innerHTML='';
  for(let i=0;i<n;i++){let d=makeDie(colors[Math.floor(Math.random()*colors.length)]);d.classList.add('rolling');grid.append(d)}
  setTimeout(()=>{const nums=Array.from({length:n},()=>Math.floor(Math.random()*colors.length));grid.innerHTML='';nums.forEach(x=>grid.append(makeDie(colors[x])));render(nums);rolls++;const hits=nums.length;score+=hits;streak++;$('rolls').textContent=rolls;$('score').textContent=score;$('streak').textContent=streak;$('status').textContent='Выпало: '+nums.map(x=>colors[x].name).join(' · ')+'. Бросок завершён!';if(nums.some(x=>x===6))meow();else winSound();$('roll').disabled=false;$('roll').textContent='🎲 ROLL DICE';busy=false},700)
-};'''
-new = '''function finishRoll(nums){
- const grid=$('diceGrid');grid.innerHTML='';nums.forEach(x=>grid.append(makeDie(colors[x])));
- render(nums);rolls++;const hits=nums.length;score+=hits;streak++;
- $('rolls').textContent=rolls;$('score').textContent=score;$('streak').textContent=streak;
- $('status').textContent='Выпало: '+nums.map(x=>colors[x].name).join(' · ')+'. Бросок завершён!';
- if(nums.some(x=>x===6))meow();else winSound();
- $('roll').disabled=false;$('roll').textContent='🎲 ROLL DICE';busy=false;
-}
-$('roll').onclick=()=>{
- if(busy)return;ctx();clickSound();busy=true;$('roll').disabled=true;
- const grid=$('diceGrid'),n=Number($('count').value);
- const nums=Array.from({length:n},()=>Math.floor(Math.random()*colors.length));
- if(fastRoll){
-   finishRoll(nums);
- }else{
-   rollSound();$('roll').textContent='⏳ ROLLING...';grid.innerHTML='';
-   for(let i=0;i<n;i++){let d=makeDie(colors[Math.floor(Math.random()*colors.length)]);d.classList.add('rolling');grid.append(d)}
-   setTimeout(()=>finishRoll(nums),700);
- }
-};'''
-if old not in html:
-    raise ValueError("Не нашёл исходный обработчик броска — файл не изменён.")
-html = html.replace(old, new, 1)
-
-# Insert handlers before initial draw.
-html = html.replace(
-'''drawIdle();
-</script>''',
-'''$('fastRollToggle').onclick=()=>{fastRoll=!fastRoll;$('fastRollToggle').textContent=fastRoll?'⚡ Fast Roll: ВКЛ':'⚡ Fast Roll: ВЫКЛ';$('fastRollToggle').classList.toggle('active',fastRoll);clickSound()};
-$('bgStyle').onchange=()=>{document.body.classList.remove('bg-purple','bg-blue','bg-dark','bg-sunset');const v=$('bgStyle').value;if(v!=='meowl')document.body.classList.add('bg-'+v);clickSound()};
-document.querySelectorAll('[data-trade]').forEach(b=>b.onclick=()=>{clickSound();document.querySelectorAll('[data-trade]').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('tradeStatus').textContent='Выбрано: '+b.dataset.trade+'. Это локальный выбор, настоящий обмен не выполняется.'});
+};
+$('reset').onclick=()=>{clickSound();rolls=score=streak=0;$('rolls').textContent='0';$('score').textContent='0';$('streak').textContent='0';$('results').innerHTML='<div class="stats" style="grid-column:1/-1">Нажми ROLL DICE!</div>';$('status').textContent='Счёт сброшен.';drawIdle()};
+$('soundToggle').onclick=()=>{soundOn=!soundOn;$('soundToggle').textContent=soundOn?'🔊 Звуки: ВКЛ':'🔇 Звуки: ВЫКЛ';$('soundToggle').classList.toggle('active',soundOn);if(soundOn){ctx();clickSound()}};
+const tunes={meow:[523,659,784,659,587,698,880,698],chill:[261,329,392,329,293,349,440,349],arcade:[440,554,659,880,659,554,784,988],autumn:[392,440,523,587,523,440,349,392]};
+function musicTick(){if(!musicOn)return;let a=tunes[$('musicStyle').value]||tunes.meow,i=musicStep%a.length;tone(a[i],.22,'sine',.018);tone(a[i]/2,.27,'triangle',.011,.02);if($('musicStyle').value==='meow'&&musicStep%4===0&&soundOn)tone(780,.08,'triangle',.008,.12);musicStep++}
+function stopMusic(){musicOn=false;clearInterval(musicTimer);musicTimer=null;$('musicToggle').textContent='♫ Музыка: ВЫКЛ';$('musicToggle').classList.remove('active');$('musicInfo').textContent='Музыка выключена.'}
+function startMusic(){if(!ctx()){$('musicInfo').textContent='Браузер не поддерживает встроенную музыку.';return}musicOn=true;musicStep=0;musicTick();musicTimer=setInterval(musicTick,300);$('musicToggle').textContent='♫ Музыка: ВКЛ';$('musicToggle').classList.add('active');$('musicInfo').textContent='Играет стиль: '+$('musicStyle').selectedOptions[0].textContent}
+$('musicToggle').onclick=()=>{clickSound();musicOn?stopMusic():startMusic()};
+$('musicStyle').onchange=()=>{clickSound();if(musicOn){stopMusic();startMusic()}else $('musicInfo').textContent='Выбран стиль: '+$('musicStyle').selectedOptions[0].textContent};
 drawIdle();
-</script>''', 1)
-
-out = Path("/mnt/data/telek_dice_meowl_fastroll_trade.html")
+</script>
+</body>
+</html>
+'''
+out = Path("/mnt/data/telek_dice_meowl_classic.html")
 out.write_text(html, encoding="utf-8")
-print(f"Готовый файл создан: {out.name}. Добавлены Fast Roll, выбор фона и Trade Machine; существующие броски, счёт, звуки и музыка сохранены.")
+print(f"Готово: {out.name} ({len(html)} символов)")
