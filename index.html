@@ -1,102 +1,120 @@
 from pathlib import Path
-from pypandoc import convert_text
 
 html = r'''<!doctype html>
 <html lang="ru">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#090b18">
-<title>TELEK DICE — Neon Edition</title>
+<meta name="theme-color" content="#f8a94e">
+<title>TELEK DICE — Color Roll</title>
 <style>
-:root{--bg:#080a16;--panel:rgba(17,22,43,.82);--line:rgba(139,119,255,.28);--cyan:#3df5ff;--pink:#ff43c6;--violet:#8b5cff;--text:#f5f7ff;--muted:#a9b0d0}
+:root{--ink:#fff;--panel:rgba(28,27,43,.43);--stroke:rgba(255,255,255,.48);--accent:#2580ff;--shadow:0 12px 34px #20102a40}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;padding:22px 13px 34px;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(ellipse at 12% 5%,#37206c 0,transparent 33%),radial-gradient(ellipse at 90% 30%,#073c58 0,transparent 35%),radial-gradient(ellipse at 50% 100%,#2d1047 0,transparent 42%),var(--bg);display:flex;justify-content:center;overflow-x:hidden}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.16;background-image:linear-gradient(rgba(117,126,255,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(117,126,255,.12) 1px,transparent 1px);background-size:34px 34px;mask-image:linear-gradient(to bottom,black,transparent 90%)}
-.wrap{position:relative;width:min(780px,100%);text-align:center}
-.topline{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:2px 0 22px;color:var(--muted);font-size:11px;font-weight:900;letter-spacing:2px}
-.pill{border:1px solid #3df5ff4a;background:#3df5ff10;color:var(--cyan);padding:7px 11px;border-radius:999px;letter-spacing:1px;white-space:nowrap}
-.logo{display:inline-block;margin:8px auto 10px;padding:0 10px;font-size:clamp(43px,10vw,76px);font-weight:1000;line-height:.92;letter-spacing:-3px;background:linear-gradient(100deg,#fff 4%,#9dfaff 28%,#b89aff 58%,#ff8de1 88%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 14px #5b7dff70)}
-.logo:after{content:"";display:block;height:4px;width:72%;margin:12px auto 0;border-radius:99px;background:linear-gradient(90deg,transparent,var(--cyan),var(--pink),transparent);box-shadow:0 0 18px #7b5cff}
-.subtitle{font-size:12px;font-weight:900;letter-spacing:3px;color:#b8c2ed;margin:18px 0 25px}
-.panel{background:linear-gradient(145deg,rgba(23,29,57,.92),rgba(10,14,30,.88));border:1px solid var(--line);border-radius:23px;padding:clamp(15px,4vw,24px);margin:14px 0;box-shadow:0 15px 50px #0006,inset 0 1px #ffffff0c;backdrop-filter:blur(16px)}
-.section-label{font-size:11px;font-weight:900;letter-spacing:2px;color:var(--muted)}
-.row{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;margin:12px 0}
-select{background:#10162d;color:#f6f7ff;border:1px solid #7266b9;border-radius:11px;padding:10px 13px;font-weight:800;outline:none}
-.dice{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:20px auto;max-width:520px}
-.die{position:relative;aspect-ratio:1;border:1px solid #ffffffc7;border-radius:20px;display:grid;place-items:center;min-width:0;cursor:pointer;box-shadow:0 0 0 3px #ffffff08,inset 0 1px #ffffff70,0 8px 18px #0005;transition:transform .18s,box-shadow .18s,outline .18s}
-.die:before{content:"";position:absolute;inset:5px;border-radius:14px;border:1px solid #ffffff40}
-.die:hover{transform:translateY(-3px)}
-.die.selected{outline:3px solid var(--cyan);outline-offset:4px;box-shadow:0 0 22px #3df5ff55,inset 0 1px #ffffff80}
-.pip{width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#e8f7ff 65%);box-shadow:0 0 12px #ffffffb0,0 2px 4px #0005}
-.primary{width:100%;max-width:470px;border:1px solid #a9faff80;border-radius:15px;padding:17px 18px;color:#07111f;font-size:21px;font-weight:1000;letter-spacing:2px;cursor:pointer;background:linear-gradient(100deg,#46f6ff,#7a8cff 52%,#ff69dc);box-shadow:0 0 24px #786aff40,0 6px 0 #35356e;transition:transform .15s,filter .15s}
-.primary:hover{filter:brightness(1.08);box-shadow:0 0 32px #5deaff55,0 6px 0 #35356e}.primary:active{transform:translateY(3px);box-shadow:0 3px 0 #35356e}.primary:disabled{opacity:.65;cursor:wait}
-.results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px auto;max-width:550px}
-.resultdie{min-width:0;min-height:83px;border-radius:16px;padding:10px 4px;border:1px solid #ffffffb8;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;font-weight:900;box-shadow:inset 0 1px #ffffff75,0 8px 15px #0004;text-shadow:0 1px 5px #0008;animation:pop .3s ease both}
-.resultdie .pip{width:13px;height:13px}.resultdie .name{font-size:12px}.resultdie .number{font-size:10px;opacity:.82}
-.rolling{animation:roll .13s infinite alternate}
-@keyframes roll{from{transform:rotate(-5deg) scale(.96);filter:brightness(.8)}to{transform:rotate(5deg) scale(1.04);filter:brightness(1.35)}}
-@keyframes pop{from{opacity:0;transform:scale(.75) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.status{background:#080d20aa;border:1px solid #ffffff12;border-radius:12px;padding:12px;margin-top:13px;color:#dbe4ff;font-size:13px}
-.btn{background:#ffffff08;color:#e7eaff;border:1px solid #ffffff24;padding:10px 14px;border-radius:11px;cursor:pointer;font-weight:800}.btn:hover{border-color:#8b7cff;color:white}
-.stats{color:var(--muted);font-size:12px}.stats strong{color:white;font-size:15px}
-.admin{display:none;text-align:left}.admin.open{display:block}.admin label{display:block;margin:13px 0 7px;font-size:13px;font-weight:800}.admin input[type=checkbox]{accent-color:#7e6bff}.admin p{line-height:1.5}
-.foot{font-size:11px;color:#7f89ad;line-height:1.6;margin:18px auto;max-width:590px}
-@media(max-width:430px){.topline{font-size:9px;letter-spacing:1px}.dice{gap:8px}.die{border-radius:15px}.die:before{inset:4px;border-radius:10px}.pip{width:13px;height:13px}.results{gap:7px}.resultdie{min-height:73px}.panel{border-radius:18px}}
-</style></head>
-<body><main class="wrap">
-<div class="topline"><span>⚡ NEON DICE CLUB</span><span class="pill">● NEON EDITION</span></div>
-<div class="logo">TELEK<br>DICE</div>
-<div class="subtitle">ROLL YOUR COLORS · OWN YOUR GAME</div>
-<div class="panel">
-<div class="section-label">НАСТРОЙ СВОЙ БРОСОК</div>
-<div class="row"><label for="count">КОЛИЧЕСТВО КУБИКОВ</label><select id="count"></select></div>
-<div class="section-label">ВЫБЕРИ ЦВЕТ</div>
-<div class="dice" id="palette"></div>
-<div class="row"><span class="section-label">ТВОЙ ЦВЕТ:</span><strong id="choice">Красный</strong></div>
-<button class="primary" id="roll">⚡ ROLL DICE</button>
-<div class="section-label" style="margin-top:25px">РЕЗУЛЬТАТ БРОСКА</div>
-<div class="results" id="results"><div class="stats" style="grid-column:1/-1">Нажми ROLL DICE, чтобы бросить кубики</div></div>
-<div class="status" id="status">Система готова к броску.</div>
-<div class="row"><button class="btn" id="reset">↻ Сбросить счёт</button><button class="btn" id="adminToggle">⚙ Админ-панель</button><button class="btn" id="musicToggle" aria-pressed="false">♫ Музыка: выкл.</button><button class="btn" id="soundToggle" aria-pressed="true">🔊 Звуки: вкл.</button></div>
-<div class="row stats"><span>ПОПАДАНИЯ: <strong id="score">0</strong></span><span>·</span><span>СЕРИЯ: <strong id="streak">0</strong></span></div>
-</div>
-<div class="panel admin" id="admin"><h3>⚙ Админ-панель · тестирование</h3>
-<p class="stats">Для проверки собственной игры. При включении тестовый результат будет явно обозначен.</p>
-<label><input type="checkbox" id="testMode"> Включить тестовый результат для всех кубиков</label>
-<label for="forced">Тестовый цвет</label><select id="forced"></select>
-</div>
-<div class="foot">TELEK DICE · Неофициальный демонстрационный проект. Обычные броски случайные; тестовый режим помечается отдельно. Музыка и звуки создаются браузером и включаются только после нажатия кнопки.</div>
+body{margin:0;min-height:100vh;color:var(--ink);font-family:Inter,ui-rounded,system-ui,-apple-system,"Segoe UI",sans-serif;background:#f5a34c;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;z-index:-2;background:linear-gradient(180deg,#ffcf70aa,#ef6e3c55),radial-gradient(ellipse at 70% 20%,#fff4ad 0,transparent 38%),linear-gradient(135deg,#f4a94e,#a9474e 60%,#375b82);transition:background .35s}
+body[data-theme="autumn"]:before{background:linear-gradient(180deg,#ffd77e55,#a3472d55),radial-gradient(ellipse at 70% 20%,#fff4ad 0,transparent 38%),linear-gradient(135deg,#ffbf59,#c75b31 55%,#6b4b5a)}
+body[data-theme="neon"]:before{background:radial-gradient(ellipse at 20% 10%,#6737b9,transparent 40%),radial-gradient(ellipse at 80% 40%,#087e9a,transparent 42%),linear-gradient(135deg,#080a20,#17113c 60%,#301344)}
+body[data-theme="ocean"]:before{background:radial-gradient(ellipse at 70% 20%,#9ef6ff,transparent 35%),linear-gradient(140deg,#0a8eb0,#125d92 52%,#13254d)}
+body[data-theme="candy"]:before{background:radial-gradient(ellipse at 20% 15%,#ffd1ef,transparent 38%),linear-gradient(140deg,#ff9dbb,#ab7aff 55%,#547cff)}
+body:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(#fff1,transparent 40%),radial-gradient(ellipse at bottom,#22142b55,transparent 65%)}
+button,select{font:inherit}button{touch-action:manipulation}
+.wrap{width:min(760px,100%);margin:auto;padding:18px 14px 35px;text-align:center}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px;font-weight:1000;letter-spacing:1.5px;text-shadow:0 2px 5px #0004}
+.pill{border:1px solid #ffffff80;background:#ffffff2c;border-radius:99px;padding:7px 11px;white-space:nowrap}
+.logo{font-size:clamp(43px,10vw,78px);font-weight:1000;line-height:.88;letter-spacing:-3px;margin:22px 0 10px;color:#ffce3b;-webkit-text-stroke:2px #2a1b16;text-shadow:3px 4px 0 #2a1b16,6px 8px 0 #0005,0 0 22px #fff5;filter:drop-shadow(0 2px 0 #fff4)}
+.logo span{display:block;color:#fff2a0;font-size:.8em;margin-top:7px}
+.subtitle{font-size:12px;font-weight:1000;letter-spacing:1.5px;margin:17px 0 22px;text-shadow:0 2px 4px #0005}
+.panel{background:var(--panel);border:1px solid var(--stroke);border-radius:23px;padding:17px clamp(13px,4vw,24px);margin:14px 0;box-shadow:var(--shadow),inset 0 1px #ffffff44;backdrop-filter:blur(10px)}
+.label{font-size:11px;font-weight:1000;letter-spacing:1.4px;text-shadow:0 1px 4px #0005}
+.row{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;margin:12px 0}
+select{max-width:100%;border:1px solid #ffffffa8;border-radius:12px;padding:10px 12px;background:#242333e8;color:white;font-weight:900;outline:none}
+.dice{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;max-width:440px;margin:19px auto 14px}
+.die{aspect-ratio:1;min-width:0;border:6px solid white;border-radius:22%;display:grid;place-items:center;cursor:pointer;box-shadow:0 5px 0 #0002,0 9px 20px #0003,inset 0 0 0 1px #ffffff88;transition:transform .16s,box-shadow .16s;position:relative}
+.die:hover{transform:translateY(-3px) rotate(-1deg)}
+.die.selected{outline:4px solid #fff3a6;outline-offset:3px;box-shadow:0 0 0 7px #ffffff35,0 0 25px #fff9,0 7px 0 #0002}
+.pip{width:17%;aspect-ratio:1;background:radial-gradient(circle at 35% 28%,white,#fff 55%,#e5e5e5);border-radius:50%;box-shadow:0 1px 5px #0004,0 0 9px #fff8}
+.choice{font-weight:1000;font-size:14px;text-shadow:0 2px 4px #0005}
+.primary{display:block;width:100%;max-width:440px;margin:17px auto 18px;border:0;border-radius:15px;padding:18px;color:white;background:linear-gradient(180deg,#338dff,#1670ed);font-size:clamp(22px,5vw,30px);font-weight:1000;letter-spacing:1px;text-shadow:0 2px 0 #164da0;box-shadow:0 7px 0 #1252b2,0 12px 22px #0003;cursor:pointer;transition:transform .12s,filter .12s}
+.primary:active{transform:translateY(4px);box-shadow:0 3px 0 #1252b2}.primary:disabled{opacity:.7;cursor:wait}
+.results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;max-width:500px;margin:17px auto}
+.resultdie{min-width:0;min-height:75px;border:3px solid white;border-radius:17px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;box-shadow:0 5px 12px #0003;text-shadow:0 1px 3px #0006;font-weight:1000;animation:pop .28s both}
+.resultdie .pip{width:13px}.resultdie small{font-size:10px}
+@keyframes pop{from{opacity:.2;transform:scale(.65) rotate(-9deg)}to{opacity:1;transform:scale(1) rotate(0)}}
+.rolling{animation:shake .12s infinite alternate}
+@keyframes shake{to{transform:rotate(5deg) scale(1.04);filter:brightness(1.3)}}
+.status{border:1px solid #ffffff55;background:#15152955;border-radius:12px;padding:11px;margin:12px 0;font-size:13px;font-weight:800;text-shadow:0 1px 4px #0004}
+.stats{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;font-size:12px;font-weight:900;text-shadow:0 1px 4px #0005}
+.stats strong{font-size:20px;margin-left:4px}
+.btn{background:#ffffff25;color:white;border:1px solid #ffffff75;padding:10px 13px;border-radius:11px;cursor:pointer;font-weight:900;text-shadow:0 1px 4px #0003}
+.btn:hover{background:#ffffff40}
+.admin{display:none;text-align:left}.admin.open{display:block}.admin label{display:block;margin:12px 0;font-weight:800;font-size:13px}.admin input{accent-color:#ffda62}
+.foot{font-size:10px;line-height:1.6;opacity:.8;text-shadow:0 1px 4px #0004;margin:17px auto;max-width:570px}
+@media(max-width:420px){.wrap{padding:13px 10px 25px}.top{font-size:9px;letter-spacing:.8px}.logo{margin-top:24px}.dice{gap:8px}.die{border-width:5px;border-radius:20%}.panel{border-radius:19px}.results{gap:6px}.resultdie{min-height:67px}.resultdie small{font-size:9px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body data-theme="autumn">
+<main class="wrap">
+  <div class="top"><span>🎲 TELEK DICE CLUB</span><span class="pill">● COLOR ROLL</span></div>
+  <h1 class="logo">TELEK<span>DICE</span></h1>
+  <div class="subtitle">CHOOSE YOUR COLOR · ROLL YOUR LUCK</div>
+
+  <section class="panel">
+    <div class="row"><label class="label" for="theme">BACKGROUND THEME</label>
+      <select id="theme" aria-label="Тема фона">
+        <option value="autumn">AUTUMN HAVEN</option><option value="neon">NEON NIGHT</option><option value="ocean">OCEAN DREAM</option><option value="candy">CANDY SKY</option>
+      </select>
+    </div>
+    <div class="label">4 COLOR DICE · SECURE RANDOM ROLLS</div>
+    <div class="dice" id="palette" aria-label="Выбор цвета"></div>
+    <div class="row"><span class="label">YOUR COLOR:</span><span class="choice" id="choice">Green</span></div>
+    <button class="primary" id="roll">ROLL 🎲</button>
+    <div class="label">ROLL RESULTS</div>
+    <div class="results" id="results"><div class="label" style="grid-column:1/-1;opacity:.9">Нажми ROLL, чтобы бросить кубики</div></div>
+    <div class="status" id="status" aria-live="polite">Готово к броску. Выбери цвет!</div>
+    <div class="stats"><span>⭐ SCORE <strong id="score">0</strong></span><span>🔥 ROLL STREAK <strong id="streak">0</strong></span><span>🎯 HITS <strong id="hits">0</strong></span></div>
+    <div class="row" style="margin-top:17px"><button class="btn" id="reset">↻ RESET SCORE</button><button class="btn" id="sound">🔊 SOUND ON</button><button class="btn" id="music">🎵 MUSIC OFF</button><button class="btn" id="adminToggle">⚙ ADMIN</button></div>
+  </section>
+  <section class="panel admin" id="admin">
+    <h3>⚙ Admin panel · local demo</h3>
+    <p style="font-size:12px;line-height:1.5">Тестовый режим предназначен для проверки локальной игры. Тестовые броски помечаются отдельно.</p>
+    <label><input type="checkbox" id="testMode"> Включить тестовый результат</label>
+    <label for="forced">Тестовый цвет</label><select id="forced"></select>
+  </section>
+  <div class="foot">TELEK DICE · Локальная демо-игра. Счёт хранится в этом окне и не синхронизируется между устройствами. Настоящие онлайн-сессии и проверка кодов требуют серверной части.</div>
 </main>
 <script>
 const colors=[
-{name:'Красный',hex:'#f04452'},{name:'Оранжевый',hex:'#ff8a27'},
-{name:'Жёлтый',hex:'#f4df42'},{name:'Зелёный',hex:'#20e88a'},
-{name:'Синий',hex:'#3978ff'},{name:'Фиолетовый',hex:'#a45bff'},
-{name:'Розовый',hex:'#ff4fc8'},{name:'Чёрный',hex:'#34394e'}
+ {name:'Green',ru:'Зелёный',hex:'#078b16'},
+ {name:'Blue',ru:'Синий',hex:'#123bff'},
+ {name:'Yellow',ru:'Жёлтый',hex:'#ffcf00'},
+ {name:'Purple',ru:'Фиолетовый',hex:'#85008d'}
 ];
-let selected=0,score=0,streak=0,busy=false,musicOn=false,soundOn=true,audioCtx=null,musicTimer=null,musicStep=0;
-const palette=document.getElementById('palette'),count=document.getElementById('count'),forced=document.getElementById('forced'),results=document.getElementById('results');
-for(let n=1;n<=8;n++){let o=document.createElement('option');o.value=n;o.textContent=n+' '+(n===1?'кубик':'кубика');count.appendChild(o)}
-colors.forEach((c,i)=>{let d=document.createElement('button');d.className='die';d.style.background=`linear-gradient(145deg,${c.hex},${c.hex}b8)`;d.title=c.name;d.setAttribute('aria-label',c.name);d.innerHTML='<span class="pip"></span>';d.onclick=()=>{choose(i);playTone(520+i*45,.07,'sine')};palette.appendChild(d);let o=document.createElement('option');o.value=i;o.textContent=c.name;forced.appendChild(o)});
-function getAudio(){if(!audioCtx){const A=window.AudioContext||window.webkitAudioContext;if(A)audioCtx=new A()}if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();return audioCtx}
-function playTone(freq=440,duration=.1,type='sine',volume=.045,delay=0){if(!soundOn)return;const ctx=getAudio();if(!ctx)return;const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type=type;osc.frequency.setValueAtTime(freq,ctx.currentTime+delay);gain.gain.setValueAtTime(.0001,ctx.currentTime+delay);gain.gain.exponentialRampToValueAtTime(volume,ctx.currentTime+delay+.012);gain.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+delay+duration);osc.connect(gain);gain.connect(ctx.destination);osc.start(ctx.currentTime+delay);osc.stop(ctx.currentTime+delay+duration+.02)}
-function clickSound(){playTone(620,.055,'triangle',.035)}
-function rollSound(){[180,240,310,390,500].forEach((f,i)=>playTone(f,.12,'sawtooth',.018,i*.09))}
-function winSound(){[523,659,784].forEach((f,i)=>playTone(f,.2,'sine',.045,i*.09))}
-function choose(i){selected=i;[...palette.children].forEach((d,j)=>d.classList.toggle('selected',i===j));document.getElementById('choice').textContent=colors[i].name}
-function render(nums,test){results.innerHTML='';nums.forEach((n,i)=>{let c=colors[n],el=document.createElement('div');el.className='resultdie';el.style.background=`linear-gradient(145deg,${c.hex},${c.hex}b8)`;el.innerHTML=`<span class="pip"></span><span class="name">${c.name}</span><span class="number">КУБИК ${i+1}${test?' · ТЕСТ':''}</span>`;results.appendChild(el)})}
-function roll(){if(busy)return;getAudio();clickSound();busy=true;const btn=document.getElementById('roll');btn.disabled=true;btn.textContent='⏳ ROLLING...';const n=Number(count.value),test=document.getElementById('testMode').checked,forcedColor=Number(forced.value);results.innerHTML='';for(let i=0;i<n;i++){let el=document.createElement('div');el.className='resultdie rolling';el.style.background='linear-gradient(145deg,#343c65,#141b35)';el.innerHTML='<span class="pip"></span><span class="name">...</span>';results.appendChild(el)}rollSound();setTimeout(()=>{let nums=Array.from({length:n},()=>test?forcedColor:Math.floor(Math.random()*colors.length));render(nums,test);let hits=nums.filter(x=>x===selected).length;if(hits){score+=hits;streak++;winSound()}else streak=0;document.getElementById('score').textContent=score;document.getElementById('streak').textContent=streak;document.getElementById('status').textContent=(test?'ТЕСТОВЫЙ РЕЗУЛЬТАТ · ':'ВЫПАЛО · ')+nums.map(x=>colors[x].name).join(' / ')+' · Совпадений: '+hits;btn.disabled=false;btn.textContent='⚡ ROLL DICE';busy=false},750)}
-document.getElementById('roll').addEventListener('click',roll);
-document.getElementById('reset').addEventListener('click',()=>{clickSound();score=0;streak=0;document.getElementById('score').textContent='0';document.getElementById('streak').textContent='0';results.innerHTML='<div class="stats" style="grid-column:1/-1">Нажми ROLL DICE, чтобы бросить кубики</div>';document.getElementById('status').textContent='Счёт сброшен.'});
-document.getElementById('adminToggle').addEventListener('click',()=>{clickSound();document.getElementById('admin').classList.toggle('open')});
-document.getElementById('soundToggle').addEventListener('click',e=>{soundOn=!soundOn;e.currentTarget.textContent=soundOn?'🔊 Звуки: вкл.':'🔇 Звуки: выкл.';e.currentTarget.setAttribute('aria-pressed',String(soundOn));if(soundOn)clickSound()});
-function musicNote(){if(!musicOn)return;const notes=[261.63,329.63,392,493.88,392,329.63,293.66,349.23];const f=notes[musicStep%notes.length];playTone(f,.32,'sine',.012);playTone(f*1.5,.24,'triangle',.006,.08);musicStep++}
-function startMusic(){getAudio();if(musicTimer)clearInterval(musicTimer);musicOn=true;musicNote();musicTimer=setInterval(musicNote,380);const b=document.getElementById('musicToggle');b.textContent='♫ Музыка: вкл.';b.setAttribute('aria-pressed','true')}
-function stopMusic(){musicOn=false;if(musicTimer)clearInterval(musicTimer);musicTimer=null;const b=document.getElementById('musicToggle');b.textContent='♫ Музыка: выкл.';b.setAttribute('aria-pressed','false')}
-document.getElementById('musicToggle').addEventListener('click',()=>{if(musicOn)stopMusic();else startMusic()});
-document.querySelectorAll('button').forEach(b=>{if(!['roll','soundToggle','musicToggle'].includes(b.id))b.addEventListener('click',()=>{if(b.id!=='reset'&&b.id!=='adminToggle'&&!b.classList.contains('die'))clickSound()})});
+let selected=0,score=0,streak=0,totalHits=0,busy=false,soundOn=true,musicOn=false,audioCtx=null,musicTimer=null,musicStep=0;
+const $=id=>document.getElementById(id);
+const palette=$('palette'),results=$('results'),forced=$('forced');
+function audio(){if(!audioCtx){const AC=window.AudioContext||window.webkitAudioContext;if(AC)audioCtx=new AC()}if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();return audioCtx}
+function tone(freq=440,duration=.08,type='sine',volume=.035,delay=0){if(!soundOn)return;const ctx=audio();if(!ctx)return;const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type=type;osc.frequency.setValueAtTime(freq,ctx.currentTime+delay);gain.gain.setValueAtTime(.0001,ctx.currentTime+delay);gain.gain.exponentialRampToValueAtTime(volume,ctx.currentTime+delay+.01);gain.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+delay+duration);osc.connect(gain);gain.connect(ctx.destination);osc.start(ctx.currentTime+delay);osc.stop(ctx.currentTime+delay+duration+.02)}
+function clickSound(){tone(560,.055,'triangle',.025)}
+function rollSound(){tone(170,.13,'sawtooth',.025);tone(260,.12,'triangle',.025,.13);tone(390,.16,'triangle',.03,.27)}
+function winSound(){[523,659,784,1047].forEach((f,i)=>tone(f,.17,'sine',.045,i*.085))}
+function makeMusic(){if(!musicOn||musicTimer)return;audio();const notes=[392,494,587,494,440,523,659,523,349,440,523,440,392,494,587,659];musicTimer=setInterval(()=>{if(musicOn){tone(notes[musicStep%notes.length],.24,'sine',.012);if(musicStep%4===0)tone(notes[musicStep%notes.length]/2,.3,'triangle',.009);musicStep++}},310)}
+function stopMusic(){if(musicTimer){clearInterval(musicTimer);musicTimer=null}}
+function choose(i){selected=i;[...palette.children].forEach((d,j)=>d.classList.toggle('selected',i===j));$('choice').textContent=colors[i].ru;if(soundOn)clickSound()}
+colors.forEach((c,i)=>{const d=document.createElement('button');d.className='die';d.style.background=`linear-gradient(145deg,${c.hex},${c.hex}dd)`;d.title=c.ru;d.setAttribute('aria-label','Выбрать цвет '+c.ru);d.innerHTML='<span class="pip"></span>';d.addEventListener('click',()=>choose(i));palette.appendChild(d);const o=document.createElement('option');o.value=i;o.textContent=c.ru;forced.appendChild(o)});
+function render(nums,test){results.innerHTML='';nums.forEach((n,i)=>{const c=colors[n],el=document.createElement('div');el.className='resultdie';el.style.background=`linear-gradient(145deg,${c.hex},${c.hex}e8)`;el.style.animationDelay=(i*.06)+'s';el.innerHTML=`<span class="pip"></span><span>${c.ru}</span><small>DICE ${i+1}${test?' · TEST':''}</small>`;results.appendChild(el)})}
+function roll(){if(busy)return;busy=true;audio();const btn=$('roll');btn.disabled=true;btn.textContent='ROLLING…';rollSound();results.innerHTML='';for(let i=0;i<4;i++){const el=document.createElement('div');el.className='resultdie rolling';el.style.background='linear-gradient(145deg,#ffffff66,#22243c88)';el.innerHTML='<span class="pip"></span><span>…</span><small>DICE '+(i+1)+'</small>';results.appendChild(el)}
+setTimeout(()=>{const test=$('testMode').checked,forcedColor=Number(forced.value);const nums=Array.from({length:4},()=>test?forcedColor:Math.floor(Math.random()*colors.length));render(nums,test);const hitCount=nums.filter(x=>x===selected).length;totalHits+=hitCount;if(hitCount){score+=hitCount;streak++}else streak=0;$('score').textContent=score;$('streak').textContent=streak;$('hits').textContent=totalHits;$('status').textContent=(test?'TEST RESULT · ':'ROLLED · ')+nums.map(x=>colors[x].ru).join(' / ')+' · Совпадений: '+hitCount;if(hitCount)winSound();btn.disabled=false;btn.textContent='ROLL 🎲';busy=false},720)}
+$('roll').addEventListener('click',roll);
+$('theme').addEventListener('change',e=>{document.body.dataset.theme=e.target.value;clickSound()});
+$('reset').addEventListener('click',()=>{clickSound();score=0;streak=0;totalHits=0;$('score').textContent='0';$('streak').textContent='0';$('hits').textContent='0';results.innerHTML='<div class="label" style="grid-column:1/-1">Нажми ROLL, чтобы бросить кубики</div>';$('status').textContent='Счёт сброшен.'});
+$('sound').addEventListener('click',()=>{soundOn=!soundOn;$('sound').textContent=soundOn?'🔊 SOUND ON':'🔇 SOUND OFF';if(soundOn)clickSound()});
+$('music').addEventListener('click',()=>{musicOn=!musicOn;$('music').textContent=musicOn?'🎵 MUSIC ON':'🎵 MUSIC OFF';if(musicOn){audio();makeMusic()}else stopMusic();if(soundOn)clickSound()});
+$('adminToggle').addEventListener('click',()=>{$('admin').classList.toggle('open');clickSound()});
 choose(0);
-</script></body></html>'''
-Path("/mnt/data/telek_dice_neon.html").write_text(html, encoding="utf-8")
-print("Создан HTML-файл:", Path("/mnt/data/telek_dice_neon.html").stat().st_size, "байт")
+</script>
+</body>
+</html>'''
+path = Path("/mnt/data/telek_dice_color_roll.html")
+path.write_text(html, encoding="utf-8")
+print(f"Готово: {path}")
