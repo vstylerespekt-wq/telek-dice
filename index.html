@@ -1,12 +1,10 @@
-from pathlib import Path
-
-html = r'''<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#100b18">
-<title>TELEK DICE — MEOWL Style</title>
+<title>TELEK DICE вЂ” MEOWL Style</title>
 <style>
 :root{--text:#fff8f0;--muted:#c9b9d2;--line:#ffb7df55;--pink:#ff4fbd;--gold:#ffd46a;--ease:cubic-bezier(.16,1,.3,1);--photo:none}
 *{box-sizing:border-box}
@@ -98,144 +96,157 @@ footer{font-size:11px;color:#b4a0bd;line-height:1.6;margin:20px;font-weight:700}
 @keyframes pipPulse{to{opacity:.25;transform:scale(.7)}}
 @keyframes progress{0%{width:0}35%{width:35%}68%{width:70%}88%{width:88%}100%{width:100%}}
 @keyframes bars{from{height:6px}to{height:34px}}
-@media(max-width:430px){.dice-grid,.results{gap:8px}.die{border-radius:18%}.panel{padding:17px 10px}.die .pip{width:13px;height:13px}.trade-grid{grid-template-columns:1fr}.mega-stage{height:185px}.mega-die{width:90px;height:90px}.mega-die .p3{top:35px;left:35px}}
+
+#rollHistory{position:fixed;left:12px;top:50%;transform:translateY(-50%);z-index:5;width:150px;max-height:72vh;overflow:auto;padding:12px;border:1px solid #ffb7df77;border-radius:16px;background:linear-gradient(145deg,#321c38ed,#170f20f2);box-shadow:0 12px 35px #0007;backdrop-filter:blur(14px);text-align:left}
+.history-head{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:10px}
+.history-title{font-size:10px;letter-spacing:1px;color:#ffc2ec;font-weight:1000}
+#clearHistory{border:1px solid #ffffff30;background:#ffffff0b;color:#fff;border-radius:7px;padding:4px 6px;font-size:9px;cursor:pointer}
+.history-empty{font-size:10px;line-height:1.4;color:var(--muted);font-weight:700}
+.history-entry{padding:8px 0;border-top:1px solid #ffffff18}
+.history-meta{font-size:9px;color:var(--muted);margin-bottom:5px}
+.history-colors{display:flex;flex-wrap:wrap;gap:4px}
+.history-color{width:13px;height:13px;border-radius:4px;border:1px solid #ffffff99;box-shadow:0 0 7px #ffffff22}
+.history-names{font-size:9px;line-height:1.4;color:#fff;margin-top:5px;overflow-wrap:anywhere}
+@media(max-width:700px){#rollHistory{left:6px;top:auto;bottom:8px;transform:none;width:112px;max-height:30vh;padding:8px;border-radius:12px;background:#170f20ed}.history-title{font-size:9px}.history-head{align-items:flex-start;flex-direction:column;gap:4px}.history-entry{padding:5px 0}.history-names{font-size:8px}.history-meta{font-size:8px}.history-color{width:11px;height:11px}}
+\n@media(max-width:430px){.dice-grid,.results{gap:8px}.die{border-radius:18%}.panel{padding:17px 10px}.die .pip{width:13px;height:13px}.trade-grid{grid-template-columns:1fr}.mega-stage{height:185px}.mega-die{width:90px;height:90px}.mega-die .p3{top:35px;left:35px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body style="--photo:url('https://i.pinimg.com/originals/2a/fa/0a/2afa0a1cf7148fe7913004eeb29aa2b1.jpg');--photo-opacity:.9;background:linear-gradient(135deg,#57301d,#1b1025)">
 <div id="megaFlash" aria-hidden="true"></div>
+<aside id="rollHistory" aria-label="Roll history"><div class="history-head"><div class="history-title" data-i18n="historyTitle">рџ“њ РРЎРўРћР РРЇ</div><button id="clearHistory" type="button" data-i18n="historyClear">РћС‡РёСЃС‚РёС‚СЊ</button></div><div id="historyList"><div class="history-empty" data-i18n="historyEmpty">Р—РґРµСЃСЊ РїРѕСЏРІСЏС‚СЃСЏ Р±СЂРѕСЃРєРё</div></div></aside>
 <div id="languageGate" role="dialog" aria-modal="true" aria-labelledby="languageTitle">
   <div class="language-card">
-    <div class="language-paw">🐾</div>
-    <h2 id="languageTitle">ВЫБЕРИ ЯЗЫК</h2>
-    <p id="languageHint">Выбери язык · Choose your language</p>
-    <button type="button" data-language="ru">🇷🇺 Русский</button>
-    <button type="button" data-language="en">🇬🇧 English</button>
+    <div class="language-paw">рџђѕ</div>
+    <h2 id="languageTitle">Р’Р«Р‘Р•Р Р РЇР—Р«Рљ</h2>
+    <p id="languageHint">Р’С‹Р±РµСЂРё СЏР·С‹Рє В· Choose your language</p>
+    <button type="button" data-language="ru">рџ‡·рџ‡є Р СѓСЃСЃРєРёР№</button>
+    <button type="button" data-language="en">рџ‡¬рџ‡§ English</button>
   </div>
 </div>
-<span class="leaf l1">🍂</span><span class="leaf l2">🍁</span><span class="leaf l3">🍃</span>
+<span class="leaf l1">рџЌ‚</span><span class="leaf l2">рџЌЃ</span><span class="leaf l3">рџЌѓ</span>
 <main class="wrap">
-  <div class="top"><span data-i18n="brand">🐾 NEON DICE CLUB</span><span class="pill" data-i18n="stylePill">● MEOWL STYLE</span></div>
+  <div class="top"><span data-i18n="brand">рџђѕ NEON DICE CLUB</span><span class="pill" data-i18n="stylePill">в—Џ MEOWL STYLE</span></div>
   <h1 class="logo">TELEK<br>DICE</h1>
-  <div class="subtitle" data-i18n="subtitle">🐾 ROLL YOUR COLORS · MEOW VIBES 🐾</div>
+  <div class="subtitle" data-i18n="subtitle">рџђѕ ROLL YOUR COLORS В· MEOW VIBES рџђѕ</div>
 
   <section class="panel">
-    <div class="label" data-i18n="customize">НАСТРОЙ СВОЙ БРОСОК</div>
-    <div class="row"><label for="count" data-i18n="diceCountLabel">КОЛИЧЕСТВО КУБИКОВ</label><select id="count"></select></div>
+    <div class="label" data-i18n="customize">РќРђРЎРўР РћР™ РЎР’РћР™ Р‘Р РћРЎРћРљ</div>
+    <div class="row"><label for="count" data-i18n="diceCountLabel">РљРћР›РР§Р•РЎРўР’Рћ РљРЈР‘РРљРћР’</label><select id="count"></select></div>
     <div class="dice-grid" id="diceGrid" aria-label="Dice"></div>
-    <div class="row"><button class="primary" id="roll" data-i18n="roll">🎲 ROLL DICE</button></div>
-    <div class="row"><button class="btn active" id="fastRoll" aria-pressed="false">⚡ Fast Roll: ВЫКЛ</button><span class="stats" data-i18n="fastHint">Без анимации — мгновенный результат</span></div>
-    <div class="label" style="margin-top:26px" data-i18n="resultsLabel">РЕЗУЛЬТАТ БРОСКА</div>
-    <div class="results" id="results"><div class="stats" style="grid-column:1/-1" data-i18n="pressRoll">Нажми ROLL DICE!</div></div>
-    <div class="status" id="status" aria-live="polite" data-i18n="ready">Система готова к броску.</div>
-    <div class="row"><button class="btn" id="reset" data-i18n="resetScore">↻ Сбросить счёт</button></div>
-    <div class="row stats"><span data-i18n="rollsLabel">БРОСКИ:</span> <strong id="rolls">0</strong> · <span data-i18n="matchesLabel">СОВПАДЕНИЯ:</span> <strong id="score">0</strong> · <span data-i18n="streakLabel">СЕРИЯ:</span> <strong id="streak">0</strong></div>
+    <div class="row"><button class="primary" id="roll" data-i18n="roll">рџЋІ ROLL DICE</button></div>
+    <div class="row"><button class="btn active" id="fastRoll" aria-pressed="false">вљЎ Fast Roll: Р’Р«РљР›</button><span class="stats" data-i18n="fastHint">Р‘РµР· Р°РЅРёРјР°С†РёРё вЂ” РјРіРЅРѕРІРµРЅРЅС‹Р№ СЂРµР·СѓР»СЊС‚Р°С‚</span></div>
+    <div class="label" style="margin-top:26px" data-i18n="resultsLabel">Р Р•Р—РЈР›Р¬РўРђРў Р‘Р РћРЎРљРђ</div>
+    <div class="results" id="results"><div class="stats" style="grid-column:1/-1" data-i18n="pressRoll">РќР°Р¶РјРё ROLL DICE!</div></div>
+    <div class="status" id="status" aria-live="polite" data-i18n="ready">РЎРёСЃС‚РµРјР° РіРѕС‚РѕРІР° Рє Р±СЂРѕСЃРєСѓ.</div>
+    <div class="row"><button class="btn" id="reset" data-i18n="resetScore">в†» РЎР±СЂРѕСЃРёС‚СЊ СЃС‡С‘С‚</button></div>
+    <div class="row stats"><span data-i18n="rollsLabel">Р‘Р РћРЎРљР:</span> <strong id="rolls">0</strong> В· <span data-i18n="matchesLabel">РЎРћР’РџРђР”Р•РќРРЇ:</span> <strong id="score">0</strong> В· <span data-i18n="streakLabel">РЎР•Р РРЇ:</span> <strong id="streak">0</strong></div>
   </section>
 
   <section class="panel mega-panel" id="megaRollSection">
-    <div class="mega-title" data-i18n="megaTitle">👑 MEGA ROLL · УЛЬТРА-БРОСОК</div>
+    <div class="mega-title" data-i18n="megaTitle">рџ‘‘ MEGA ROLL В· РЈР›Р¬РўР Рђ-Р‘Р РћРЎРћРљ</div>
     <div class="mega-stage" aria-hidden="true"><div class="orbit"></div><div class="mega-die" id="megaDie"><i class="pip p1"></i><i class="pip p2"></i><i class="pip p3"></i><i class="pip p4"></i><i class="pip p5"></i></div></div>
-    <button class="primary" id="megaRoll" data-i18n="megaButton">✨ MEGA ROLL ✨</button>
-    <div class="mega-caption" id="megaCaption" aria-live="polite" data-i18n="megaHint">Нажми кнопку — кубик закрутится и откроет результат…</div>
+    <button class="primary" id="megaRoll" data-i18n="megaButton">вњЁ MEGA ROLL вњЁ</button>
+    <div class="mega-caption" id="megaCaption" aria-live="polite" data-i18n="megaHint">РќР°Р¶РјРё РєРЅРѕРїРєСѓ вЂ” РєСѓР±РёРє Р·Р°РєСЂСѓС‚РёС‚СЃСЏ Рё РѕС‚РєСЂРѕРµС‚ СЂРµР·СѓР»СЊС‚Р°С‚вЂ¦</div>
     <div class="progress" id="megaProgress"><span></span></div>
   </section>
 
   <section class="panel">
-    <div class="label" data-i18n="backgroundTitle">🎨 ВЫБОР ФОНА · ФОТОГРАФИИ ПРИРОДЫ</div>
-    <div class="row"><label for="backgroundStyle" data-i18n="pageStyle">СТИЛЬ СТРАНИЦЫ</label><select id="backgroundStyle"></select></div>
+    <div class="label" data-i18n="backgroundTitle">рџЋЁ Р’Р«Р‘РћР  Р¤РћРќРђ В· Р¤РћРўРћР“Р РђР¤РР РџР РР РћР”Р«</div>
+    <div class="row"><label for="backgroundStyle" data-i18n="pageStyle">РЎРўРР›Р¬ РЎРўР РђРќРР¦Р«</label><select id="backgroundStyle"></select></div>
     <div class="photo-grid">
-      <button class="photo-choice active" data-bg="autumn"><img loading="lazy" src="https://i.pinimg.com/originals/2a/fa/0a/2afa0a1cf7148fe7913004eeb29aa2b1.jpg" alt="Autumn forest"><span data-i18n="bgAutumn">🍂 Осень</span></button>
-      <button class="photo-choice" data-bg="winter"><img loading="lazy" src="https://img.goodfon.ru/wallpaper/nbig/7/f7/winter-snow-tree-zima-sneg-forest-hut-house-khizhina-les-d-8.webp" alt="Winter landscape"><span data-i18n="bgWinter">❄️ Зима</span></button>
-      <button class="photo-choice" data-bg="spring"><img loading="lazy" src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=400&q=75" alt="Spring flowers"><span data-i18n="bgSpring">🌸 Весна</span></button>
-      <button class="photo-choice" data-bg="forest"><img loading="lazy" src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=400&q=75" alt="Mountains and lake"><span data-i18n="bgForest">🏞️ Горы</span></button>
-      <button class="photo-choice" data-bg="sunset"><img loading="lazy" src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=400&q=75" alt="Sunset"><span data-i18n="bgSunset">🌇 Закат</span></button>
-      <button class="photo-choice" data-bg="ocean"><img loading="lazy" src="https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=400&q=75" alt="Ocean"><span data-i18n="bgOcean">🌊 Океан</span></button>
-      <button class="photo-choice" data-bg="city"><img loading="lazy" src="https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=400&q=75" alt="Night city"><span data-i18n="bgCity">🌃 Город</span></button>
-      <button class="photo-choice" data-bg="night"><img loading="lazy" src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=400&q=75" alt="Space"><span data-i18n="bgNight">🌌 Космос</span></button>
+      <button class="photo-choice active" data-bg="autumn"><img loading="lazy" src="https://i.pinimg.com/originals/2a/fa/0a/2afa0a1cf7148fe7913004eeb29aa2b1.jpg" alt="Autumn forest"><span data-i18n="bgAutumn">рџЌ‚ РћСЃРµРЅСЊ</span></button>
+      <button class="photo-choice" data-bg="winter"><img loading="lazy" src="https://img.goodfon.ru/wallpaper/nbig/7/f7/winter-snow-tree-zima-sneg-forest-hut-house-khizhina-les-d-8.webp" alt="Winter landscape"><span data-i18n="bgWinter">вќ„пёЏ Р—РёРјР°</span></button>
+      <button class="photo-choice" data-bg="spring"><img loading="lazy" src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=400&q=75" alt="Spring flowers"><span data-i18n="bgSpring">рџЊё Р’РµСЃРЅР°</span></button>
+      <button class="photo-choice" data-bg="forest"><img loading="lazy" src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=400&q=75" alt="Mountains and lake"><span data-i18n="bgForest">рџЏћпёЏ Р“РѕСЂС‹</span></button>
+      <button class="photo-choice" data-bg="sunset"><img loading="lazy" src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=400&q=75" alt="Sunset"><span data-i18n="bgSunset">рџЊ‡ Р—Р°РєР°С‚</span></button>
+      <button class="photo-choice" data-bg="ocean"><img loading="lazy" src="https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=400&q=75" alt="Ocean"><span data-i18n="bgOcean">рџЊЉ РћРєРµР°РЅ</span></button>
+      <button class="photo-choice" data-bg="city"><img loading="lazy" src="https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=400&q=75" alt="Night city"><span data-i18n="bgCity">рџЊѓ Р“РѕСЂРѕРґ</span></button>
+      <button class="photo-choice" data-bg="night"><img loading="lazy" src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=400&q=75" alt="Space"><span data-i18n="bgNight">рџЊЊ РљРѕСЃРјРѕСЃ</span></button>
     </div>
-    <div class="stats" data-i18n="backgroundHint">Фон меняется плавно и не влияет на игровой счёт. Фотографии загружаются из интернета.</div>
-    <div class="row pinterest-links"><span class="stats" data-i18n="pinterest">Референсы в Pinterest:</span><a href="https://www.pinterest.com/pin/cozy-cabin-in-the-forest-tranquil-fall-escape-in-2024--1145321748982152488/" target="_blank" rel="noopener noreferrer" data-i18n="pinAutumn">🍂 Осенняя хижина</a><a href="https://ru.pinterest.com/pin/winter-wallpaper-cozy-cabin-in-the-snowy-woods--354095589456085644/" target="_blank" rel="noopener noreferrer" data-i18n="pinWinter">❄️ Зимний лес</a><a href="https://www.pinterest.com/pin/8514686790157263/" target="_blank" rel="noopener noreferrer" data-i18n="pinWindow">☕ Уютное окно</a></div>
+    <div class="stats" data-i18n="backgroundHint">Р¤РѕРЅ РјРµРЅСЏРµС‚СЃСЏ РїР»Р°РІРЅРѕ Рё РЅРµ РІР»РёСЏРµС‚ РЅР° РёРіСЂРѕРІРѕР№ СЃС‡С‘С‚. Р¤РѕС‚РѕРіСЂР°С„РёРё Р·Р°РіСЂСѓР¶Р°СЋС‚СЃСЏ РёР· РёРЅС‚РµСЂРЅРµС‚Р°.</div>
+    <div class="row pinterest-links"><span class="stats" data-i18n="pinterest">Р РµС„РµСЂРµРЅСЃС‹ РІ Pinterest:</span><a href="https://www.pinterest.com/pin/cozy-cabin-in-the-forest-tranquil-fall-escape-in-2024--1145321748982152488/" target="_blank" rel="noopener noreferrer" data-i18n="pinAutumn">рџЌ‚ РћСЃРµРЅРЅСЏСЏ С…РёР¶РёРЅР°</a><a href="https://ru.pinterest.com/pin/winter-wallpaper-cozy-cabin-in-the-snowy-woods--354095589456085644/" target="_blank" rel="noopener noreferrer" data-i18n="pinWinter">вќ„пёЏ Р—РёРјРЅРёР№ Р»РµСЃ</a><a href="https://www.pinterest.com/pin/8514686790157263/" target="_blank" rel="noopener noreferrer" data-i18n="pinWindow">в• РЈСЋС‚РЅРѕРµ РѕРєРЅРѕ</a></div>
   </section>
 
   <section class="panel">
-    <div class="label" data-i18n="soundTitle">🔊 ЗВУКИ И МУЗЫКА</div>
-    <div class="row"><button class="btn active" id="soundToggle">🔊 Звуки: ВКЛ</button><button class="btn" id="musicToggle">♫ Музыка: ВЫКЛ</button></div>
-    <div class="row"><label for="musicStyle" data-i18n="musicStyleLabel">МУЗЫКАЛЬНЫЙ СТИЛЬ</label><select id="musicStyle"></select></div>
+    <div class="label" data-i18n="soundTitle">рџ”Љ Р—Р’РЈРљР Р РњРЈР—Р«РљРђ</div>
+    <div class="row"><button class="btn active" id="soundToggle">рџ”Љ Р—РІСѓРєРё: Р’РљР›</button><button class="btn" id="musicToggle">в™« РњСѓР·С‹РєР°: Р’Р«РљР›</button></div>
+    <div class="row"><label for="musicStyle" data-i18n="musicStyleLabel">РњРЈР—Р«РљРђР›Р¬РќР«Р™ РЎРўРР›Р¬</label><select id="musicStyle"></select></div>
     <div class="music-bars" id="musicBars" aria-hidden="true"></div>
-    <div class="stats" id="musicInfo" data-i18n="musicInfo">Выбери стиль и включи музыку. Звук запускается после нажатия кнопки.</div>
+    <div class="stats" id="musicInfo" data-i18n="musicInfo">Р’С‹Р±РµСЂРё СЃС‚РёР»СЊ Рё РІРєР»СЋС‡Рё РјСѓР·С‹РєСѓ. Р—РІСѓРє Р·Р°РїСѓСЃРєР°РµС‚СЃСЏ РїРѕСЃР»Рµ РЅР°Р¶Р°С‚РёСЏ РєРЅРѕРїРєРё.</div>
   </section>
 
   <section class="panel" id="tradeMachine">
-    <div class="label" data-i18n="tradeTitle">🔁 TRADE MACHINE · СИСТЕМА ОБМЕНА</div>
-    <p class="stats" data-i18n="tradeHint">Выбери две стороны обмена. Машина покажет предложение и проверит количества.</p>
+    <div class="label" data-i18n="tradeTitle">рџ”Ѓ TRADE MACHINE В· РЎРРЎРўР•РњРђ РћР‘РњР•РќРђ</div>
+    <p class="stats" data-i18n="tradeHint">Р’С‹Р±РµСЂРё РґРІРµ СЃС‚РѕСЂРѕРЅС‹ РѕР±РјРµРЅР°. РњР°С€РёРЅР° РїРѕРєР°Р¶РµС‚ РїСЂРµРґР»РѕР¶РµРЅРёРµ Рё РїСЂРѕРІРµСЂРёС‚ РєРѕР»РёС‡РµСЃС‚РІР°.</p>
     <div class="trade-grid">
-      <div class="trade-card"><label for="giveColor" data-i18n="giveLabel">ТЫ ОТДАЁШЬ</label><select id="giveColor"></select><label for="giveAmount" style="margin-top:12px" data-i18n="quantity">КОЛИЧЕСТВО</label><input id="giveAmount" type="number" min="1" max="999" value="1"></div>
-      <div class="trade-card"><label for="getColor" data-i18n="getLabel">ТЫ ПОЛУЧАЕШЬ</label><select id="getColor"></select><label for="getAmount" style="margin-top:12px" data-i18n="quantity">КОЛИЧЕСТВО</label><input id="getAmount" type="number" min="1" max="999" value="1"></div>
+      <div class="trade-card"><label for="giveColor" data-i18n="giveLabel">РўР« РћРўР”РђРЃРЁР¬</label><select id="giveColor"></select><label for="giveAmount" style="margin-top:12px" data-i18n="quantity">РљРћР›РР§Р•РЎРўР’Рћ</label><input id="giveAmount" type="number" min="1" max="999" value="1"></div>
+      <div class="trade-card"><label for="getColor" data-i18n="getLabel">РўР« РџРћР›РЈР§РђР•РЁР¬</label><select id="getColor"></select><label for="getAmount" style="margin-top:12px" data-i18n="quantity">РљРћР›РР§Р•РЎРўР’Рћ</label><input id="getAmount" type="number" min="1" max="999" value="1"></div>
     </div>
-    <div class="row"><button class="btn" id="checkTrade" data-i18n="checkTrade">⚙️ Проверить обмен</button><button class="btn" id="resetTrade" data-i18n="resetTrade">↻ Сбросить обмен</button></div>
-    <div class="trade-result" id="tradeResult" aria-live="polite" data-i18n="tradeDefault">Настрой обмен и нажми «Проверить обмен».</div>
-    <p class="stats" data-i18n="tradeDisclaimer">Важно: это локальный симулятор. Он не подключён к аккаунтам, инвентарю или онлайн-рынку.</p>
+    <div class="row"><button class="btn" id="checkTrade" data-i18n="checkTrade">вљ™пёЏ РџСЂРѕРІРµСЂРёС‚СЊ РѕР±РјРµРЅ</button><button class="btn" id="resetTrade" data-i18n="resetTrade">в†» РЎР±СЂРѕСЃРёС‚СЊ РѕР±РјРµРЅ</button></div>
+    <div class="trade-result" id="tradeResult" aria-live="polite" data-i18n="tradeDefault">РќР°СЃС‚СЂРѕР№ РѕР±РјРµРЅ Рё РЅР°Р¶РјРё В«РџСЂРѕРІРµСЂРёС‚СЊ РѕР±РјРµРЅВ».</div>
+    <p class="stats" data-i18n="tradeDisclaimer">Р’Р°Р¶РЅРѕ: СЌС‚Рѕ Р»РѕРєР°Р»СЊРЅС‹Р№ СЃРёРјСѓР»СЏС‚РѕСЂ. РћРЅ РЅРµ РїРѕРґРєР»СЋС‡С‘РЅ Рє Р°РєРєР°СѓРЅС‚Р°Рј, РёРЅРІРµРЅС‚Р°СЂСЋ РёР»Рё РѕРЅР»Р°Р№РЅ-СЂС‹РЅРєСѓ.</p>
   </section>
-  <footer data-i18n="footer">TELEK DICE · MEOWL-inspired style · Счёт хранится в этой вкладке и не является глобальным онлайном.</footer>
+  <footer data-i18n="footer">TELEK DICE В· MEOWL-inspired style В· РЎС‡С‘С‚ С…СЂР°РЅРёС‚СЃСЏ РІ СЌС‚РѕР№ РІРєР»Р°РґРєРµ Рё РЅРµ СЏРІР»СЏРµС‚СЃСЏ РіР»РѕР±Р°Р»СЊРЅС‹Рј РѕРЅР»Р°Р№РЅРѕРј.</footer>
 </main>
 <script>
 const translations = {
 ru: {
-gateTitle:'ВЫБЕРИ ЯЗЫК', gateHint:'Выбери язык · Choose your language',
-brand:'🐾 NEON DICE CLUB',stylePill:'● MEOWL STYLE',subtitle:'🐾 ROLL YOUR COLORS · MEOW VIBES 🐾',
-customize:'НАСТРОЙ СВОЙ БРОСОК',diceCountLabel:'КОЛИЧЕСТВО КУБИКОВ',resultsLabel:'РЕЗУЛЬТАТ БРОСКА',
-fastOff:'⚡ Fast Roll: ВЫКЛ',fastOn:'⚡ Fast Roll: ВКЛ',fastHint:'Без анимации — мгновенный результат',
-pressRoll:'Нажми ROLL DICE!',ready:'Система готова к броску.',resetScore:'↻ Сбросить счёт',
-rollsLabel:'БРОСКИ:',matchesLabel:'СОВПАДЕНИЯ:',streakLabel:'СЕРИЯ:',megaTitle:'👑 MEGA ROLL · УЛЬТРА-БРОСОК',
-megaButton:'✨ MEGA ROLL ✨',megaBusy:'✨ КУБИКИ КРУТЯТСЯ…',megaAgain:'✨ ЕЩЁ РАЗ',
-megaHint:'Нажми кнопку — кубик закрутится и откроет результат…',megaChanging:'Цвета меняются… сейчас выпадет комбинация!',
-backgroundTitle:'🎨 ВЫБОР ФОНА · ФОТОГРАФИИ ПРИРОДЫ',pageStyle:'СТИЛЬ СТРАНИЦЫ',
-bgMeowl:'🐾 MEOWL — исходный',bgAutumn:'🍂 Осень',bgWinter:'❄️ Зима',bgSpring:'🌸 Весна',bgForest:'🏞️ Горы и озеро',
-bgSunset:'🌇 Закат',bgOcean:'🌊 Океан',bgCity:'🌃 Ночной город',bgNight:'🌌 Космос',bgMidnight:'🌙 Полночь',bgMint:'🌿 Мята',bgMono:'🖤 Тёмный монохром',
-backgroundHint:'Фон меняется плавно и не влияет на игровой счёт. Фотографии загружаются из интернета.',
-pinterest:'Референсы в Pinterest:',pinAutumn:'🍂 Осенняя хижина',pinWinter:'❄️ Зимний лес',pinWindow:'☕ Уютное окно',
-soundTitle:'🔊 ЗВУКИ И МУЗЫКА',soundOn:'🔊 Звуки: ВКЛ',soundOff:'🔇 Звуки: ВЫКЛ',musicOn:'♫ Музыка: ВКЛ',musicOff:'♫ Музыка: ВЫКЛ',
-musicStyleLabel:'МУЗЫКАЛЬНЫЙ СТИЛЬ',musicMeow:'🐱 MEOW melody',musicChill:'🌙 Chill neon',musicArcade:'🕹️ Arcade',musicAutumn:'🍂 Autumn vibes',
-musicInfo:'Выбери стиль и включи музыку. Звук запускается после нажатия кнопки.',musicPlaying:'Играет стиль: ',musicChosen:'Выбран стиль: ',musicOffInfo:'Музыка выключена.',noAudio:'Браузер не поддерживает встроенную музыку.',
-tradeTitle:'🔁 TRADE MACHINE · СИСТЕМА ОБМЕНА',tradeHint:'Выбери две стороны обмена. Машина покажет предложение и проверит количества.',
-giveLabel:'ТЫ ОТДАЁШЬ',getLabel:'ТЫ ПОЛУЧАЕШЬ',quantity:'КОЛИЧЕСТВО',checkTrade:'⚙️ Проверить обмен',resetTrade:'↻ Сбросить обмен',
-tradeDefault:'Настрой обмен и нажми «Проверить обмен».',tradeDisclaimer:'Важно: это локальный симулятор. Он не подключён к аккаунтам, инвентарю или онлайн-рынку.',
-footer:'TELEK DICE · MEOWL-inspired style · Счёт хранится в этой вкладке и не является глобальным онлайном.',
-readyRoll:'Система готова к броску.',scoreReset:'Счёт сброшен.',rolling:'⏳ БРОСАЕМ...',result:'🎉 РЕЗУЛЬТАТ: ',
-rollDone:'Выпало: ',rollFinished:'. Бросок завершён!',megaStatus:'MEGA ROLL: выпали цвета — ',
-tradeInvalid:'Укажи количество от 1 до 999 для обеих сторон.',tradeSame:'Выбери разные цвета для обмена.',
-tradeEqual:'⚖️ Количества равны. Предложение сбалансировано по количеству.',
-tradeGiveMore:'📦 Ты отдаёшь больше предметов, чем получаешь.',
-tradeGetMore:'✨ Ты получаешь больше предметов, чем отдаёшь.',
-tradeOffer:'Предложение: ', die:'кубик',dice:'кубика',dieN:'КУБИК '
+gateTitle:'Р’Р«Р‘Р•Р Р РЇР—Р«Рљ', gateHint:'Р’С‹Р±РµСЂРё СЏР·С‹Рє В· Choose your language',historyTitle:'рџ“њ РРЎРўРћР РРЇ',historyClear:'РћС‡РёСЃС‚РёС‚СЊ',historyEmpty:'Р—РґРµСЃСЊ РїРѕСЏРІСЏС‚СЃСЏ Р±СЂРѕСЃРєРё',
+brand:'рџђѕ NEON DICE CLUB',stylePill:'в—Џ MEOWL STYLE',subtitle:'рџђѕ ROLL YOUR COLORS В· MEOW VIBES рџђѕ',
+customize:'РќРђРЎРўР РћР™ РЎР’РћР™ Р‘Р РћРЎРћРљ',diceCountLabel:'РљРћР›РР§Р•РЎРўР’Рћ РљРЈР‘РРљРћР’',resultsLabel:'Р Р•Р—РЈР›Р¬РўРђРў Р‘Р РћРЎРљРђ',
+fastOff:'вљЎ Fast Roll: Р’Р«РљР›',fastOn:'вљЎ Fast Roll: Р’РљР›',fastHint:'Р‘РµР· Р°РЅРёРјР°С†РёРё вЂ” РјРіРЅРѕРІРµРЅРЅС‹Р№ СЂРµР·СѓР»СЊС‚Р°С‚',
+pressRoll:'РќР°Р¶РјРё ROLL DICE!',ready:'РЎРёСЃС‚РµРјР° РіРѕС‚РѕРІР° Рє Р±СЂРѕСЃРєСѓ.',resetScore:'в†» РЎР±СЂРѕСЃРёС‚СЊ СЃС‡С‘С‚',
+rollsLabel:'Р‘Р РћРЎРљР:',matchesLabel:'РЎРћР’РџРђР”Р•РќРРЇ:',streakLabel:'РЎР•Р РРЇ:',megaTitle:'рџ‘‘ MEGA ROLL В· РЈР›Р¬РўР Рђ-Р‘Р РћРЎРћРљ',
+megaButton:'вњЁ MEGA ROLL вњЁ',megaBusy:'вњЁ РљРЈР‘РРљР РљР РЈРўРЇРўРЎРЇвЂ¦',megaAgain:'вњЁ Р•Р©РЃ Р РђР—',
+megaHint:'РќР°Р¶РјРё РєРЅРѕРїРєСѓ вЂ” РєСѓР±РёРє Р·Р°РєСЂСѓС‚РёС‚СЃСЏ Рё РѕС‚РєСЂРѕРµС‚ СЂРµР·СѓР»СЊС‚Р°С‚вЂ¦',megaChanging:'Р¦РІРµС‚Р° РјРµРЅСЏСЋС‚СЃСЏвЂ¦ СЃРµР№С‡Р°СЃ РІС‹РїР°РґРµС‚ РєРѕРјР±РёРЅР°С†РёСЏ!',
+backgroundTitle:'рџЋЁ Р’Р«Р‘РћР  Р¤РћРќРђ В· Р¤РћРўРћР“Р РђР¤РР РџР РР РћР”Р«',pageStyle:'РЎРўРР›Р¬ РЎРўР РђРќРР¦Р«',
+bgMeowl:'рџђѕ MEOWL вЂ” РёСЃС…РѕРґРЅС‹Р№',bgAutumn:'рџЌ‚ РћСЃРµРЅСЊ',bgWinter:'вќ„пёЏ Р—РёРјР°',bgSpring:'рџЊё Р’РµСЃРЅР°',bgForest:'рџЏћпёЏ Р“РѕСЂС‹ Рё РѕР·РµСЂРѕ',
+bgSunset:'рџЊ‡ Р—Р°РєР°С‚',bgOcean:'рџЊЉ РћРєРµР°РЅ',bgCity:'рџЊѓ РќРѕС‡РЅРѕР№ РіРѕСЂРѕРґ',bgNight:'рџЊЊ РљРѕСЃРјРѕСЃ',bgMidnight:'рџЊ™ РџРѕР»РЅРѕС‡СЊ',bgMint:'рџЊї РњСЏС‚Р°',bgMono:'рџ–¤ РўС‘РјРЅС‹Р№ РјРѕРЅРѕС…СЂРѕРј',
+backgroundHint:'Р¤РѕРЅ РјРµРЅСЏРµС‚СЃСЏ РїР»Р°РІРЅРѕ Рё РЅРµ РІР»РёСЏРµС‚ РЅР° РёРіСЂРѕРІРѕР№ СЃС‡С‘С‚. Р¤РѕС‚РѕРіСЂР°С„РёРё Р·Р°РіСЂСѓР¶Р°СЋС‚СЃСЏ РёР· РёРЅС‚РµСЂРЅРµС‚Р°.',
+pinterest:'Р РµС„РµСЂРµРЅСЃС‹ РІ Pinterest:',pinAutumn:'рџЌ‚ РћСЃРµРЅРЅСЏСЏ С…РёР¶РёРЅР°',pinWinter:'вќ„пёЏ Р—РёРјРЅРёР№ Р»РµСЃ',pinWindow:'в• РЈСЋС‚РЅРѕРµ РѕРєРЅРѕ',
+soundTitle:'рџ”Љ Р—Р’РЈРљР Р РњРЈР—Р«РљРђ',soundOn:'рџ”Љ Р—РІСѓРєРё: Р’РљР›',soundOff:'рџ”‡ Р—РІСѓРєРё: Р’Р«РљР›',musicOn:'в™« РњСѓР·С‹РєР°: Р’РљР›',musicOff:'в™« РњСѓР·С‹РєР°: Р’Р«РљР›',
+musicStyleLabel:'РњРЈР—Р«РљРђР›Р¬РќР«Р™ РЎРўРР›Р¬',musicMeow:'рџђ± MEOW melody',musicChill:'рџЊ™ Chill neon',musicArcade:'рџ•№пёЏ Arcade',musicAutumn:'рџЌ‚ Autumn vibes',
+musicInfo:'Р’С‹Р±РµСЂРё СЃС‚РёР»СЊ Рё РІРєР»СЋС‡Рё РјСѓР·С‹РєСѓ. Р—РІСѓРє Р·Р°РїСѓСЃРєР°РµС‚СЃСЏ РїРѕСЃР»Рµ РЅР°Р¶Р°С‚РёСЏ РєРЅРѕРїРєРё.',musicPlaying:'РРіСЂР°РµС‚ СЃС‚РёР»СЊ: ',musicChosen:'Р’С‹Р±СЂР°РЅ СЃС‚РёР»СЊ: ',musicOffInfo:'РњСѓР·С‹РєР° РІС‹РєР»СЋС‡РµРЅР°.',noAudio:'Р‘СЂР°СѓР·РµСЂ РЅРµ РїРѕРґРґРµСЂР¶РёРІР°РµС‚ РІСЃС‚СЂРѕРµРЅРЅСѓСЋ РјСѓР·С‹РєСѓ.',
+tradeTitle:'рџ”Ѓ TRADE MACHINE В· РЎРРЎРўР•РњРђ РћР‘РњР•РќРђ',tradeHint:'Р’С‹Р±РµСЂРё РґРІРµ СЃС‚РѕСЂРѕРЅС‹ РѕР±РјРµРЅР°. РњР°С€РёРЅР° РїРѕРєР°Р¶РµС‚ РїСЂРµРґР»РѕР¶РµРЅРёРµ Рё РїСЂРѕРІРµСЂРёС‚ РєРѕР»РёС‡РµСЃС‚РІР°.',
+giveLabel:'РўР« РћРўР”РђРЃРЁР¬',getLabel:'РўР« РџРћР›РЈР§РђР•РЁР¬',quantity:'РљРћР›РР§Р•РЎРўР’Рћ',checkTrade:'вљ™пёЏ РџСЂРѕРІРµСЂРёС‚СЊ РѕР±РјРµРЅ',resetTrade:'в†» РЎР±СЂРѕСЃРёС‚СЊ РѕР±РјРµРЅ',
+tradeDefault:'РќР°СЃС‚СЂРѕР№ РѕР±РјРµРЅ Рё РЅР°Р¶РјРё В«РџСЂРѕРІРµСЂРёС‚СЊ РѕР±РјРµРЅВ».',tradeDisclaimer:'Р’Р°Р¶РЅРѕ: СЌС‚Рѕ Р»РѕРєР°Р»СЊРЅС‹Р№ СЃРёРјСѓР»СЏС‚РѕСЂ. РћРЅ РЅРµ РїРѕРґРєР»СЋС‡С‘РЅ Рє Р°РєРєР°СѓРЅС‚Р°Рј, РёРЅРІРµРЅС‚Р°СЂСЋ РёР»Рё РѕРЅР»Р°Р№РЅ-СЂС‹РЅРєСѓ.',
+footer:'TELEK DICE В· MEOWL-inspired style В· РЎС‡С‘С‚ С…СЂР°РЅРёС‚СЃСЏ РІ СЌС‚РѕР№ РІРєР»Р°РґРєРµ Рё РЅРµ СЏРІР»СЏРµС‚СЃСЏ РіР»РѕР±Р°Р»СЊРЅС‹Рј РѕРЅР»Р°Р№РЅРѕРј.',
+readyRoll:'РЎРёСЃС‚РµРјР° РіРѕС‚РѕРІР° Рє Р±СЂРѕСЃРєСѓ.',scoreReset:'РЎС‡С‘С‚ СЃР±СЂРѕС€РµРЅ.',rolling:'вЏі Р‘Р РћРЎРђР•Рњ...',result:'рџЋ‰ Р Р•Р—РЈР›Р¬РўРђРў: ',
+rollDone:'Р’С‹РїР°Р»Рѕ: ',rollFinished:'. Р‘СЂРѕСЃРѕРє Р·Р°РІРµСЂС€С‘РЅ!',megaStatus:'MEGA ROLL: РІС‹РїР°Р»Рё С†РІРµС‚Р° вЂ” ',
+tradeInvalid:'РЈРєР°Р¶Рё РєРѕР»РёС‡РµСЃС‚РІРѕ РѕС‚ 1 РґРѕ 999 РґР»СЏ РѕР±РµРёС… СЃС‚РѕСЂРѕРЅ.',tradeSame:'Р’С‹Р±РµСЂРё СЂР°Р·РЅС‹Рµ С†РІРµС‚Р° РґР»СЏ РѕР±РјРµРЅР°.',
+tradeEqual:'вљ–пёЏ РљРѕР»РёС‡РµСЃС‚РІР° СЂР°РІРЅС‹. РџСЂРµРґР»РѕР¶РµРЅРёРµ СЃР±Р°Р»Р°РЅСЃРёСЂРѕРІР°РЅРѕ РїРѕ РєРѕР»РёС‡РµСЃС‚РІСѓ.',
+tradeGiveMore:'рџ“¦ РўС‹ РѕС‚РґР°С‘С€СЊ Р±РѕР»СЊС€Рµ РїСЂРµРґРјРµС‚РѕРІ, С‡РµРј РїРѕР»СѓС‡Р°РµС€СЊ.',
+tradeGetMore:'вњЁ РўС‹ РїРѕР»СѓС‡Р°РµС€СЊ Р±РѕР»СЊС€Рµ РїСЂРµРґРјРµС‚РѕРІ, С‡РµРј РѕС‚РґР°С‘С€СЊ.',
+tradeOffer:'РџСЂРµРґР»РѕР¶РµРЅРёРµ: ', die:'РєСѓР±РёРє',dice:'РєСѓР±РёРєР°',dieN:'РљРЈР‘РРљ '
 },
 en: {
-gateTitle:'CHOOSE YOUR LANGUAGE',gateHint:'Choose your language',
-brand:'🐾 NEON DICE CLUB',stylePill:'● MEOWL STYLE',subtitle:'🐾 ROLL YOUR COLORS · MEOW VIBES 🐾',
+gateTitle:'CHOOSE YOUR LANGUAGE',gateHint:'Choose your language',historyTitle:'рџ“њ HISTORY',historyClear:'Clear',historyEmpty:'Your rolls will appear here',
+brand:'рџђѕ NEON DICE CLUB',stylePill:'в—Џ MEOWL STYLE',subtitle:'рџђѕ ROLL YOUR COLORS В· MEOW VIBES рџђѕ',
 customize:'CUSTOMIZE YOUR ROLL',diceCountLabel:'NUMBER OF DICE',resultsLabel:'ROLL RESULTS',
-fastOff:'⚡ Fast Roll: OFF',fastOn:'⚡ Fast Roll: ON',fastHint:'Skip animation for instant results',
-pressRoll:'Press ROLL DICE!',ready:'Ready to roll.',resetScore:'↻ Reset score',
-rollsLabel:'ROLLS:',matchesLabel:'MATCHES:',streakLabel:'STREAK:',megaTitle:'👑 MEGA ROLL · ULTRA ROLL',
-megaButton:'✨ MEGA ROLL ✨',megaBusy:'✨ ROLLING…',megaAgain:'✨ ROLL AGAIN',
-megaHint:'Press the button — the die will spin and reveal the result…',megaChanging:'Colors are changing… your combo is coming!',
-backgroundTitle:'🎨 BACKGROUND · NATURE PHOTOS',pageStyle:'PAGE STYLE',
-bgMeowl:'🐾 MEOWL — original',bgAutumn:'🍂 Autumn',bgWinter:'❄️ Winter',bgSpring:'🌸 Spring',bgForest:'🏞️ Mountains & lake',
-bgSunset:'🌇 Sunset',bgOcean:'🌊 Ocean',bgCity:'🌃 Night city',bgNight:'🌌 Space',bgMidnight:'🌙 Midnight',bgMint:'🌿 Mint',bgMono:'🖤 Dark monochrome',
+fastOff:'вљЎ Fast Roll: OFF',fastOn:'вљЎ Fast Roll: ON',fastHint:'Skip animation for instant results',
+pressRoll:'Press ROLL DICE!',ready:'Ready to roll.',resetScore:'в†» Reset score',
+rollsLabel:'ROLLS:',matchesLabel:'MATCHES:',streakLabel:'STREAK:',megaTitle:'рџ‘‘ MEGA ROLL В· ULTRA ROLL',
+megaButton:'вњЁ MEGA ROLL вњЁ',megaBusy:'вњЁ ROLLINGвЂ¦',megaAgain:'вњЁ ROLL AGAIN',
+megaHint:'Press the button вЂ” the die will spin and reveal the resultвЂ¦',megaChanging:'Colors are changingвЂ¦ your combo is coming!',
+backgroundTitle:'рџЋЁ BACKGROUND В· NATURE PHOTOS',pageStyle:'PAGE STYLE',
+bgMeowl:'рџђѕ MEOWL вЂ” original',bgAutumn:'рџЌ‚ Autumn',bgWinter:'вќ„пёЏ Winter',bgSpring:'рџЊё Spring',bgForest:'рџЏћпёЏ Mountains & lake',
+bgSunset:'рџЊ‡ Sunset',bgOcean:'рџЊЉ Ocean',bgCity:'рџЊѓ Night city',bgNight:'рџЊЊ Space',bgMidnight:'рџЊ™ Midnight',bgMint:'рџЊї Mint',bgMono:'рџ–¤ Dark monochrome',
 backgroundHint:'The background changes smoothly and does not affect the score. Photos load from the internet.',
-pinterest:'Pinterest references:',pinAutumn:'🍂 Autumn cabin',pinWinter:'❄️ Winter forest',pinWindow:'☕ Cozy window',
-soundTitle:'🔊 SOUND & MUSIC',soundOn:'🔊 Sound: ON',soundOff:'🔇 Sound: OFF',musicOn:'♫ Music: ON',musicOff:'♫ Music: OFF',
-musicStyleLabel:'MUSIC STYLE',musicMeow:'🐱 MEOW melody',musicChill:'🌙 Chill neon',musicArcade:'🕹️ Arcade',musicAutumn:'🍂 Autumn vibes',
+pinterest:'Pinterest references:',pinAutumn:'рџЌ‚ Autumn cabin',pinWinter:'вќ„пёЏ Winter forest',pinWindow:'в• Cozy window',
+soundTitle:'рџ”Љ SOUND & MUSIC',soundOn:'рџ”Љ Sound: ON',soundOff:'рџ”‡ Sound: OFF',musicOn:'в™« Music: ON',musicOff:'в™« Music: OFF',
+musicStyleLabel:'MUSIC STYLE',musicMeow:'рџђ± MEOW melody',musicChill:'рџЊ™ Chill neon',musicArcade:'рџ•№пёЏ Arcade',musicAutumn:'рџЌ‚ Autumn vibes',
 musicInfo:'Choose a style and turn on music. Audio starts after you press a button.',musicPlaying:'Playing style: ',musicChosen:'Selected style: ',musicOffInfo:'Music is off.',noAudio:'This browser does not support built-in audio.',
-tradeTitle:'🔁 TRADE MACHINE',tradeHint:'Choose both sides of the trade. The machine will show the offer and compare quantities.',
-giveLabel:'YOU GIVE',getLabel:'YOU RECEIVE',quantity:'QUANTITY',checkTrade:'⚙️ Check trade',resetTrade:'↻ Reset trade',
-tradeDefault:'Set up your trade and press “Check trade”.',tradeDisclaimer:'Note: this is a local simulator. It is not connected to accounts, inventory, or an online market.',
-footer:'TELEK DICE · MEOWL-inspired style · Scores are local to this tab and are not global online stats.',
-readyRoll:'Ready to roll.',scoreReset:'Score reset.',rolling:'⏳ ROLLING...',result:'🎉 RESULT: ',
-rollDone:'Rolled: ',rollFinished:'. Roll complete!',megaStatus:'MEGA ROLL: colors rolled — ',
+tradeTitle:'рџ”Ѓ TRADE MACHINE',tradeHint:'Choose both sides of the trade. The machine will show the offer and compare quantities.',
+giveLabel:'YOU GIVE',getLabel:'YOU RECEIVE',quantity:'QUANTITY',checkTrade:'вљ™пёЏ Check trade',resetTrade:'в†» Reset trade',
+tradeDefault:'Set up your trade and press вЂњCheck tradeвЂќ.',tradeDisclaimer:'Note: this is a local simulator. It is not connected to accounts, inventory, or an online market.',
+footer:'TELEK DICE В· MEOWL-inspired style В· Scores are local to this tab and are not global online stats.',
+readyRoll:'Ready to roll.',scoreReset:'Score reset.',rolling:'вЏі ROLLING...',result:'рџЋ‰ RESULT: ',
+rollDone:'Rolled: ',rollFinished:'. Roll complete!',megaStatus:'MEGA ROLL: colors rolled вЂ” ',
 tradeInvalid:'Enter a quantity from 1 to 999 for both sides.',tradeSame:'Choose different colors for the trade.',
-tradeEqual:'⚖️ Quantities are equal. The offer is balanced by quantity.',
-tradeGiveMore:'📦 You are giving more items than you receive.',
-tradeGetMore:'✨ You are receiving more items than you give.',
+tradeEqual:'вљ–пёЏ Quantities are equal. The offer is balanced by quantity.',
+tradeGiveMore:'рџ“¦ You are giving more items than you receive.',
+tradeGetMore:'вњЁ You are receiving more items than you give.',
 tradeOffer:'Offer: ',die:'die',dice:'dice',dieN:'DIE '
 }
 };
@@ -249,25 +260,31 @@ function setLanguage(lang){
   $('soundToggle').textContent=soundOn?tr('soundOn'):tr('soundOff');
   $('musicToggle').textContent=musicOn?tr('musicOn'):tr('musicOff');
   const count=Number($('count').value||4);
-  $('count').innerHTML='';for(let n=1;n<=8;n++){const o=document.createElement('option');o.value=n;o.textContent=n+' '+(language==='en'?(n===1?tr('die'):tr('dice')):(n===1?'кубик':'кубика'));$('count').append(o)}$('count').value=count;
+  $('count').innerHTML='';for(let n=1;n<=8;n++){const o=document.createElement('option');o.value=n;o.textContent=n+' '+(language==='en'?(n===1?tr('die'):tr('dice')):(n===1?'РєСѓР±РёРє':'РєСѓР±РёРєР°'));$('count').append(o)}$('count').value=count;
   const bgSelect=$('backgroundStyle'),currentBg=bgSelect.value||'autumn';bgSelect.innerHTML='';
   [['meowl','bgMeowl'],['autumn','bgAutumn'],['winter','bgWinter'],['spring','bgSpring'],['forest','bgForest'],['sunset','bgSunset'],['ocean','bgOcean'],['city','bgCity'],['night','bgNight'],['midnight','bgMidnight'],['mint','bgMint'],['mono','bgMono']].forEach(([v,k])=>{let o=document.createElement('option');o.value=v;o.textContent=tr(k);bgSelect.append(o)});bgSelect.value=currentBg;
   const ms=$('musicStyle'),old=ms.value||'meow';ms.innerHTML='';[['meow','musicMeow'],['chill','musicChill'],['arcade','musicArcade'],['autumn','musicAutumn']].forEach(([v,k])=>{let o=document.createElement('option');o.value=v;o.textContent=tr(k);ms.append(o)});ms.value=old;
   document.querySelectorAll('#giveColor,#getColor').forEach(sel=>{const old=sel.value;sel.innerHTML='';colors.forEach((c,i)=>{let o=document.createElement('option');o.value=i;o.textContent=trColor(c.name);sel.append(o)});sel.value=old});
-  $('languageGate').classList.add('hidden');
+  $('languageGate').classList.add('hidden');renderHistory();
 }
-function trColor(name){if(language==='en')return ({'Красный':'Red','Оранжевый':'Orange','Жёлтый':'Yellow','Зелёный':'Green','Синий':'Blue','Фиолетовый':'Purple','Розовый':'Pink','Чёрный':'Black'})[name]||name;return name}
+function trColor(name){if(language==='en')return ({'РљСЂР°СЃРЅС‹Р№':'Red','РћСЂР°РЅР¶РµРІС‹Р№':'Orange','Р–С‘Р»С‚С‹Р№':'Yellow','Р—РµР»С‘РЅС‹Р№':'Green','РЎРёРЅРёР№':'Blue','Р¤РёРѕР»РµС‚РѕРІС‹Р№':'Purple','Р РѕР·РѕРІС‹Р№':'Pink','Р§С‘СЂРЅС‹Р№':'Black'})[name]||name;return name}
 document.querySelectorAll('[data-language]').forEach(b=>b.addEventListener('click',()=>{setLanguage(b.dataset.language);drawIdle();$('results').innerHTML='<div class="stats" style="grid-column:1/-1">'+tr('pressRoll')+'</div>';$('status').textContent=tr('ready');}));
 
 const colors=[
- {name:'Красный',hex:'#ed403c'},{name:'Оранжевый',hex:'#ff852e'},
- {name:'Жёлтый',hex:'#f3d743'},{name:'Зелёный',hex:'#21c968'},
- {name:'Синий',hex:'#3479f6'},{name:'Фиолетовый',hex:'#9b42e9'},
- {name:'Розовый',hex:'#ef42b5'},{name:'Чёрный',hex:'#393541'}
+ {name:'РљСЂР°СЃРЅС‹Р№',hex:'#ed403c'},{name:'РћСЂР°РЅР¶РµРІС‹Р№',hex:'#ff852e'},
+ {name:'Р–С‘Р»С‚С‹Р№',hex:'#f3d743'},{name:'Р—РµР»С‘РЅС‹Р№',hex:'#21c968'},
+ {name:'РЎРёРЅРёР№',hex:'#3479f6'},{name:'Р¤РёРѕР»РµС‚РѕРІС‹Р№',hex:'#9b42e9'},
+ {name:'Р РѕР·РѕРІС‹Р№',hex:'#ef42b5'},{name:'Р§С‘СЂРЅС‹Р№',hex:'#393541'}
 ];
 const $=id=>document.getElementById(id);
-let rolls=0,score=0,streak=0,busy=false,soundOn=true,musicOn=false,fastRoll=false,audio=null,musicTimer=null,musicStep=0,megaBusy=false,megaTimer=null,megaColorTimer=null;
-for(let n=1;n<=8;n++){let o=document.createElement('option');o.value=n;o.textContent=n+' кубика';$('count').append(o)}
+let rollHistory=[];
+try{const savedHistory=JSON.parse(localStorage.getItem('telekDiceRollHistory')||'[]');if(Array.isArray(savedHistory))rollHistory=savedHistory.slice(0,100)}catch(e){}
+function saveHistory(nums,type='ROLL'){rollHistory.unshift({nums:nums.slice(),type:type,time:new Date().toLocaleTimeString(language==='en'?'en-GB':'ru-RU',{hour:'2-digit',minute:'2-digit'})});rollHistory=rollHistory.slice(0,100);try{localStorage.setItem('telekDiceRollHistory',JSON.stringify(rollHistory))}catch(e){}renderHistory()}
+function renderHistory(){const list=$('historyList');if(!list)return;list.innerHTML='';if(!rollHistory.length){const empty=document.createElement('div');empty.className='history-empty';empty.textContent=tr('historyEmpty');list.append(empty);return}rollHistory.forEach(entry=>{const row=document.createElement('div');row.className='history-entry';const meta=document.createElement('div');meta.className='history-meta';meta.textContent=(entry.type==='MEGA'?'вњЁ MEGA':'рџЋІ ROLL')+' В· '+entry.time;const dots=document.createElement('div');dots.className='history-colors';entry.nums.forEach(n=>{if(!colors[n])return;const dot=document.createElement('span');dot.className='history-color';dot.style.background=colors[n].hex;dot.title=trColor(colors[n].name);dots.append(dot)});const names=document.createElement('div');names.className='history-names';names.textContent=entry.nums.map(n=>colors[n]?trColor(colors[n].name):'').filter(Boolean).join(' В· ');row.append(meta,dots,names);list.append(row)})}
+$('clearHistory').onclick=()=>{rollHistory=[];try{localStorage.removeItem('telekDiceRollHistory')}catch(e){}renderHistory();clickSound()};
+
+renderHistory();\nlet rolls=0,score=0,streak=0,busy=false,soundOn=true,musicOn=false,fastRoll=false,audio=null,musicTimer=null,musicStep=0,megaBusy=false,megaTimer=null,megaColorTimer=null;
+for(let n=1;n<=8;n++){let o=document.createElement('option');o.value=n;o.textContent=n+' РєСѓР±РёРєР°';$('count').append(o)}
 function ctx(){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;if(!audio)audio=new AC();if(audio.state==='suspended')audio.resume();return audio}
 function tone(freq,duration=.12,type='sine',volume=.025,delay=0){const c=ctx();if(!c)return;let o=c.createOscillator(),g=c.createGain(),t=c.currentTime+delay;o.type=type;o.frequency.setValueAtTime(freq,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(volume,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+duration);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+duration+.03)}
 function clickSound(){if(soundOn){tone(720,.055,'sine',.025);tone(960,.045,'sine',.012,.025)}}
@@ -277,10 +294,10 @@ function winSound(){if(soundOn)[523,659,784,1046].forEach((f,i)=>tone(f,.15,'sin
 function makeDie(c,small=false){let d=document.createElement('div');d.className=small?'resultdie':'die';d.style.background=`linear-gradient(145deg,${c.hex},${c.hex}dd)`;d.innerHTML=small?'<span class="pip"></span><span class="name">'+trColor(c.name)+'</span>':'<span class="pip"></span>';return d}
 function drawIdle(){let grid=$('diceGrid');grid.innerHTML='';for(let i=0;i<Number($('count').value);i++)grid.append(makeDie(colors[i%colors.length]))}
 function render(nums,mega=false){let r=$('results');r.innerHTML='';nums.forEach((n,i)=>{let d=makeDie(colors[n],true);let small=document.createElement('span');small.className='small';small.textContent=mega?'MEGA ROLL':tr('dieN')+(i+1);d.append(small);d.style.animationDelay=(i*.055)+'s';r.append(d)})}
-function finishRoll(nums){const grid=$('diceGrid');grid.innerHTML='';nums.forEach(x=>grid.append(makeDie(colors[x])));render(nums);rolls++;score+=nums.length;streak++;$('rolls').textContent=rolls;$('score').textContent=score;$('streak').textContent=streak;$('status').textContent=tr('rollDone')+nums.map(x=>trColor(colors[x].name)).join(' · ')+tr('rollFinished');if(nums.some(x=>x===6))meow();else winSound();$('roll').disabled=false;$('roll').textContent=tr('roll');busy=false}
+function finishRoll(nums){saveHistory(nums,'ROLL');const grid=$('diceGrid');grid.innerHTML='';nums.forEach(x=>grid.append(makeDie(colors[x])));render(nums);rolls++;score+=nums.length;streak++;$('rolls').textContent=rolls;$('score').textContent=score;$('streak').textContent=streak;$('status').textContent=tr('rollDone')+nums.map(x=>trColor(colors[x].name)).join(' В· ')+tr('rollFinished');if(nums.some(x=>x===6))meow();else winSound();$('roll').disabled=false;$('roll').textContent=tr('roll');busy=false}
 $('count').value='4';
 $('count').onchange=()=>{clickSound();drawIdle()};
-$('roll').onclick=()=>{if(busy||megaBusy)return;ctx();clickSound();busy=true;$('roll').disabled=true;$('roll').textContent=fastRoll?'⚡ RESULT...':tr('rolling');const n=Number($('count').value),nums=Array.from({length:n},()=>Math.floor(Math.random()*colors.length));if(fastRoll){finishRoll(nums);return}rollSound();const grid=$('diceGrid');grid.innerHTML='';for(let i=0;i<n;i++){let d=makeDie(colors[Math.floor(Math.random()*colors.length)]);d.classList.add('rolling');grid.append(d)}setTimeout(()=>finishRoll(nums),750)};
+$('roll').onclick=()=>{if(busy||megaBusy)return;ctx();clickSound();busy=true;$('roll').disabled=true;$('roll').textContent=fastRoll?'вљЎ RESULT...':tr('rolling');const n=Number($('count').value),nums=Array.from({length:n},()=>Math.floor(Math.random()*colors.length));if(fastRoll){finishRoll(nums);return}rollSound();const grid=$('diceGrid');grid.innerHTML='';for(let i=0;i<n;i++){let d=makeDie(colors[Math.floor(Math.random()*colors.length)]);d.classList.add('rolling');grid.append(d)}setTimeout(()=>finishRoll(nums),750)};
 $('fastRoll').onclick=()=>{fastRoll=!fastRoll;$('fastRoll').textContent=fastRoll?tr('fastOn'):tr('fastOff');$('fastRoll').classList.toggle('active',fastRoll);$('fastRoll').setAttribute('aria-pressed',String(fastRoll));clickSound()};
 $('reset').onclick=()=>{clickSound();rolls=score=streak=0;$('rolls').textContent='0';$('score').textContent='0';$('streak').textContent='0';$('results').innerHTML='<div class="stats" style="grid-column:1/-1">'+tr('pressRoll')+'</div>';$('status').textContent=tr('scoreReset');drawIdle()};
 $('soundToggle').onclick=()=>{soundOn=!soundOn;$('soundToggle').textContent=soundOn?tr('soundOn'):tr('soundOff');$('soundToggle').classList.toggle('active',soundOn);if(soundOn){ctx();clickSound()}};
@@ -308,10 +325,10 @@ function setBackground(key){const b=backgrounds[key]||backgrounds.meowl;document
 $('backgroundStyle').onchange=()=>setBackground($('backgroundStyle').value);
 document.querySelectorAll('.photo-choice').forEach(el=>el.onclick=()=>setBackground(el.dataset.bg));
 function shuffledColorResults(count){const bag=colors.map((_,i)=>i);for(let i=bag.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[bag[i],bag[j]]=[bag[j],bag[i]]}return bag.slice(0,Math.min(count,bag.length))}
-function startMegaRoll(){if(megaBusy||busy)return;ctx();clickSound();document.body.classList.remove('mega-impact','mega-flash');document.body.classList.add('mega-approach');megaBusy=true;$('megaRoll').disabled=true;$('megaRoll').textContent=tr('megaBusy');$('roll').disabled=true;$('megaCaption').textContent=tr('megaChanging');const die=$('megaDie'),progress=$('megaProgress'),count=Number($('count').value),nums=shuffledColorResults(count);die.classList.remove('spinning');progress.classList.remove('running');void die.offsetWidth;void progress.offsetWidth;die.classList.add('spinning');progress.classList.add('running');rollSound();$('diceGrid').querySelectorAll('.die').forEach((d,i)=>{d.classList.add('rolling');d.style.animationDelay=(i*.035)+'s'});if(megaColorTimer)clearInterval(megaColorTimer);megaColorTimer=setInterval(()=>{const c=colors[Math.floor(Math.random()*colors.length)];die.style.background=`linear-gradient(140deg,${c.hex},${c.hex}dd)`},135);megaTimer=setTimeout(()=>{clearInterval(megaColorTimer);megaColorTimer=null;document.body.classList.remove('mega-approach');document.body.classList.add('mega-impact','mega-flash');setTimeout(()=>document.body.classList.remove('mega-impact'),700);setTimeout(()=>document.body.classList.remove('mega-flash'),700);die.classList.remove('spinning');progress.classList.remove('running');const mainColor=colors[nums[0]];die.style.background=`linear-gradient(140deg,${mainColor.hex},${mainColor.hex}dd)`;const list=nums.map(n=>trColor(colors[n].name));$('megaCaption').textContent=tr('result')+list.join(' · ');$('status').textContent=tr('megaStatus')+list.join(' · ')+'.';$('diceGrid').querySelectorAll('.die').forEach(d=>d.classList.remove('rolling'));rolls++;score+=nums.length;streak++;$('rolls').textContent=rolls;$('score').textContent=score;$('streak').textContent=streak;render(nums,true);const grid=$('diceGrid');grid.innerHTML='';nums.forEach(n=>grid.append(makeDie(colors[n])));if(nums.includes(6))meow();else winSound();$('megaRoll').disabled=false;$('megaRoll').textContent=tr('megaAgain');$('roll').disabled=false;$('roll').textContent=tr('roll');megaBusy=false},2150)}
+function startMegaRoll(){if(megaBusy||busy)return;ctx();clickSound();document.body.classList.remove('mega-impact','mega-flash');document.body.classList.add('mega-approach');megaBusy=true;$('megaRoll').disabled=true;$('megaRoll').textContent=tr('megaBusy');$('roll').disabled=true;$('megaCaption').textContent=tr('megaChanging');const die=$('megaDie'),progress=$('megaProgress'),count=Number($('count').value),nums=shuffledColorResults(count);die.classList.remove('spinning');progress.classList.remove('running');void die.offsetWidth;void progress.offsetWidth;die.classList.add('spinning');progress.classList.add('running');rollSound();$('diceGrid').querySelectorAll('.die').forEach((d,i)=>{d.classList.add('rolling');d.style.animationDelay=(i*.035)+'s'});if(megaColorTimer)clearInterval(megaColorTimer);megaColorTimer=setInterval(()=>{const c=colors[Math.floor(Math.random()*colors.length)];die.style.background=`linear-gradient(140deg,${c.hex},${c.hex}dd)`},135);megaTimer=setTimeout(()=>{clearInterval(megaColorTimer);megaColorTimer=null;document.body.classList.remove('mega-approach');document.body.classList.add('mega-impact','mega-flash');setTimeout(()=>document.body.classList.remove('mega-impact'),700);setTimeout(()=>document.body.classList.remove('mega-flash'),700);die.classList.remove('spinning');progress.classList.remove('running');const mainColor=colors[nums[0]];die.style.background=`linear-gradient(140deg,${mainColor.hex},${mainColor.hex}dd)`;saveHistory(nums,'MEGA');const list=nums.map(n=>trColor(colors[n].name));$('megaCaption').textContent=tr('result')+list.join(' В· ');$('status').textContent=tr('megaStatus')+list.join(' В· ')+'.';$('diceGrid').querySelectorAll('.die').forEach(d=>d.classList.remove('rolling'));rolls++;score+=nums.length;streak++;$('rolls').textContent=rolls;$('score').textContent=score;$('streak').textContent=streak;render(nums,true);const grid=$('diceGrid');grid.innerHTML='';nums.forEach(n=>grid.append(makeDie(colors[n])));if(nums.includes(6))meow();else winSound();$('megaRoll').disabled=false;$('megaRoll').textContent=tr('megaAgain');$('roll').disabled=false;$('roll').textContent=tr('roll');megaBusy=false},2150)}
 $('megaRoll').onclick=startMegaRoll;
 function fillTradeColors(){['giveColor','getColor'].forEach((id,idx)=>{const sel=$(id);colors.forEach((c,i)=>{const op=document.createElement('option');op.value=String(i);op.textContent=trColor(c.name);sel.append(op)});sel.value=idx===0?'0':'1'})}
-function checkTrade(){const gi=Number($('giveColor').value),ge=Number($('getColor').value),ga=Number($('giveAmount').value),ea=Number($('getAmount').value);if(!Number.isInteger(ga)||!Number.isInteger(ea)||ga<1||ea<1||ga>999||ea>999){$('tradeResult').textContent=tr('tradeInvalid');return}if(gi===ge){$('tradeResult').textContent=tr('tradeSame');return}const verdict=ga===ea?tr('tradeEqual'):ga>ea?tr('tradeGiveMore'):tr('tradeGetMore');$('tradeResult').textContent=tr('tradeOffer')+ga+' × '+trColor(colors[gi].name)+' → '+ea+' × '+trColor(colors[ge].name)+'. '+verdict}
+function checkTrade(){const gi=Number($('giveColor').value),ge=Number($('getColor').value),ga=Number($('giveAmount').value),ea=Number($('getAmount').value);if(!Number.isInteger(ga)||!Number.isInteger(ea)||ga<1||ea<1||ga>999||ea>999){$('tradeResult').textContent=tr('tradeInvalid');return}if(gi===ge){$('tradeResult').textContent=tr('tradeSame');return}const verdict=ga===ea?tr('tradeEqual'):ga>ea?tr('tradeGiveMore'):tr('tradeGetMore');$('tradeResult').textContent=tr('tradeOffer')+ga+' Г— '+trColor(colors[gi].name)+' в†’ '+ea+' Г— '+trColor(colors[ge].name)+'. '+verdict}
 $('checkTrade').onclick=()=>{clickSound();checkTrade()};
 $('resetTrade').onclick=()=>{$('giveColor').value='0';$('getColor').value='1';$('giveAmount').value='1';$('getAmount').value='1';$('tradeResult').textContent=tr('tradeDefault');clickSound()};
 for(let i=0;i<18;i++)$('musicBars').append(document.createElement('i'));
@@ -319,97 +336,3 @@ fillTradeColors();drawIdle();setBackground('autumn');
 </script>
 </body>
 </html>
-'''
-
-out = Path("/mnt/data/telek-dice-meowl-bilingual.html")
-out.write_text(html, encoding="utf-8")
-print(f"Готово: {out.name} · {len(html):,} символов")
---- original.html
-+++ telek-dice-history.html
-@@ -96,12 +96,25 @@
- @keyframes pipPulse{to{opacity:.25;transform:scale(.7)}}
- @keyframes progress{0%{width:0}35%{width:35%}68%{width:70%}88%{width:88%}100%{width:100%}}
- @keyframes bars{from{height:6px}to{height:34px}}
--@media(max-width:430px){.dice-grid,.results{gap:8px}.die{border-radius:18%}.panel{padding:17px 10px}.die .pip{width:13px;height:13px}.trade-grid{grid-template-columns:1fr}.mega-stage{height:185px}.mega-die{width:90px;height:90px}.mega-die .p3{top:35px;left:35px}}
-+
-+#rollHistory{position:fixed;left:12px;top:50%;transform:translateY(-50%);z-index:5;width:150px;max-height:72vh;overflow:auto;padding:12px;border:1px solid #ffb7df77;border-radius:16px;background:linear-gradient(145deg,#321c38ed,#170f20f2);box-shadow:0 12px 35px #0007;backdrop-filter:blur(14px);text-align:left}
-+.history-head{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:10px}
-+.history-title{font-size:10px;letter-spacing:1px;color:#ffc2ec;font-weight:1000}
-+#clearHistory{border:1px solid #ffffff30;background:#ffffff0b;color:#fff;border-radius:7px;padding:4px 6px;font-size:9px;cursor:pointer}
-+.history-empty{font-size:10px;line-height:1.4;color:var(--muted);font-weight:700}
-+.history-entry{padding:8px 0;border-top:1px solid #ffffff18}
-+.history-meta{font-size:9px;color:var(--muted);margin-bottom:5px}
-+.history-colors{display:flex;flex-wrap:wrap;gap:4px}
-+.history-color{width:13px;height:13px;border-radius:4px;border:1px solid #ffffff99;box-shadow:0 0 7px #ffffff22}
-+.history-names{font-size:9px;line-height:1.4;color:#fff;margin-top:5px;overflow-wrap:anywhere}
-+@media(max-width:700px){#rollHistory{left:6px;top:auto;bottom:8px;transform:none;width:112px;max-height:30vh;padding:8px;border-radius:12px;background:#170f20ed}.history-title{font-size:9px}.history-head{align-items:flex-start;flex-direction:column;gap:4px}.history-entry{padding:5px 0}.history-names{font-size:8px}.history-meta{font-size:8px}.history-color{width:11px;height:11px}}
-+\n@media(max-width:430px){.dice-grid,.results{gap:8px}.die{border-radius:18%}.panel{padding:17px 10px}.die .pip{width:13px;height:13px}.trade-grid{grid-template-columns:1fr}.mega-stage{height:185px}.mega-die{width:90px;height:90px}.mega-die .p3{top:35px;left:35px}}
- @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
- </style>
- </head>
- <body style="--photo:url('https://i.pinimg.com/originals/2a/fa/0a/2afa0a1cf7148fe7913004eeb29aa2b1.jpg');--photo-opacity:.9;background:linear-gradient(135deg,#57301d,#1b1025)">
- <div id="megaFlash" aria-hidden="true"></div>
-+<aside id="rollHistory" aria-label="Roll history"><div class="history-head"><div class="history-title" data-i18n="historyTitle">рџ“њ РРЎРўРћР РРЇ</div><button id="clearHistory" type="button" data-i18n="historyClear">РћС‡РёСЃС‚РёС‚СЊ</button></div><div id="historyList"><div class="history-empty" data-i18n="historyEmpty">Р—РґРµСЃСЊ РїРѕСЏРІСЏС‚СЃСЏ Р±СЂРѕСЃРєРё</div></div></aside>
- <div id="languageGate" role="dialog" aria-modal="true" aria-labelledby="languageTitle">
-   <div class="language-card">
-     <div class="language-paw">рџђѕ</div>
-@@ -179,7 +192,7 @@
- <script>
- const translations = {
- ru: {
--gateTitle:'Р’Р«Р‘Р•Р Р РЇР—Р«Рљ', gateHint:'Р’С‹Р±РµСЂРё СЏР·С‹Рє В· Choose your language',
-+gateTitle:'Р’Р«Р‘Р•Р Р РЇР—Р«Рљ', gateHint:'Р’С‹Р±РµСЂРё СЏР·С‹Рє В· Choose your language',historyTitle:'рџ“њ РРЎРўРћР РРЇ',historyClear:'РћС‡РёСЃС‚РёС‚СЊ',historyEmpty:'Р—РґРµСЃСЊ РїРѕСЏРІСЏС‚СЃСЏ Р±СЂРѕСЃРєРё',
- brand:'рџђѕ NEON DICE CLUB',stylePill:'в—Џ MEOWL STYLE',subtitle:'рџђѕ ROLL YOUR COLORS В· MEOW VIBES рџђѕ',
- customize:'РќРђРЎРўР РћР™ РЎР’РћР™ Р‘Р РћРЎРћРљ',diceCountLabel:'РљРћР›РР§Р•РЎРўР’Рћ РљРЈР‘РРљРћР’',resultsLabel:'Р Р•Р—РЈР›Р¬РўРђРў Р‘Р РћРЎРљРђ',
- fastOff:'вљЎ Fast Roll: Р’Р«РљР›',fastOn:'вљЎ Fast Roll: Р’РљР›',fastHint:'Р‘РµР· Р°РЅРёРјР°С†РёРё вЂ” РјРіРЅРѕРІРµРЅРЅС‹Р№ СЂРµР·СѓР»СЊС‚Р°С‚',
-@@ -208,7 +221,7 @@
- tradeOffer:'РџСЂРµРґР»РѕР¶РµРЅРёРµ: ', die:'РєСѓР±РёРє',dice:'РєСѓР±РёРєР°',dieN:'РљРЈР‘РРљ '
- },
- en: {
--gateTitle:'CHOOSE YOUR LANGUAGE',gateHint:'Choose your language',
-+gateTitle:'CHOOSE YOUR LANGUAGE',gateHint:'Choose your language',historyTitle:'рџ“њ HISTORY',historyClear:'Clear',historyEmpty:'Your rolls will appear here',
- brand:'рџђѕ NEON DICE CLUB',stylePill:'в—Џ MEOWL STYLE',subtitle:'рџђѕ ROLL YOUR COLORS В· MEOW VIBES рџђѕ',
- customize:'CUSTOMIZE YOUR ROLL',diceCountLabel:'NUMBER OF DICE',resultsLabel:'ROLL RESULTS',
- fastOff:'вљЎ Fast Roll: OFF',fastOn:'вљЎ Fast Roll: ON',fastHint:'Skip animation for instant results',
-@@ -252,7 +265,7 @@
-   [['meowl','bgMeowl'],['autumn','bgAutumn'],['winter','bgWinter'],['spring','bgSpring'],['forest','bgForest'],['sunset','bgSunset'],['ocean','bgOcean'],['city','bgCity'],['night','bgNight'],['midnight','bgMidnight'],['mint','bgMint'],['mono','bgMono']].forEach(([v,k])=>{let o=document.createElement('option');o.value=v;o.textContent=tr(k);bgSelect.append(o)});bgSelect.value=currentBg;
-   const ms=$('musicStyle'),old=ms.value||'meow';ms.innerHTML='';[['meow','musicMeow'],['chill','musicChill'],['arcade','musicArcade'],['autumn','musicAutumn']].forEach(([v,k])=>{let o=document.createElement('option');o.value=v;o.textContent=tr(k);ms.append(o)});ms.value=old;
-   document.querySelectorAll('#giveColor,#getColor').forEach(sel=>{const old=sel.value;sel.innerHTML='';colors.forEach((c,i)=>{let o=document.createElement('option');o.value=i;o.textContent=trColor(c.name);sel.append(o)});sel.value=old});
--  $('languageGate').classList.add('hidden');
-+  $('languageGate').classList.add('hidden');renderHistory();
- }
- function trColor(name){if(language==='en')return ({'РљСЂР°СЃРЅС‹Р№':'Red','РћСЂР°РЅР¶РµРІС‹Р№':'Orange','Р–С‘Р»С‚С‹Р№':'Yellow','Р—РµР»С‘РЅС‹Р№':'Green','РЎРёРЅРёР№':'Blue','Р¤РёРѕР»РµС‚РѕРІС‹Р№':'Purple','Р РѕР·РѕРІС‹Р№':'Pink','Р§С‘СЂРЅС‹Р№':'Black'})[name]||name;return name}
- document.querySelectorAll('[data-language]').forEach(b=>b.addEventListener('click',()=>{setLanguage(b.dataset.language);drawIdle();$('results').innerHTML='<div class="stats" style="grid-column:1/-1">'+tr('pressRoll')+'</div>';$('status').textContent=tr('ready');}));
-@@ -264,7 +277,13 @@
-  {name:'Р РѕР·РѕРІС‹Р№',hex:'#ef42b5'},{name:'Р§С‘СЂРЅС‹Р№',hex:'#393541'}
- ];
- const $=id=>document.getElementById(id);
--let rolls=0,score=0,streak=0,busy=false,soundOn=true,musicOn=false,fastRoll=false,audio=null,musicTimer=null,musicStep=0,megaBusy=false,megaTimer=null,megaColorTimer=null;
-+let rollHistory=[];
-+try{const savedHistory=JSON.parse(localStorage.getItem('telekDiceRollHistory')||'[]');if(Array.isArray(savedHistory))rollHistory=savedHistory.slice(0,100)}catch(e){}
-+function saveHistory(nums,type='ROLL'){rollHistory.unshift({nums:nums.slice(),type:type,time:new Date().toLocaleTimeString(language==='en'?'en-GB':'ru-RU',{hour:'2-digit',minute:'2-digit'})});rollHistory=rollHistory.slice(0,100);try{localStorage.setItem('telekDiceRollHistory',JSON.stringify(rollHistory))}catch(e){}renderHistory()}
-+function renderHistory(){const list=$('historyList');if(!list)return;list.innerHTML='';if(!rollHistory.length){const empty=document.createElement('div');empty.className='history-empty';empty.textContent=tr('historyEmpty');list.append(empty);return}rollHistory.forEach(entry=>{const row=document.createElement('div');row.className='history-entry';const meta=document.createElement('div');meta.className='history-meta';meta.textContent=(entry.type==='MEGA'?'вњЁ MEGA':'рџЋІ ROLL')+' В· '+entry.time;const dots=document.createElement('div');dots.className='history-colors';entry.nums.forEach(n=>{if(!colors[n])return;const dot=document.createElement('span');dot.className='history-color';dot.style.background=colors[n].hex;dot.title=trColor(colors[n].name);dots.append(dot)});const names=document.createElement('div');names.className='history-names';names.textContent=entry.nums.map(n=>colors[n]?trColor(colors[n].name):'').filter(Boolean).join(' В· ');row.append(meta,dots,names);list.append(row)})}
-+$('clearHistory').onclick=()=>{rollHistory=[];try{localStorage.removeItem('telekDiceRollHistory')}catch(e){}renderHistory();clickSound()};
-+
-+renderHistory();\nlet rolls=0,score=0,streak=0,busy=false,soundOn=true,musicOn=false,fastRoll=false,audio=null,musicTimer=null,musicStep=0,megaBusy=false,megaTimer=null,megaColorTimer=null;
- for(let n=1;n<=8;n++){let o=document.createElement('option');o.value=n;o.textContent=n+' РєСѓР±РёРєР°';$('count').append(o)}
- function ctx(){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;if(!audio)audio=new AC();if(audio.state==='suspended')audio.resume();return audio}
- function tone(freq,duration=.12,type='sine',volume=.025,delay=0){const c=ctx();if(!c)return;let o=c.createOscillator(),g=c.createGain(),t=c.currentTime+delay;o.type=type;o.frequency.setValueAtTime(freq,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(volume,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+duration);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+duration+.03)}
-@@ -275,7 +294,7 @@
- function makeDie(c,small=false){let d=document.createElement('div');d.className=small?'resultdie':'die';d.style.background=`linear-gradient(145deg,${c.hex},${c.hex}dd)`;d.innerHTML=small?'<span class="pip"></span><span class="name">'+trColor(c.name)+'</span>':'<span class="pip"></span>';return d}
- function drawIdle(){let grid=$('diceGrid');grid.innerHTML='';for(let i=0;i<Number($('count').value);i++)grid.append(makeDie(colors[i%colors.length]))}
- function render(nums,mega=false){let r=$('results');r.innerHTML='';nums.forEach((n,i)=>{let d=makeDie(colors[n],true);let small=document.createElement('span');small.className='small';small.textContent=mega?'MEGA ROLL':tr('dieN')+(i+1);d.append(small);d.style.animationDelay=(i*.055)+'s';r.append(d)})}
--function finishRoll(nums){const grid=$('diceGrid');grid.innerHTML='';nums.forEach(x=>grid.append(makeDie(colors[x])));render(nums);rolls++;score+=nums.length;streak++;$('rolls').textContent=rolls;$('score').textContent=score;$('streak').textContent=streak;$('status').textContent=tr('rollDone')+nums.map(x=>trColor(colors[x].name)).join(' В· ')+tr('rollFinished');if(nums.some(x=>x===6))meow();else winSound();$('roll').disabled=false;$('roll').textContent=tr('roll');busy=false}
-+function finishRoll(nums){saveHistory(nums,'ROLL');const grid=$('diceGrid');grid.innerHTML='';nums.forEach(x=>grid.append(makeDie(colors[x])));render(nums);rolls++;score+=nums.length;streak++;$('rolls').textContent=rolls;$('score').textContent=score;$('streak').textContent=streak;$('status').textContent=tr('rollDone')+nums.map(x=>trColor(colors[x].name)).join(' В· ')+tr('rollFinished');if(nums.some(x=>x===6))meow();else winSound();$('roll').disabled=false;$('roll').textContent=tr('roll');busy=false}
- $('count').value='4';
- $('count').onchange=()=>{clickSound();drawIdle()};
- $('roll').onclick=()=>{if(busy||megaBusy)return;ctx();clickSound();busy=true;$('roll').disabled=true;$('roll').textContent=fastRoll?'вљЎ RESULT...':tr('rolling');const n=Number($('count').value),nums=Array.from({length:n},()=>Math.floor(Math.random()*colors.length));if(fastRoll){finishRoll(nums);return}rollSound();const grid=$('diceGrid');grid.innerHTML='';for(let i=0;i<n;i++){let d=makeDie(colors[Math.floor(Math.random()*colors.length)]);d.classList.add('rolling');grid.append(d)}setTimeout(()=>finishRoll(nums),750)};
-@@ -306,7 +325,7 @@
- $('backgroundStyle').onchange=()=>setBackground($('backgroundStyle').value);
- document.querySelectorAll('.photo-choice').forEach(el=>el.onclick=()=>setBackground(el.dataset.bg));
- function shuffledColorResults(count){const bag=colors.map((_,i)=>i);for(let i=bag.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[bag[i],bag[j]]=[bag[j],bag[i]]}return bag.slice(0,Math.min(count,bag.length))}
--function startMegaRoll(){if(megaBusy||busy)return;ctx();clickSound();document.body.classList.remove('mega-impact','mega-flash');document.body.classList.add('mega-approach');megaBusy=true;$('megaRoll').disabled=true;$('megaRoll').textContent=tr('megaBusy');$('roll').disabled=true;$('megaCaption').textContent=tr('megaChanging');const die=$('megaDie'),progress=$('megaProgress'),count=Number($('count').value),nums=shuffledColorResults(count);die.classList.remove('spinning');progress.classList.remove('running');void die.offsetWidth;void progress.offsetWidth;die.classList.add('spinning');progress.classList.add('running');rollSound();$('diceGrid').querySelectorAll('.die').forEach((d,i)=>{d.classList.add('rolling');d.style.animationDelay=(i*.035)+'s'});if(megaColorTimer)clearInterval(megaColorTimer);megaColorTimer=setInterval(()=>{const c=colors[Math.floor(Math.random()*colors.length)];die.style.background=`linear-gradient(140deg,${c.hex},${c.hex}dd)`},135);megaTimer=setTimeout(()=>{clearInterval(megaColorTimer);megaColorTimer=null;document.body.classList.remove('mega-approach');document.body.classList.add('mega-impact','mega-flash');setTimeout(()=>document.body.classList.remove('mega-impact'),700);setTimeout(()=>document.body.classList.remove('mega-flash'),700);die.classList.remove('spinning');progress.classList.remove('running');const mainColor=colors[nums[0]];die.style.background=`linear-gradient(140deg,${mainColor.hex},${mainColor.hex}dd)`;const list=nums.map(n=>trColor(colors[n].name));$('megaCaption').textContent=tr('result')+list.join(' В· ');$('status').textContent=tr('megaStatus')+list.join(' В· ')+'.';$('diceGrid').querySelectorAll('.die').forEach(d=>d.classList.remove('rolling'));rolls++;score+=nums.length;streak++;$('rolls').textContent=rolls;$('score').textContent=score;$('streak').textContent=streak;render(nums,true);const grid=$('diceGrid');grid.innerHTML='';nums.forEach(n=>grid.append(makeDie(colors[n])));if(nums.includes(6))meow();else winSound();$('megaRoll').disabled=false;$('megaRoll').textContent=tr('megaAgain');$('roll').disabled=false;$('roll').textContent=tr('roll');megaBusy=false},2150)}
-+function startMegaRoll(){if(megaBusy||busy)return;ctx();clickSound();document.body.classList.remove('mega-impact','mega-flash');document.body.classList.add('mega-approach');megaBusy=true;$('megaRoll').disabled=true;$('megaRoll').textContent=tr('megaBusy');$('roll').disabled=true;$('megaCaption').textContent=tr('megaChanging');const die=$('megaDie'),progress=$('megaProgress'),count=Number($('count').value),nums=shuffledColorResults(count);die.classList.remove('spinning');progress.classList.remove('running');void die.offsetWidth;void progress.offsetWidth;die.classList.add('spinning');progress.classList.add('running');rollSound();$('diceGrid').querySelectorAll('.die').forEach((d,i)=>{d.classList.add('rolling');d.style.animationDelay=(i*.035)+'s'});if(megaColorTimer)clearInterval(megaColorTimer);megaColorTimer=setInterval(()=>{const c=colors[Math.floor(Math.random()*colors.length)];die.style.background=`linear-gradient(140deg,${c.hex},${c.hex}dd)`},135);megaTimer=setTimeout(()=>{clearInterval(megaColorTimer);megaColorTimer=null;document.body.classList.remove('mega-approach');document.body.classList.add('mega-impact','mega-flash');setTimeout(()=>document.body.classList.remove('mega-impact'),700);setTimeout(()=>document.body.classList.remove('mega-flash'),700);die.classList.remove('spinning');progress.classList.remove('running');const mainColor=colors[nums[0]];die.style.background=`linear-gradient(140deg,${mainColor.hex},${mainColor.hex}dd)`;saveHistory(nums,'MEGA');const list=nums.map(n=>trColor(colors[n].name));$('megaCaption').textContent=tr('result')+list.join(' В· ');$('status').textContent=tr('megaStatus')+list.join(' В· ')+'.';$('diceGrid').querySelectorAll('.die').forEach(d=>d.classList.remove('rolling'));rolls++;score+=nums.length;streak++;$('rolls').textContent=rolls;$('score').textContent=score;$('streak').textContent=streak;render(nums,true);const grid=$('diceGrid');grid.innerHTML='';nums.forEach(n=>grid.append(makeDie(colors[n])));if(nums.includes(6))meow();else winSound();$('megaRoll').disabled=false;$('megaRoll').textContent=tr('megaAgain');$('roll').disabled=false;$('roll').textContent=tr('roll');megaBusy=false},2150)}
- $('megaRoll').onclick=startMegaRoll;
- function fillTradeColors(){['giveColor','getColor'].forEach((id,idx)=>{const sel=$(id);colors.forEach((c,i)=>{const op=document.createElement('option');op.value=String(i);op.textContent=trColor(c.name);sel.append(op)});sel.value=idx===0?'0':'1'})}
- function checkTrade(){const gi=Number($('giveColor').value),ge=Number($('getColor').value),ga=Number($('giveAmount').value),ea=Number($('getAmount').value);if(!Number.isInteger(ga)||!Number.isInteger(ea)||ga<1||ea<1||ga>999||ea>999){$('tradeResult').textContent=tr('tradeInvalid');return}if(gi===ge){$('tradeResult').textContent=tr('tradeSame');return}const verdict=ga===ea?tr('tradeEqual'):ga>ea?tr('tradeGiveMore'):tr('tradeGetMore');$('tradeResult').textContent=tr('tradeOffer')+ga+' Г— '+trColor(colors[gi].name)+' в†’ '+ea+' Г— '+trColor(colors[ge].name)+'. '+verdict}
