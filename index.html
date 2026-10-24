@@ -324,3 +324,92 @@ fillTradeColors();drawIdle();setBackground('autumn');
 out = Path("/mnt/data/telek-dice-meowl-bilingual.html")
 out.write_text(html, encoding="utf-8")
 print(f"Готово: {out.name} · {len(html):,} символов")
+--- original.html
++++ telek-dice-history.html
+@@ -96,12 +96,25 @@
+ @keyframes pipPulse{to{opacity:.25;transform:scale(.7)}}
+ @keyframes progress{0%{width:0}35%{width:35%}68%{width:70%}88%{width:88%}100%{width:100%}}
+ @keyframes bars{from{height:6px}to{height:34px}}
+-@media(max-width:430px){.dice-grid,.results{gap:8px}.die{border-radius:18%}.panel{padding:17px 10px}.die .pip{width:13px;height:13px}.trade-grid{grid-template-columns:1fr}.mega-stage{height:185px}.mega-die{width:90px;height:90px}.mega-die .p3{top:35px;left:35px}}
++
++#rollHistory{position:fixed;left:12px;top:50%;transform:translateY(-50%);z-index:5;width:150px;max-height:72vh;overflow:auto;padding:12px;border:1px solid #ffb7df77;border-radius:16px;background:linear-gradient(145deg,#321c38ed,#170f20f2);box-shadow:0 12px 35px #0007;backdrop-filter:blur(14px);text-align:left}
++.history-head{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:10px}
++.history-title{font-size:10px;letter-spacing:1px;color:#ffc2ec;font-weight:1000}
++#clearHistory{border:1px solid #ffffff30;background:#ffffff0b;color:#fff;border-radius:7px;padding:4px 6px;font-size:9px;cursor:pointer}
++.history-empty{font-size:10px;line-height:1.4;color:var(--muted);font-weight:700}
++.history-entry{padding:8px 0;border-top:1px solid #ffffff18}
++.history-meta{font-size:9px;color:var(--muted);margin-bottom:5px}
++.history-colors{display:flex;flex-wrap:wrap;gap:4px}
++.history-color{width:13px;height:13px;border-radius:4px;border:1px solid #ffffff99;box-shadow:0 0 7px #ffffff22}
++.history-names{font-size:9px;line-height:1.4;color:#fff;margin-top:5px;overflow-wrap:anywhere}
++@media(max-width:700px){#rollHistory{left:6px;top:auto;bottom:8px;transform:none;width:112px;max-height:30vh;padding:8px;border-radius:12px;background:#170f20ed}.history-title{font-size:9px}.history-head{align-items:flex-start;flex-direction:column;gap:4px}.history-entry{padding:5px 0}.history-names{font-size:8px}.history-meta{font-size:8px}.history-color{width:11px;height:11px}}
++\n@media(max-width:430px){.dice-grid,.results{gap:8px}.die{border-radius:18%}.panel{padding:17px 10px}.die .pip{width:13px;height:13px}.trade-grid{grid-template-columns:1fr}.mega-stage{height:185px}.mega-die{width:90px;height:90px}.mega-die .p3{top:35px;left:35px}}
+ @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+ </style>
+ </head>
+ <body style="--photo:url('https://i.pinimg.com/originals/2a/fa/0a/2afa0a1cf7148fe7913004eeb29aa2b1.jpg');--photo-opacity:.9;background:linear-gradient(135deg,#57301d,#1b1025)">
+ <div id="megaFlash" aria-hidden="true"></div>
++<aside id="rollHistory" aria-label="Roll history"><div class="history-head"><div class="history-title" data-i18n="historyTitle">рџ“њ РРЎРўРћР РРЇ</div><button id="clearHistory" type="button" data-i18n="historyClear">РћС‡РёСЃС‚РёС‚СЊ</button></div><div id="historyList"><div class="history-empty" data-i18n="historyEmpty">Р—РґРµСЃСЊ РїРѕСЏРІСЏС‚СЃСЏ Р±СЂРѕСЃРєРё</div></div></aside>
+ <div id="languageGate" role="dialog" aria-modal="true" aria-labelledby="languageTitle">
+   <div class="language-card">
+     <div class="language-paw">рџђѕ</div>
+@@ -179,7 +192,7 @@
+ <script>
+ const translations = {
+ ru: {
+-gateTitle:'Р’Р«Р‘Р•Р Р РЇР—Р«Рљ', gateHint:'Р’С‹Р±РµСЂРё СЏР·С‹Рє В· Choose your language',
++gateTitle:'Р’Р«Р‘Р•Р Р РЇР—Р«Рљ', gateHint:'Р’С‹Р±РµСЂРё СЏР·С‹Рє В· Choose your language',historyTitle:'рџ“њ РРЎРўРћР РРЇ',historyClear:'РћС‡РёСЃС‚РёС‚СЊ',historyEmpty:'Р—РґРµСЃСЊ РїРѕСЏРІСЏС‚СЃСЏ Р±СЂРѕСЃРєРё',
+ brand:'рџђѕ NEON DICE CLUB',stylePill:'в—Џ MEOWL STYLE',subtitle:'рџђѕ ROLL YOUR COLORS В· MEOW VIBES рџђѕ',
+ customize:'РќРђРЎРўР РћР™ РЎР’РћР™ Р‘Р РћРЎРћРљ',diceCountLabel:'РљРћР›РР§Р•РЎРўР’Рћ РљРЈР‘РРљРћР’',resultsLabel:'Р Р•Р—РЈР›Р¬РўРђРў Р‘Р РћРЎРљРђ',
+ fastOff:'вљЎ Fast Roll: Р’Р«РљР›',fastOn:'вљЎ Fast Roll: Р’РљР›',fastHint:'Р‘РµР· Р°РЅРёРјР°С†РёРё вЂ” РјРіРЅРѕРІРµРЅРЅС‹Р№ СЂРµР·СѓР»СЊС‚Р°С‚',
+@@ -208,7 +221,7 @@
+ tradeOffer:'РџСЂРµРґР»РѕР¶РµРЅРёРµ: ', die:'РєСѓР±РёРє',dice:'РєСѓР±РёРєР°',dieN:'РљРЈР‘РРљ '
+ },
+ en: {
+-gateTitle:'CHOOSE YOUR LANGUAGE',gateHint:'Choose your language',
++gateTitle:'CHOOSE YOUR LANGUAGE',gateHint:'Choose your language',historyTitle:'рџ“њ HISTORY',historyClear:'Clear',historyEmpty:'Your rolls will appear here',
+ brand:'рџђѕ NEON DICE CLUB',stylePill:'в—Џ MEOWL STYLE',subtitle:'рџђѕ ROLL YOUR COLORS В· MEOW VIBES рџђѕ',
+ customize:'CUSTOMIZE YOUR ROLL',diceCountLabel:'NUMBER OF DICE',resultsLabel:'ROLL RESULTS',
+ fastOff:'вљЎ Fast Roll: OFF',fastOn:'вљЎ Fast Roll: ON',fastHint:'Skip animation for instant results',
+@@ -252,7 +265,7 @@
+   [['meowl','bgMeowl'],['autumn','bgAutumn'],['winter','bgWinter'],['spring','bgSpring'],['forest','bgForest'],['sunset','bgSunset'],['ocean','bgOcean'],['city','bgCity'],['night','bgNight'],['midnight','bgMidnight'],['mint','bgMint'],['mono','bgMono']].forEach(([v,k])=>{let o=document.createElement('option');o.value=v;o.textContent=tr(k);bgSelect.append(o)});bgSelect.value=currentBg;
+   const ms=$('musicStyle'),old=ms.value||'meow';ms.innerHTML='';[['meow','musicMeow'],['chill','musicChill'],['arcade','musicArcade'],['autumn','musicAutumn']].forEach(([v,k])=>{let o=document.createElement('option');o.value=v;o.textContent=tr(k);ms.append(o)});ms.value=old;
+   document.querySelectorAll('#giveColor,#getColor').forEach(sel=>{const old=sel.value;sel.innerHTML='';colors.forEach((c,i)=>{let o=document.createElement('option');o.value=i;o.textContent=trColor(c.name);sel.append(o)});sel.value=old});
+-  $('languageGate').classList.add('hidden');
++  $('languageGate').classList.add('hidden');renderHistory();
+ }
+ function trColor(name){if(language==='en')return ({'РљСЂР°СЃРЅС‹Р№':'Red','РћСЂР°РЅР¶РµРІС‹Р№':'Orange','Р–С‘Р»С‚С‹Р№':'Yellow','Р—РµР»С‘РЅС‹Р№':'Green','РЎРёРЅРёР№':'Blue','Р¤РёРѕР»РµС‚РѕРІС‹Р№':'Purple','Р РѕР·РѕРІС‹Р№':'Pink','Р§С‘СЂРЅС‹Р№':'Black'})[name]||name;return name}
+ document.querySelectorAll('[data-language]').forEach(b=>b.addEventListener('click',()=>{setLanguage(b.dataset.language);drawIdle();$('results').innerHTML='<div class="stats" style="grid-column:1/-1">'+tr('pressRoll')+'</div>';$('status').textContent=tr('ready');}));
+@@ -264,7 +277,13 @@
+  {name:'Р РѕР·РѕРІС‹Р№',hex:'#ef42b5'},{name:'Р§С‘СЂРЅС‹Р№',hex:'#393541'}
+ ];
+ const $=id=>document.getElementById(id);
+-let rolls=0,score=0,streak=0,busy=false,soundOn=true,musicOn=false,fastRoll=false,audio=null,musicTimer=null,musicStep=0,megaBusy=false,megaTimer=null,megaColorTimer=null;
++let rollHistory=[];
++try{const savedHistory=JSON.parse(localStorage.getItem('telekDiceRollHistory')||'[]');if(Array.isArray(savedHistory))rollHistory=savedHistory.slice(0,100)}catch(e){}
++function saveHistory(nums,type='ROLL'){rollHistory.unshift({nums:nums.slice(),type:type,time:new Date().toLocaleTimeString(language==='en'?'en-GB':'ru-RU',{hour:'2-digit',minute:'2-digit'})});rollHistory=rollHistory.slice(0,100);try{localStorage.setItem('telekDiceRollHistory',JSON.stringify(rollHistory))}catch(e){}renderHistory()}
++function renderHistory(){const list=$('historyList');if(!list)return;list.innerHTML='';if(!rollHistory.length){const empty=document.createElement('div');empty.className='history-empty';empty.textContent=tr('historyEmpty');list.append(empty);return}rollHistory.forEach(entry=>{const row=document.createElement('div');row.className='history-entry';const meta=document.createElement('div');meta.className='history-meta';meta.textContent=(entry.type==='MEGA'?'вњЁ MEGA':'рџЋІ ROLL')+' В· '+entry.time;const dots=document.createElement('div');dots.className='history-colors';entry.nums.forEach(n=>{if(!colors[n])return;const dot=document.createElement('span');dot.className='history-color';dot.style.background=colors[n].hex;dot.title=trColor(colors[n].name);dots.append(dot)});const names=document.createElement('div');names.className='history-names';names.textContent=entry.nums.map(n=>colors[n]?trColor(colors[n].name):'').filter(Boolean).join(' В· ');row.append(meta,dots,names);list.append(row)})}
++$('clearHistory').onclick=()=>{rollHistory=[];try{localStorage.removeItem('telekDiceRollHistory')}catch(e){}renderHistory();clickSound()};
++
++renderHistory();\nlet rolls=0,score=0,streak=0,busy=false,soundOn=true,musicOn=false,fastRoll=false,audio=null,musicTimer=null,musicStep=0,megaBusy=false,megaTimer=null,megaColorTimer=null;
+ for(let n=1;n<=8;n++){let o=document.createElement('option');o.value=n;o.textContent=n+' РєСѓР±РёРєР°';$('count').append(o)}
+ function ctx(){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;if(!audio)audio=new AC();if(audio.state==='suspended')audio.resume();return audio}
+ function tone(freq,duration=.12,type='sine',volume=.025,delay=0){const c=ctx();if(!c)return;let o=c.createOscillator(),g=c.createGain(),t=c.currentTime+delay;o.type=type;o.frequency.setValueAtTime(freq,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(volume,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+duration);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+duration+.03)}
+@@ -275,7 +294,7 @@
+ function makeDie(c,small=false){let d=document.createElement('div');d.className=small?'resultdie':'die';d.style.background=`linear-gradient(145deg,${c.hex},${c.hex}dd)`;d.innerHTML=small?'<span class="pip"></span><span class="name">'+trColor(c.name)+'</span>':'<span class="pip"></span>';return d}
+ function drawIdle(){let grid=$('diceGrid');grid.innerHTML='';for(let i=0;i<Number($('count').value);i++)grid.append(makeDie(colors[i%colors.length]))}
+ function render(nums,mega=false){let r=$('results');r.innerHTML='';nums.forEach((n,i)=>{let d=makeDie(colors[n],true);let small=document.createElement('span');small.className='small';small.textContent=mega?'MEGA ROLL':tr('dieN')+(i+1);d.append(small);d.style.animationDelay=(i*.055)+'s';r.append(d)})}
+-function finishRoll(nums){const grid=$('diceGrid');grid.innerHTML='';nums.forEach(x=>grid.append(makeDie(colors[x])));render(nums);rolls++;score+=nums.length;streak++;$('rolls').textContent=rolls;$('score').textContent=score;$('streak').textContent=streak;$('status').textContent=tr('rollDone')+nums.map(x=>trColor(colors[x].name)).join(' В· ')+tr('rollFinished');if(nums.some(x=>x===6))meow();else winSound();$('roll').disabled=false;$('roll').textContent=tr('roll');busy=false}
++function finishRoll(nums){saveHistory(nums,'ROLL');const grid=$('diceGrid');grid.innerHTML='';nums.forEach(x=>grid.append(makeDie(colors[x])));render(nums);rolls++;score+=nums.length;streak++;$('rolls').textContent=rolls;$('score').textContent=score;$('streak').textContent=streak;$('status').textContent=tr('rollDone')+nums.map(x=>trColor(colors[x].name)).join(' В· ')+tr('rollFinished');if(nums.some(x=>x===6))meow();else winSound();$('roll').disabled=false;$('roll').textContent=tr('roll');busy=false}
+ $('count').value='4';
+ $('count').onchange=()=>{clickSound();drawIdle()};
+ $('roll').onclick=()=>{if(busy||megaBusy)return;ctx();clickSound();busy=true;$('roll').disabled=true;$('roll').textContent=fastRoll?'вљЎ RESULT...':tr('rolling');const n=Number($('count').value),nums=Array.from({length:n},()=>Math.floor(Math.random()*colors.length));if(fastRoll){finishRoll(nums);return}rollSound();const grid=$('diceGrid');grid.innerHTML='';for(let i=0;i<n;i++){let d=makeDie(colors[Math.floor(Math.random()*colors.length)]);d.classList.add('rolling');grid.append(d)}setTimeout(()=>finishRoll(nums),750)};
+@@ -306,7 +325,7 @@
+ $('backgroundStyle').onchange=()=>setBackground($('backgroundStyle').value);
+ document.querySelectorAll('.photo-choice').forEach(el=>el.onclick=()=>setBackground(el.dataset.bg));
+ function shuffledColorResults(count){const bag=colors.map((_,i)=>i);for(let i=bag.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[bag[i],bag[j]]=[bag[j],bag[i]]}return bag.slice(0,Math.min(count,bag.length))}
+-function startMegaRoll(){if(megaBusy||busy)return;ctx();clickSound();document.body.classList.remove('mega-impact','mega-flash');document.body.classList.add('mega-approach');megaBusy=true;$('megaRoll').disabled=true;$('megaRoll').textContent=tr('megaBusy');$('roll').disabled=true;$('megaCaption').textContent=tr('megaChanging');const die=$('megaDie'),progress=$('megaProgress'),count=Number($('count').value),nums=shuffledColorResults(count);die.classList.remove('spinning');progress.classList.remove('running');void die.offsetWidth;void progress.offsetWidth;die.classList.add('spinning');progress.classList.add('running');rollSound();$('diceGrid').querySelectorAll('.die').forEach((d,i)=>{d.classList.add('rolling');d.style.animationDelay=(i*.035)+'s'});if(megaColorTimer)clearInterval(megaColorTimer);megaColorTimer=setInterval(()=>{const c=colors[Math.floor(Math.random()*colors.length)];die.style.background=`linear-gradient(140deg,${c.hex},${c.hex}dd)`},135);megaTimer=setTimeout(()=>{clearInterval(megaColorTimer);megaColorTimer=null;document.body.classList.remove('mega-approach');document.body.classList.add('mega-impact','mega-flash');setTimeout(()=>document.body.classList.remove('mega-impact'),700);setTimeout(()=>document.body.classList.remove('mega-flash'),700);die.classList.remove('spinning');progress.classList.remove('running');const mainColor=colors[nums[0]];die.style.background=`linear-gradient(140deg,${mainColor.hex},${mainColor.hex}dd)`;const list=nums.map(n=>trColor(colors[n].name));$('megaCaption').textContent=tr('result')+list.join(' В· ');$('status').textContent=tr('megaStatus')+list.join(' В· ')+'.';$('diceGrid').querySelectorAll('.die').forEach(d=>d.classList.remove('rolling'));rolls++;score+=nums.length;streak++;$('rolls').textContent=rolls;$('score').textContent=score;$('streak').textContent=streak;render(nums,true);const grid=$('diceGrid');grid.innerHTML='';nums.forEach(n=>grid.append(makeDie(colors[n])));if(nums.includes(6))meow();else winSound();$('megaRoll').disabled=false;$('megaRoll').textContent=tr('megaAgain');$('roll').disabled=false;$('roll').textContent=tr('roll');megaBusy=false},2150)}
++function startMegaRoll(){if(megaBusy||busy)return;ctx();clickSound();document.body.classList.remove('mega-impact','mega-flash');document.body.classList.add('mega-approach');megaBusy=true;$('megaRoll').disabled=true;$('megaRoll').textContent=tr('megaBusy');$('roll').disabled=true;$('megaCaption').textContent=tr('megaChanging');const die=$('megaDie'),progress=$('megaProgress'),count=Number($('count').value),nums=shuffledColorResults(count);die.classList.remove('spinning');progress.classList.remove('running');void die.offsetWidth;void progress.offsetWidth;die.classList.add('spinning');progress.classList.add('running');rollSound();$('diceGrid').querySelectorAll('.die').forEach((d,i)=>{d.classList.add('rolling');d.style.animationDelay=(i*.035)+'s'});if(megaColorTimer)clearInterval(megaColorTimer);megaColorTimer=setInterval(()=>{const c=colors[Math.floor(Math.random()*colors.length)];die.style.background=`linear-gradient(140deg,${c.hex},${c.hex}dd)`},135);megaTimer=setTimeout(()=>{clearInterval(megaColorTimer);megaColorTimer=null;document.body.classList.remove('mega-approach');document.body.classList.add('mega-impact','mega-flash');setTimeout(()=>document.body.classList.remove('mega-impact'),700);setTimeout(()=>document.body.classList.remove('mega-flash'),700);die.classList.remove('spinning');progress.classList.remove('running');const mainColor=colors[nums[0]];die.style.background=`linear-gradient(140deg,${mainColor.hex},${mainColor.hex}dd)`;saveHistory(nums,'MEGA');const list=nums.map(n=>trColor(colors[n].name));$('megaCaption').textContent=tr('result')+list.join(' В· ');$('status').textContent=tr('megaStatus')+list.join(' В· ')+'.';$('diceGrid').querySelectorAll('.die').forEach(d=>d.classList.remove('rolling'));rolls++;score+=nums.length;streak++;$('rolls').textContent=rolls;$('score').textContent=score;$('streak').textContent=streak;render(nums,true);const grid=$('diceGrid');grid.innerHTML='';nums.forEach(n=>grid.append(makeDie(colors[n])));if(nums.includes(6))meow();else winSound();$('megaRoll').disabled=false;$('megaRoll').textContent=tr('megaAgain');$('roll').disabled=false;$('roll').textContent=tr('roll');megaBusy=false},2150)}
+ $('megaRoll').onclick=startMegaRoll;
+ function fillTradeColors(){['giveColor','getColor'].forEach((id,idx)=>{const sel=$(id);colors.forEach((c,i)=>{const op=document.createElement('option');op.value=String(i);op.textContent=trColor(c.name);sel.append(op)});sel.value=idx===0?'0':'1'})}
+ function checkTrade(){const gi=Number($('giveColor').value),ge=Number($('getColor').value),ga=Number($('giveAmount').value),ea=Number($('getAmount').value);if(!Number.isInteger(ga)||!Number.isInteger(ea)||ga<1||ea<1||ga>999||ea>999){$('tradeResult').textContent=tr('tradeInvalid');return}if(gi===ge){$('tradeResult').textContent=tr('tradeSame');return}const verdict=ga===ea?tr('tradeEqual'):ga>ea?tr('tradeGiveMore'):tr('tradeGetMore');$('tradeResult').textContent=tr('tradeOffer')+ga+' Г— '+trColor(colors[gi].name)+' в†’ '+ea+' Г— '+trColor(colors[ge].name)+'. '+verdict}
